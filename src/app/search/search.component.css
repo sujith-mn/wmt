@@ -1,0 +1,20 @@
+/* .mat-mdc-form-field {
+    --mat-mdc-form-field-floating-label-scale: 0.75;
+    display: inline-flex;
+    flex-direction: column;
+    min-width: 0;
+    text-align: left;
+    background-color: white;
+} */
+.mat-mdc-form-field {
+    color: rgb(241, 245, 249);
+    border-color: black;
+}
+.search{
+    position: absolute;
+    right: 207px;
+    width: 100px;
+    bottom: 412px;
+    height: 75px;
+    
+}
