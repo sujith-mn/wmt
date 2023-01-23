@@ -51,7 +51,7 @@ export class SearchComponent implements OnInit{
       id: [''],
       manager: [''],
       created: [''],
-      end_date:[''],
+      endDate:[''],
       ageing: [''],
       priority: [''],
       skill: [''],
@@ -144,7 +144,7 @@ export class SearchComponent implements OnInit{
       id: demand.id,
       manager: demand.manager,
       created: demand.created,
-      end_date:demand.endDate,
+      endDate:demand.endDate,
       ageing: demand.ageing,
       priority: demand.priority,
       skill: demand.skill,
@@ -157,7 +157,7 @@ export class SearchComponent implements OnInit{
   //Save Edit start
   onSave() {
     const editURL = 'http://localhost:7000/api/demands/' + this.editForm.value.id;
-    console.log(this.editForm.value);
+    console.log("onSave-->",this.editForm.value);
     this.httpClient.put(editURL, this.editForm.value)
       .subscribe((results) => {
         this.ngOnInit();
