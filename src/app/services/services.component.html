@@ -1,6 +1,12 @@
 <input [(ngModel)]="newValue" />
 
-<button type="button" (click)="getProfileBySearch()">search</button>
+<button
+  type="button"
+  [disabled]="newValue === ''"
+  (click)="getProfileBySearch()"
+>
+  search
+</button>
 
 <br />
 

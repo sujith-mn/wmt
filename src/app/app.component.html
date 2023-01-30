@@ -1,1 +1,21 @@
-<app-services></app-services>
+<mat-sidenav-container fullscreen class="sidenav">
+  <mat-sidenav #sidenav class="sidenav">
+    <mat-nav-list (click)="sidenav.close()">
+      <a mat-list-item routerLink="/">
+        <mat-icon class="text">home</mat-icon>
+        <span class="text">Home</span>
+      </a>
+      <a mat-list-item routerLink="/search">
+        <mat-icon class="text">search</mat-icon>
+        <span class="text">search</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="sidenav.open()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <p class="title">{{ titlebar }}</p>
+  </mat-toolbar>
+  <router-outlet (activate)="setHeader()"></router-outlet>
+</mat-sidenav-container>
