@@ -104,13 +104,7 @@
   </div>
   <div class="modal-body">
     <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
-      <!-- <div class="form-group">
-        <label for="demandId">Demand Id</label>
-        <div class="input-group">
-          <input type="text" name="demandId" id="demandId" class="form-control" ngModel required #demandId="ngModel">
-        </div>
-      </div> -->
-
+      
       <div class="form-group">
           <label for="manager">Customer Manager</label>
           <div class="input-group">
@@ -130,7 +124,7 @@
         <div class="input-group">
           <input type="date" name="created" id="created" class="form-control" ngModel required #createdOn="ngModel" placeholder="yyyy-MM-dd" 
           min="2000-01-01" 
-          max="2023-12-31" required />
+          max="2030-12-31" required />
         </div>
     </div>
     
@@ -139,7 +133,7 @@
       <div class="input-group">
         <input type="date" name="endDate" id="endDate" class="form-control" ngModel required #endDate="ngModel" placeholder="yyyy-MM-dd" 
         min="2000-01-01" 
-        max="2023-12-31" required />
+        max="2030-12-31" required />
       </div>
   </div>
       <div class="form-group">
@@ -311,21 +305,16 @@
     </div>
     <div class="modal-body">
       <form [formGroup]="editForm" novalidate>
-        <!-- <div class="form-group">
-          <label for="demandId">Demand Id</label>
-          <div class="input-group">
-            <input  formControlName="demandId"  class="form-control" >
-          </div>
-        </div> -->
+    
 
-        <div class="form-group">
+        <div class="form-group ">
             <label for="manager">Customer Manager</label>
             <div class="input-group">
               <input formControlName="manager"  class="form-control" >
             </div>
         </div>
 
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label for="created">Start Date</label>
             <div class="input-group">
               <input formControlName="created"  class="form-control" >
@@ -337,8 +326,25 @@
           <div class="input-group">
             <input formControlName="endDate" class="form-control" >
           </div>
-      </div>
+      </div> -->
         
+      <div class="form-group ">
+        <label for="created">Start Date</label>
+        <div class="input-group">
+          <input type="date" name="created" id="created" class="form-control" ngModel required #createdOn="ngModel" placeholder="yyyy-MM-dd" 
+          min="2000-01-01" 
+          max="2030-12-31" required />
+        </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="endDate">End Date</label>
+      <div class="input-group">
+        <input type="date" name="endDate" id="endDate" class="form-control" ngModel required #endDate="ngModel" placeholder="yyyy-MM-dd" 
+        min="2000-01-01" 
+        max="2030-12-31" required />
+      </div>
+  </div>
         <div class="form-group">
             <label for="ageing">Ageing</label>
             <div class="input-group">
