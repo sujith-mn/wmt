@@ -1,21 +1,23 @@
-package com.profiles.app.service;
+package com.application.profile.logic;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.profiles.app.dto.ProfileDto;
-import com.profiles.app.model.Profile;
-import com.profiles.app.repository.ProfileRepository;
+import com.application.profile.domain.model.Profile;
+import com.application.profile.domain.repository.ProfileRepository;
+import com.application.profile.service.rest.v1.ExcelHelper;
+import com.application.profile.service.rest.v1.model.ProfileDto;
 
 @Service
-public class ProfileServiceImpl implements ProfileService {
+public class ProfileService{
 	
 	@Autowired
 	private ProfileRepository profileRepository;
 
-	@Override
 	public Profile save(ProfileDto profile) {
 		
 		Profile addedProfile = new Profile();
@@ -31,47 +33,54 @@ public class ProfileServiceImpl implements ProfileService {
 
 	}
 
-	@Override
 	public List<Profile> getAllprofiles() {
 		
 		return profileRepository.findAll();
 	}
 
-	@Override
+	
 	public List<Profile> getAllprofilesByPrimarySkill(String skill) {
 		
 		return profileRepository.findAllByPrimarySkill(skill);
 	}
 
-	@Override
+	
 	public List<Profile> getAllprofilesByAvailability(String availability) {
 		
 		return profileRepository.findAllByAvailability(availability);
 	}
 
-	@Override
+	
 	public List<Profile> getAllprofilesBylocation(String location) {
 
 		return profileRepository.findAllByLocation(location);
 	}
 
-	@Override
+
 	public List<Profile> getAllProfilesByName(String search) {
 
 		return profileRepository.findAllByName(search);
 		
 	}
 
-	@Override
+
 	public List<Profile> getAllProfilesByProposedBy(String search) {
 		return profileRepository.findAllByProposedBy(search);
 	}
 
-	@Override
 	public List<Profile> getAllProfilesBySource(String search) {
 		
 		return profileRepository.findAllBySource(search);
 		
 	}
+	
+	public void save(MultipartFile file) {
+	    try {
+	      List<Profile> excels = ExcelHelper.excelToData(file.getInputStream());
+	      profileRepository.saveAll(excels);
+	    } catch (IOException e) {
+	      throw new RuntimeException("fail to store excel data: " + e.getMessage());
+	    }
+	  }
 
 }

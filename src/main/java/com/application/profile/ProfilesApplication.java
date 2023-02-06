@@ -1,4 +1,4 @@
-package com.profiles.app;
+package com.application.profile;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

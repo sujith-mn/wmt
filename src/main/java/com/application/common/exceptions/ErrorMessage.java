@@ -1,4 +1,4 @@
-package com.profiles.app.info;
+package com.application.common.exceptions;
 
 import java.util.Date;
 

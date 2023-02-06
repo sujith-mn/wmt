@@ -1,22 +1,14 @@
-package com.profiles.app.model;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+package com.application.profile.service.rest.v1.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Profile {
+@NoArgsConstructor
+public class ProfileDto {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private long id;
 	private String name;
 	private String primarySkill;

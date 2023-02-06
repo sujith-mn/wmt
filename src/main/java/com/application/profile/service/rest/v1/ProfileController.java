@@ -1,4 +1,4 @@
-package com.profiles.app.controller;
+package com.application.profile.service.rest.v1;
 
 import java.util.List;
 
@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.profiles.app.dto.ProfileDto;
-import com.profiles.app.info.ResponseInfo;
-import com.profiles.app.model.Profile;
-import com.profiles.app.service.ProfileService;
+import com.application.profile.domain.model.Profile;
+import com.application.profile.logic.ProfileService;
+import com.application.profile.service.rest.v1.model.ProfileDto;
+
+
+
 @CrossOrigin(origins="*")
 @RestController
 @RequestMapping("/profiles")
@@ -26,15 +30,38 @@ public class ProfileController {
 	private ProfileService profileService;
 	
 	@PostMapping("/add")
-	public ResponseEntity<ResponseInfo> addProfile(@RequestBody ProfileDto profile) {
+	public ResponseEntity<Profile> addProfile(@RequestBody ProfileDto profile) {
 		
 		Profile addedProfile = new Profile();
 		
 		addedProfile = profileService.save(profile);
 		
-		ResponseInfo responseInfo =  new ResponseInfo(addedProfile);
-		
-		return new ResponseEntity<> (responseInfo,HttpStatus.CREATED);
+		return new ResponseEntity<> (addedProfile,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/excel/upload")
+	public ResponseEntity<ResponseInfo> uploadFile(@RequestParam("file") MultipartFile file) {
+		String message = "";
+		ResponseInfo responseInfo;
+
+		if (ExcelHelper.hasExcelFormat(file)) {
+			try {
+				profileService.save(file);
+
+				message = "Uploaded the file successfully: " + file.getOriginalFilename();
+				responseInfo = new ResponseInfo(HttpStatus.CREATED, file.getOriginalFilename(), message);
+
+				return new ResponseEntity<>(responseInfo, HttpStatus.CREATED);
+			} catch (Exception e) {
+				message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+				responseInfo = new ResponseInfo(HttpStatus.EXPECTATION_FAILED, file.getOriginalFilename(), message);
+				return new ResponseEntity<>(responseInfo, HttpStatus.EXPECTATION_FAILED);
+			}
+		}
+
+		message = "Please upload an excel file!";
+		responseInfo = new ResponseInfo(HttpStatus.BAD_REQUEST, file.getOriginalFilename(), message);
+		return new ResponseEntity<>(responseInfo, HttpStatus.BAD_REQUEST);
 	}
 	
 	@GetMapping()
