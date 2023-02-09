@@ -1,16 +1,20 @@
 package com.application.profile.logic;
 
-import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.application.profile.domain.model.Profile;
 import com.application.profile.domain.repository.ProfileRepository;
-import com.application.profile.service.rest.v1.ExcelHelper;
+import com.application.profile.service.rest.v1.Profiles;
+import com.application.profile.service.rest.v1.SheetReader;
 import com.application.profile.service.rest.v1.model.ProfileDto;
+
+
 
 @Service
 public class ProfileService{
@@ -76,9 +80,16 @@ public class ProfileService{
 	
 	public void save(MultipartFile file) {
 	    try {
-	      List<Profile> excels = ExcelHelper.excelToData(file.getInputStream());
-	      profileRepository.saveAll(excels);
-	    } catch (IOException e) {
+	      
+	    	XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+			XSSFSheet datatypeSheet = workbook.getSheetAt(0);
+	        SheetReader<Profiles> sr=new SheetReader<Profiles>(workbook);
+	        sr.setHeaderRow(1);
+	       
+	        List<Profiles> excels = sr.getListFromSheet(datatypeSheet,Profiles.class);
+	        System.out.println(excels);
+//	      profileRepository.saveAll(excels);
+	    } catch (Exception e) {
 	      throw new RuntimeException("fail to store excel data: " + e.getMessage());
 	    }
 	  }
