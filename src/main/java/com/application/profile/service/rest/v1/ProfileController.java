@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.application.profile.domain.model.Profile;
+import com.application.profile.domain.model.Profiles;
 import com.application.profile.logic.ProfileService;
 import com.application.profile.service.rest.v1.model.ProfileDto;
 
@@ -26,13 +26,15 @@ import com.application.profile.service.rest.v1.model.ProfileDto;
 @RequestMapping("/profiles")
 public class ProfileController {
 	
+	public static final String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	
 	@Autowired
 	private ProfileService profileService;
 	
 	@PostMapping("/add")
-	public ResponseEntity<Profile> addProfile(@RequestBody ProfileDto profile) {
+	public ResponseEntity<Profiles> addProfile(@RequestBody ProfileDto profile) {
 		
-		Profile addedProfile = new Profile();
+		Profiles addedProfile = new Profiles();
 		
 		addedProfile = profileService.save(profile);
 		
@@ -43,53 +45,64 @@ public class ProfileController {
 	public ResponseEntity<ResponseInfo> handleFileUpload(
 			@RequestParam("file") MultipartFile file)
 			throws Exception {
-		String message = "upload success";
+		String message ="";
 		ResponseInfo responseInfo;
-		profileService.save(file);
+		if (TYPE.equals(file.getContentType())) {
+			message = "upload success";
+			profileService.save(file);
 
-		responseInfo = new ResponseInfo(HttpStatus.OK, file.getOriginalFilename(), message);
-		return new ResponseEntity<>(responseInfo, HttpStatus.OK);
+			responseInfo = new ResponseInfo(HttpStatus.OK, file.getOriginalFilename(), message);
+			return new ResponseEntity<>(responseInfo, HttpStatus.OK);
+			
+		}
+		
+		else {
+
+		message = "Please upload an excel file!";
+		responseInfo = new ResponseInfo(HttpStatus.BAD_REQUEST, file.getOriginalFilename(), message);
+		return new ResponseEntity<>(responseInfo, HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@GetMapping()
-	public ResponseEntity<List<Profile>> getAllProfiles(){
+	public ResponseEntity<List<Profiles>> getAllProfiles(){
 		
-		List<Profile> profilesList = profileService.getAllprofiles();
+		List<Profiles> profilesList = profileService.getAllprofiles();
 		
 		return new ResponseEntity<>(profilesList, HttpStatus.OK);
 		
 	}
 	
 	@GetMapping("/by/primaryskill/{primaryskill}")
-	public ResponseEntity<List<Profile>> getAllProfiles(@PathVariable("primaryskill") String skill){
+	public ResponseEntity<List<Profiles>> getAllProfiles(@PathVariable("primaryskill") String skill){
 		
-		List<Profile> profilesList = profileService.getAllprofilesByPrimarySkill(skill);
+		List<Profiles> profilesList = profileService.getAllprofilesByPrimarySkill(skill);
 	
 		return new ResponseEntity<>(profilesList, HttpStatus.OK);
 		
 	}
 	
 	@GetMapping("/by/availability/{availability}")
-	public ResponseEntity<List<Profile>> getAllProfilesByAvailability(@PathVariable("availability") String availability){
+	public ResponseEntity<List<Profiles>> getAllProfilesByAvailability(@PathVariable("availability") String availability){
 		
-		List<Profile> profilesList = profileService.getAllprofilesByAvailability(availability);
+		List<Profiles> profilesList = profileService.getAllprofilesByAvailability(availability);
 
 		return new ResponseEntity<>(profilesList, HttpStatus.OK);
 		
 	}
 	
 	@GetMapping("/by/location/{location}")
-	public ResponseEntity<List<Profile>> getAllProfilesByLocation(@PathVariable("location") String location){
+	public ResponseEntity<List<Profiles>> getAllProfilesByLocation(@PathVariable("location") String location){
 		
-		List<Profile> profilesList = profileService.getAllprofilesBylocation(location);
+		List<Profiles> profilesList = profileService.getAllprofilesBylocation(location);
 
 		return new ResponseEntity<>(profilesList, HttpStatus.OK);
 		
 	}
 	
 	@GetMapping("/by/search/{search}")
-	public ResponseEntity<List<Profile>> getAllProfilesBySearch(@PathVariable("search") String search) {
-		List<Profile> profilesList = null;
+	public ResponseEntity<List<Profiles>> getAllProfilesBySearch(@PathVariable("search") String search) {
+		List<Profiles> profilesList = null;
 		
 		if(!profileService.getAllprofilesByPrimarySkill(search).isEmpty()) {
 			profilesList = profileService.getAllprofilesByPrimarySkill(search);

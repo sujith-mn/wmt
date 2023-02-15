@@ -5,21 +5,21 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.application.profile.domain.model.Profile;
+import com.application.profile.domain.model.Profiles;
 
 @Repository
-public interface ProfileRepository extends JpaRepository<Profile, Long> {
+public interface ProfileRepository extends JpaRepository<Profiles, Long> {
 
-	List<Profile> findAllByPrimarySkill(String skill);
+	List<Profiles> findAllByPrimarySkill(String skill);
 
-	List<Profile> findAllByAvailability(String availability);
+	List<Profiles> findAllByAvailability(String availability);
 
-	List<Profile> findAllByLocation(String location);
+	List<Profiles> findAllByLocation(String location);
 
-	List<Profile> findAllByName(String search);
+	List<Profiles> findAllByName(String search);
 
-	List<Profile> findAllByProposedBy(String search);
+	List<Profiles> findAllByProposedBy(String search);
 
-	List<Profile> findAllBySource(String search);
+	List<Profiles> findAllBySource(String search);
 
 }
