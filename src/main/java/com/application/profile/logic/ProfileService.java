@@ -2,16 +2,18 @@ package com.application.profile.logic;
 
 import java.util.List;
 
+import com.xlm.reader.SheetReader;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.application.profile.domain.model.Profile;
 import com.application.profile.domain.repository.ProfileRepository;
 import com.application.profile.service.rest.v1.Profiles;
-import com.application.profile.service.rest.v1.SheetReader;
+
 import com.application.profile.service.rest.v1.model.ProfileDto;
 
 
@@ -77,18 +79,20 @@ public class ProfileService{
 		return profileRepository.findAllBySource(search);
 		
 	}
-	
+
+	@Async
 	public void save(MultipartFile file) {
 	    try {
 	      
 	    	XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
 			XSSFSheet datatypeSheet = workbook.getSheetAt(0);
 	        SheetReader<Profiles> sr=new SheetReader<Profiles>(workbook);
-	        sr.setHeaderRow(1);
+	        sr.setHeaderRow(0);
 	       
-	        List<Profiles> excels = sr.getListFromSheet(datatypeSheet,Profiles.class);
+	        List<Profiles> excels = sr.retrieveRows(datatypeSheet,Profiles.class);
+
 	        System.out.println(excels);
-//	      profileRepository.saveAll(excels);
+	//	      profileRepository.saveAll(excels);
 	    } catch (Exception e) {
 	      throw new RuntimeException("fail to store excel data: " + e.getMessage());
 	    }

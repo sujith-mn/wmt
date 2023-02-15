@@ -40,29 +40,15 @@ public class ProfileController {
 	}
 	
 	@PostMapping("/excel/upload")
-	public ResponseEntity<ResponseInfo> uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
-		String message = "";
+	public ResponseEntity<ResponseInfo> handleFileUpload(
+			@RequestParam("file") MultipartFile file)
+			throws Exception {
+		String message = "upload success";
 		ResponseInfo responseInfo;
 		profileService.save(file);
 
-//		if (ExcelHelper.hasExcelFormat(file)) {
-//			try {
-//				profileService.save(file);
-//
-//				message = "Uploaded the file successfully: " + file.getOriginalFilename();
-//				responseInfo = new ResponseInfo(HttpStatus.CREATED, file.getOriginalFilename(), message);
-//
-//				return new ResponseEntity<>(responseInfo, HttpStatus.CREATED);
-//			} catch (Exception e) {
-//				message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-//				responseInfo = new ResponseInfo(HttpStatus.EXPECTATION_FAILED, file.getOriginalFilename(), message);
-//				return new ResponseEntity<>(responseInfo, HttpStatus.EXPECTATION_FAILED);
-//			}
-//		}
-
-		message = "Please upload an excel file!";
-		responseInfo = new ResponseInfo(HttpStatus.BAD_REQUEST, file.getOriginalFilename(), message);
-		return new ResponseEntity<>(responseInfo, HttpStatus.BAD_REQUEST);
+		responseInfo = new ResponseInfo(HttpStatus.OK, file.getOriginalFilename(), message);
+		return new ResponseEntity<>(responseInfo, HttpStatus.OK);
 	}
 	
 	@GetMapping()

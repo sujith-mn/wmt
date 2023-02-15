@@ -1,5 +1,8 @@
 package com.application.profile.service.rest.v1;
 
+import com.xlm.util.XLColumn;
+import com.xlm.util.XLSheet;
+
 @XLSheet(name="Profiles")
 public class Profiles {
 	
