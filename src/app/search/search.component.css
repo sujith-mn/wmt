@@ -11,10 +11,19 @@
     border-color: black;
 }
 .search{
-    position: absolute;
-    right: 207px;
-    width: 100px;
-    bottom: 393px;
-    height: 75px;
-    
+
+
 }
+.mdc-data-table__cell, .mdc-data-table__header-cell{
+  padding: 0;
+}
+.mdc-button{
+  min-width: auto;
+}
+.search .mat-mdc-text-field-wrapper{
+  border-bottom: 1px solid red !important;
+}
+form .ng-invalid{
+  border: 1px solid red;
+}
+
