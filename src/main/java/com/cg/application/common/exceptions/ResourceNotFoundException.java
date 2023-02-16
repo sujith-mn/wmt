@@ -2,6 +2,10 @@ package com.cg.application.common.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String resourceName,fieldName;
 	long fieldValue;
 	@Override
