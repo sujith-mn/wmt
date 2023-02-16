@@ -15,20 +15,21 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRippleModule } from '@angular/material/core';
 import {MatTableModule} from '@angular/material/table'
-
 import { FormsModule ,ReactiveFormsModule} from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
-import { NavbarComponent } from './navbar/navbar.component'
+import { NavbarComponent } from './navbar/navbar.component';
+import { ProfileComponent } from './profile/profile.component'
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     DemandComponent,
     SearchComponent,
-    NavbarComponent
+    NavbarComponent,
+    ProfileComponent
     
   ],
   imports: [
@@ -55,7 +56,6 @@ import { NavbarComponent } from './navbar/navbar.component'
   exports: [
     MatButtonModule,
     MatFormFieldModule,
-    
     MatRippleModule,
   ],
   providers: [],
