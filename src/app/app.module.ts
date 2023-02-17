@@ -4,7 +4,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HomeComponent } from './home/home.component';
-import { DemandComponent } from './demand/demand.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SearchComponent } from './search/search.component';
 import {MatPaginatorModule} from '@angular/material/paginator';
@@ -27,15 +26,16 @@ import { DataStorageService } from './shared/services/data-storage.service';
 import { APP_CONFIG } from './app-config';
 import { environment } from 'src/environments/environment.prod';
 import { NotificationService } from './shared/services/notification.service';
+import { AssignComponent } from './assign/assign.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    DemandComponent,
     SearchComponent,
     NavbarComponent,
-    ProfileComponent
+    ProfileComponent,
+    AssignComponent
   ],
   imports: [
     BrowserModule,
