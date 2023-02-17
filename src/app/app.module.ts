@@ -15,6 +15,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRippleModule } from '@angular/material/core';
 import {MatTableModule} from '@angular/material/table'
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule ,ReactiveFormsModule} from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
@@ -22,6 +23,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ProfileComponent } from './profile/profile.component'
+import { DataStorageService } from './shared/services/data-storage.service';
+import { APP_CONFIG } from './app-config';
+import { environment } from 'src/environments/environment.prod';
+import { NotificationService } from './shared/services/notification.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +36,6 @@ import { ProfileComponent } from './profile/profile.component'
     SearchComponent,
     NavbarComponent,
     ProfileComponent
-    
   ],
   imports: [
     BrowserModule,
@@ -51,14 +56,15 @@ import { ProfileComponent } from './profile/profile.component'
     MatRippleModule,
     MatTableModule,
     MatIconModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatSnackBarModule
   ],
   exports: [
     MatButtonModule,
     MatFormFieldModule,
     MatRippleModule,
   ],
-  providers: [],
+  providers: [DataStorageService,NotificationService,{ provide: APP_CONFIG, useValue: environment }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

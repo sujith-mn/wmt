@@ -4,10 +4,11 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import { Demand } from '../demand/demand.component';
-import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { __values } from 'tslib';
+import { DataStorageService } from '../shared/services/data-storage.service';
 export interface demandData {
   id: string;
   manager: string;
@@ -24,30 +25,59 @@ export interface demandData {
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit{
+
  demands: demandData[];
  editForm: FormGroup;
+ detailForm:FormGroup;
 //  private fb: FormBuilder;
  private deleteId: number;
- closeResult: string; 
+ closeResult: string;
  displayedColumns:string[] = ['id','manager','created','endDate','ageing','priority','skill','status','actions'];
- dataSource: MatTableDataSource<demandData>;  
+
+ statusVal: string[] = ['Open', 'complete', 'Pending', 'InProgress'];
+ skillVal: string[] = ['Java', 'Angular', 'Spring framework', 'React'];
+ dataSource: MatTableDataSource<demandData>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  
-  
+
+
   constructor(private httpClient: HttpClient,
     private modalService: NgbModal,  //Add parameter of type NgbModal
-    private fb: FormBuilder        //Add parameter of type FormBuilder.
+    private fb: FormBuilder,
+    private  dataStorageService:DataStorageService        //Add parameter of type FormBuilder.
     ) {
 
     // Assign the data to the data source for the table to render
    // this.dataSource = new MatTableDataSource<Demand>(this.demands);
   }
+  newDemand: FormGroup = this.fb.group({
+    manager: [null, [Validators.required]],
+    created:[null,[ Validators.required]],
+    endDate:[null, [Validators.required]],
+    ageing: [null, [Validators.required]],
+    priority: [null, [Validators.required]],
+    skill: [null, [Validators.required]],
+    status: [null, [Validators.required]]
+  });
   ngOnInit():void {
-    
+
+
+    this.dataStorageService.refreshneeds.subscribe(() => {
+      this.getDemands();
+    });
     this.getDemands();
     this.editForm = this.fb.group({
+      id: [''],
+      manager: [null, Validators.required],
+      created:[null, Validators.required],
+      endDate:[null, Validators.required],
+      ageing: [null, Validators.required],
+      priority: [null, Validators.required],
+      skill: [null, Validators.required],
+      status: [null, Validators.required]
+    });
+    this.detailForm = this.fb.group({
       id: [''],
       manager: [''],
       created: [''],
@@ -58,19 +88,28 @@ export class SearchComponent implements OnInit{
       status: ['']
     });
   }
-  
+
+
+  // return this.datastorageservice.storePaitent(value)
+
   getDemands() {
-    this.httpClient.get<any>('http://localhost:7000/api/demands/').subscribe(
-      response => {
-        
-        this.demands = response;
+    return this.dataStorageService.getAllDemands().subscribe(
+      {
+        next: (result: any) => {
+        console.log(result);
+        this.demands = result;
         this.dataSource=new MatTableDataSource<demandData>(this.demands);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        console.log("response -->",response);
-        console.log("DataSource -->",this.dataSource);
+        },
+        error: (err: any) => {
+        console.log(err);
+        },
+        complete: () => {
+        console.log('complete');
+        }
       }
-    );
+    )
   }
 
   applyFilter(event: Event) {
@@ -89,7 +128,7 @@ export class SearchComponent implements OnInit{
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
   }
-  // open end 
+  // open end
 
 
   private getDismissReason(reason: any): string {
@@ -102,45 +141,35 @@ export class SearchComponent implements OnInit{
     }
   }
 
-  onSubmit(f: NgForm) {
+  onSubmit() {
 
-    const headerOptions = new HttpHeaders();
-    headerOptions.set('Content-Type', 'application/json');
-    const url = 'http://localhost:7000/api/demands/';
-    this.httpClient.post(url, f.value, { headers: headerOptions })
-      .subscribe((result) => {
-        console.log(result);
-        this.ngOnInit(); //reload the tablex`
-      });
-    this.modalService.dismissAll(); //dismiss the modal
+    var a = this.newDemand.value;
+console.log(a);
+      return this.dataStorageService.storeDemand(a).subscribe(
+          { next: (result: any) => {
+            console.log(result);
+            },
+            error: (err: any) => {
+            //this.notificationService.setErrorMsg(err.error)
+            console.log(err);
+            },
+            complete: () => {
+            console.log('complete');
+            }
+          }
+
+        )
+
   }
-  
+
   //Detail Start
   openDetails(targetModal: any, demand: Demand) {
     this.modalService.open(targetModal, {
       centered: true,
       backdrop: 'static',
-      size: 'lg'
+      size: 'md'
     });
-    document.getElementById('manager_Detail')?.setAttribute('value', demand.manager);
-    document.getElementById('created_Detail')?.setAttribute('value', demand.created);
-    document.getElementById('end_date_Detail')?.setAttribute('value', demand.endDate);
-    document.getElementById('ageing_Detail')?.setAttribute('value', demand.ageing);
-    document.getElementById('priority_Detail')?.setAttribute('value', demand.priority);
-    document.getElementById('skill_Detail')?.setAttribute('value', demand.skill);
-    document.getElementById('status_Detail')?.setAttribute('value', demand.status);
-
-  }
-  //Detail End 
-
-  //Edit start
-  openEdit(targetModal: any, demand: Demand) {
-    this.modalService.open(targetModal, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg'
-    });
-    this.editForm.patchValue({
+    let editedDemandValues = {
       id: demand.id,
       manager: demand.manager,
       created: demand.created,
@@ -149,20 +178,54 @@ export class SearchComponent implements OnInit{
       priority: demand.priority,
       skill: demand.skill,
       status: demand.status
+    }
+    this.detailForm.patchValue(editedDemandValues);
+  }
+  //Detail End
 
+  //Edit start
+  openEdit(targetModal: any, demand: Demand) {
+    this.modalService.open(targetModal, {
+      centered: true,
+      backdrop: 'static',
+      size: 'md'
     });
+
+    let editedDemandValues = {
+      id: demand.id,
+      manager: demand.manager,
+      created: demand.created,
+      endDate:demand.endDate,
+      ageing: demand.ageing,
+      priority: demand.priority,
+      skill: demand.skill,
+      status: demand.status
+    }
+
+    this.editForm.patchValue(editedDemandValues);
   }
   // Edit End .
 
   //Save Edit start
   onSave() {
-    const editURL = 'http://localhost:7000/api/demands/' + this.editForm.value.id;
-    console.log("onSave-->",this.editForm.value);
-    this.httpClient.put(editURL, this.editForm.value)
-      .subscribe((results) => {
-        this.ngOnInit();
-        this.modalService.dismissAll();
-      });
+
+    return this.dataStorageService.editDemand(this.editForm.value.id,this.editForm.value).subscribe(
+      { next: (result: any) => {
+        // this.ngOnInit();
+        // this.modalService.dismissAll();
+        },
+        error: (err: any) => {
+        //this.notificationService.setErrorMsg(err.error)
+        console.log(err);
+        },
+        complete: () => {
+        console.log('complete');
+        }
+      }
+
+    )
+
+
   }
   //Save Edit End
 
@@ -171,19 +234,32 @@ export class SearchComponent implements OnInit{
     this.deleteId = demand.id;
     this.modalService.open(targetModal, {
       backdrop: 'static',
-      size: 'lg'
+      size: 'md'
     });
   }
   //openDelete End
 
   //On delete start
   onDelete() {
-    const deleteURL = 'http://localhost:7000/api/demands/' + this.deleteId;
-    this.httpClient.delete(deleteURL)
-      .subscribe((results) => {
-        this.ngOnInit();
+
+
+    return this.dataStorageService.deleteDemand(this.deleteId).subscribe(
+      { next: (result: any) => {
+        // this.ngOnInit();
         this.modalService.dismissAll();
+        },
+        error: (err: any) => {
+        //this.notificationService.setErrorMsg(err.error)
+        // this.ngOnInit();
+        this.modalService.dismissAll();
+        },
+        complete: () => {
+        console.log('complete');
+        }
+
       });
-  }
+    }
+
+
 }
 

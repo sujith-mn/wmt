@@ -1,4 +1,5 @@
-.container {
-     margin-top: 0.5%8; 
-    max-width: 1216px;
+.banner-img{
+  background-image: url('../../assets/img1.jpg');
+  background-size: cover;
+  height: calc(100vh - 68px);
 }
