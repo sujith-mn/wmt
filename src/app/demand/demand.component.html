@@ -3,8 +3,6 @@
     <div class="border" >
         <button class="btn btn-md btn-outline-primary" (click)="open(content)">
           <i class="fa fa-user"></i>New Demand</button>
-          
-
       </div> 
       
     <table class="table table-bordered table-striped"  >
@@ -56,27 +54,12 @@
     </div>
     <div class="modal-body">
       <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
-        <!-- <div class="form-group">
-          <label for="demandId">Demand Id</label>
-          <div class="input-group">
-            <input type="text" name="demandId" id="demandId" class="form-control" ngModel required #demandId="ngModel">
-          </div>
-        </div> -->
-
         <div class="form-group">
             <label for="manager">Customer Manager</label>
             <div class="input-group">
               <input type="text" name="manager" id="manager" class="form-control" ngModel required #manager="ngModel">
             </div>
         </div>
-
-        <!-- <div class="form-group">
-            <label for="created">Created On</label>
-            <div class="input-group">
-              <input type="text" name="created" id="created" class="form-control" ngModel required #createdOn="ngModel">
-            </div>
-        </div> -->
-        
         <div class="form-group">
           <label for="created">Start Date</label>
           <div class="input-group">
@@ -119,17 +102,8 @@
               <option value="4">4</option>
               <option value="5">5</option>
               </select>
-            <!-- <input type="text" name="priority" id="priority" class="form-control" ngModel required #priority="ngModel"> -->
-          </div>
+           </div>
       </div>
-
-        
-        <!-- <div class="form-group">
-            <label for="skill">Skill</label>
-            <div class="input-group">
-              <input type="text" name="skill" id="skill" class="form-control" ngModel required #skill="ngModel">
-            </div>
-        </div> -->
         <div class="form-group">
           <label for="skill">Skill</label>
           <div class="input-group">
@@ -141,17 +115,8 @@
               <option value="Spring framework">Spring framework</option>
               <option value="Python">Python</option>
               </select>
-            <!-- <input type="text" name="skill" id="skill" class="form-control" ngModel required #skill="ngModel"> -->
-          </div>
-      </div>
-        
-        <!-- <div class="form-group">
-            <label for="status">Status</label>
-            <div class="input-group">
-              <input type="text" name="status" id="status" class="form-control" ngModel required #status="ngModel">
             </div>
-        </div> -->
-
+      </div>
         <div class="form-group">
           <label for="status">Status</label>
           <div class="input-group">
@@ -163,8 +128,7 @@
               <option value="in-process">in-process</option>
               
               </select>
-            <!-- <input type="text" name="status" id="status" class="form-control" ngModel required #status="ngModel"> -->
-          </div>
+             </div>
       </div>
         <div class="border text-center">
             <button data-dismiss="modal" class="btn btn-info">Submit</button>
@@ -187,13 +151,6 @@
     </div>
     <div class="modal-body">
       <form>
-        <!-- <div class="form-group">
-          <label for="demandId">Demand Id</label>
-          <div class="input-group">
-            <input id="demandId_Detail" class="form-control" readonly>
-          </div>
-        </div> -->
-
         <div class="form-group">
             <label>Customer Manager</label>
             <div class="input-group">
@@ -262,13 +219,6 @@
     </div>
     <div class="modal-body">
       <form [formGroup]="editForm" novalidate>
-        <!-- <div class="form-group">
-          <label for="demandId">Demand Id</label>
-          <div class="input-group">
-            <input  formControlName="demandId"  class="form-control" >
-          </div>
-        </div> -->
-
         <div class="form-group">
             <label for="manager">Customer Manager</label>
             <div class="input-group">

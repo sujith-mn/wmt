@@ -6,6 +6,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import { map } from 'rxjs';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgForm } from '@angular/forms';
+import { ProfileService } from '../shared/services/profile.service';
 export class ProfileData{
 
   constructor(
@@ -40,9 +41,13 @@ export class ProfileComponent implements OnInit{
 
   constructor(
     private _http:HttpClient,
-    private modalService: NgbModal  //Add parameter of type NgbModal
-  ){}
+    private modalService: NgbModal,  //Add parameter of type NgbModal
+    private profileService:ProfileService
+    ){}
   ngOnInit(): void {
+    this.profileService.refreshneeds.subscribe(()=>{
+      this.getProfile();
+    })
     this.getProfile() ;
   }
 
@@ -54,36 +59,44 @@ export class ProfileComponent implements OnInit{
   }
 
   uploadFile(){
-    let formData = new FormData();
-    formData.append("file",this.file);
-
-    this._http.post('http://localhost:7001/profiles/excel/upload',formData)
-    .subscribe(
-      (data:any)=>{
-        //success 
-        alert(data.message);
-      },
-      (error)=>{
-        //error
-        alert(error.message);
+    return this.profileService.uploadProfile(this.file).subscribe(
+      {
+        next: (result: any) => {
+          console.log(result);
+          },
+          error: (err: any) => {
+          //this.notificationService.setErrorMsg(err.error)
+          console.log(err);
+          },
+          complete: () => {
+          console.log('complete');
+          }
       }
-      );
-    
+    )
   }
-
   
-	getProfile() {
-		this._http.get<any>('http://localhost:7001/profiles').subscribe(
-      response => {
-        console.log(response);
-        this.profiles = response;
+
+  getProfile() {
+    return this.profileService.getAllProfiles().subscribe(
+      {
+        next:(result:any)=>{
+          console.log(result);
+        this.profiles = result;
         this.dataSource=new MatTableDataSource<ProfileData>(this.profiles);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        },
+        error:(err:any)=>{
+          console.log(err);
+        },
+        complete:()=>{
+          console.log('complete');
+        }
       }
-    );
+    )
 	}
-
+  
+	
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();

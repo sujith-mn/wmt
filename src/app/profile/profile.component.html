@@ -1,23 +1,20 @@
-<!-- <br/>
-    Profile Excel : <input type="file" (change)="selectFile($event)"/>
+<div class="container">
+  <div class="row m-2">
 
-<button class="btn btn-md btn-outline-primary" (click)="uploadFile()">Upload</button> -->
-<div class="container">
- 
-    
-<div class="container">
-  
-    <div class="border" >
+    <div class="col-6">
       <button class="btn btn-md btn-outline-primary" (click)="open(content)"> 
         <i class="fa fa-user"></i>
         <mat-icon>note_add</mat-icon> Excel Upload </button>
-         </div>
-         <div class="search">
-          <mat-form-field >
-            <input matInput  (keyup)="applyFilter($event)" placeholder="Search" #input>
-          </mat-form-field>
-         </div>
-      
+    </div>
+    <div class="search col-6 d-flex justify-content-end">
+      <mat-form-field class="example-full-width">
+        <span matPrefix> </span>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Search" #input>
+        <button matSuffix mat-button><mat-icon >search</mat-icon></button>
+      </mat-form-field>
+
+    </div>
+  </div>
       <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="id">
@@ -87,9 +84,7 @@
       Profile Excel : <input type="file" (change)="selectFile($event)"/>
 
       <button data-dismiss="modal" class="btn btn-md btn-outline-primary" (click)="uploadFile()">Upload</button>    
-      <!-- <div class="border text-center">
-          <button data-dismiss="modal" class="btn btn-info">Submit</button>
-      </div> -->
+      
     </form>
   </div>
   <div class="modal-footer">
