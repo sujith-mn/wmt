@@ -3,12 +3,14 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import { Demand } from '../demand/demand.component';
+// import { Demand } from '../demand/demand.component';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-
+import { Router } from '@angular/router';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { __values } from 'tslib';
 import { DataStorageService } from '../shared/services/data-storage.service';
+import { Demand } from '../shared/model/demand';
+
 export interface demandData {
   id: string;
   manager: string;
@@ -45,7 +47,8 @@ export class SearchComponent implements OnInit{
   constructor(private httpClient: HttpClient,
     private modalService: NgbModal,  //Add parameter of type NgbModal
     private fb: FormBuilder,
-    private  dataStorageService:DataStorageService        //Add parameter of type FormBuilder.
+    private  dataStorageService:DataStorageService,
+    private router: Router
     ) {
 
     // Assign the data to the data source for the table to render
@@ -231,7 +234,7 @@ console.log(a);
 
    // openDelete start
    openDelete(targetModal: any, demand: Demand) {
-    this.deleteId = demand.id;
+    // this.deleteId = demand.id;
     this.modalService.open(targetModal, {
       backdrop: 'static',
       size: 'md'
@@ -260,6 +263,8 @@ console.log(a);
       });
     }
 
-
+    assign(){
+      this.router.navigateByUrl('/assign');
+    }
 }
 

@@ -6,4 +6,5 @@ export interface Demand {
       priority: string
       skill:string
       status: string
+      id?:string
   }

@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DemandComponent } from './demand/demand.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SearchComponent } from './search/search.component';
+import { AssignComponent } from './assign/assign.component';
 
 const routes: Routes = [
-  {path: 'home', component: HomeComponent},
-  {path: 'demands', component: DemandComponent},
-  {path: 'profile', component: ProfileComponent},
   {path: '', component: HomeComponent},
-  {path: 'search', component: SearchComponent}
+  {path: 'home', component: HomeComponent},
+  {path: 'profile', component: ProfileComponent},
+  {path: 'search', component: SearchComponent},
+  {path: 'assign', component: AssignComponent}
 ];
 
 @NgModule({
