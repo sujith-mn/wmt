@@ -80,7 +80,7 @@
           <button mat-button (click)="openDelete(contentDelete, myRowData)">
             <mat-icon>delete</mat-icon>
           </button>
-          <button class="btn btn-primary" type="button"  (click)="assign();">
+          <button class="btn btn-primary" type="button"  (click)="assign(myRowData);">
            Assign
           </button>
         </td>
@@ -370,3 +370,6 @@
   </div>
 </ng-template>
 <!-- Delete Demand End -->
+
+
+<!-- <app-assign [Variable] = "Variable"></app-assign> -->

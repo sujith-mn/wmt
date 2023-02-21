@@ -10,6 +10,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { __values } from 'tslib';
 import { DataStorageService } from '../shared/services/data-storage.service';
 import { Demand } from '../shared/model/demand';
+import { assign } from '../shared/model/assign';
 
 export interface demandData {
   id: string;
@@ -27,7 +28,7 @@ export interface demandData {
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit{
-
+ Variable : any ;
  demands: demandData[];
  editForm: FormGroup;
  detailForm:FormGroup;
@@ -42,6 +43,7 @@ export class SearchComponent implements OnInit{
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+editedDemandValues: any;
 
 
   constructor(private httpClient: HttpClient,
@@ -262,9 +264,16 @@ console.log(a);
 
       });
     }
-
-    assign(){
-      this.router.navigateByUrl('/assign');
+    
+    assign(IdData: assign){
+     
+      this.router.navigate(
+        ['/assign'],
+        { queryParams: { Id: IdData.id} }
+      );
+      
     }
 }
+
+
 
