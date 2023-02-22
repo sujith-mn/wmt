@@ -2,9 +2,8 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AppConfig, APP_CONFIG } from 'src/app/app-config';
 import { catchError, map, Subject } from 'rxjs';
-import { NgForm } from '@angular/forms';
 import { NotificationService } from './notification.service';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {  NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Profile } from '../model/profile';
 
 @Injectable({
