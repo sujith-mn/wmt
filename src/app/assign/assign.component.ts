@@ -9,18 +9,18 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppConfig, APP_CONFIG } from 'src/app/app-config';
 import { AssignService } from '../shared/services/assign.service';
 
-export class assignData {
-  constructor(
-    public manager: string,
-    public created: string,
-    public endDate: string,
-    public ageing: string,
-    public priority: string,
-    public skill: string,
-    public status: string,
-    public id?: string
-  ) { }
-}
+// export class assignData {
+//   constructor(
+//     public manager: string,
+//     public created: string,
+//     public endDate: string,
+//     public ageing: string,
+//     public priority: string,
+//     public skill: string,
+//     public status: string,
+//     public id?: string
+//   ) { }
+// }
 @Component({
   selector: 'app-assign',
   templateUrl: './assign.component.html',
@@ -28,10 +28,9 @@ export class assignData {
 })
 export class AssignComponent implements OnInit {
 
-  assign: assignData[];
-  dataSource: MatTableDataSource<assignData>;
-  displayedColumns:string[] = ['manager','created','priority','skill','status'];
 
+  displayedColumns:string[] = ['manager','created','priority','skill','status','agening'];
+  dataSource: assign[] = [];
   Id: string;
   paramsId: any;
   constructor(
@@ -46,14 +45,8 @@ export class AssignComponent implements OnInit {
     this.route.queryParamMap.subscribe((params) => {
       this.paramsId = { ...params.keys, ...params };
       this.Id = this.paramsId.params.Id;
-      console.log("Demand by id ->", this.getDemandData());
-
     }
     );
-    this.assignService.refreshneeds.subscribe(() => {
-      this.getDemandData();
-
-    })
     this.getDemandData();
   }
 
@@ -82,11 +75,9 @@ export class AssignComponent implements OnInit {
     return this.assignService.getDemandById(this.Id).subscribe(
 
       {
-        next: (result: any) => {
-          console.log("GetDemandData", result);
-          this.assign = result;
-          this.dataSource = new MatTableDataSource<assignData>(this.assign);
-
+        next: (result: assign) => {
+          this.dataSource.push(result);
+          this.dataSource = [...this.dataSource];
         },
         error: (err: any) => {
           console.log(err);

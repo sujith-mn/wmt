@@ -1,5 +1,5 @@
 export interface assign{
-    manager: string
+      manager: string
       created: string
       endDate:string
       ageing: string
@@ -7,4 +7,6 @@ export interface assign{
       skill:string
       status: string
       id?:string
+      profilesList:any
 }
+

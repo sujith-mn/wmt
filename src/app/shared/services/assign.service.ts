@@ -15,12 +15,12 @@ export class AssignService {
   AssignSubject = new Subject<void>();
 
 
-  constructor( 
+  constructor(
     private http: HttpClient,
     public notificationService: NotificationService,
     private modalService: NgbModal,
     @Inject(APP_CONFIG) appConfig: AppConfig)
-     { 
+     {
     this.baseURL = appConfig.apiURL;
   }
 
