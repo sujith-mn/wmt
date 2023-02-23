@@ -28,15 +28,13 @@ export class AssignService {
     return this.AssignSubject;
   }
 
+  
   getDemandById( Id:any){
-    console.log("ID in assign.service.ts ->",Id);
-    // DemandId = Id;
     return  this.http
   .get<assign[]>(this.baseURL + 'api/demands/' +Id)
   .pipe(
     map((resData: any) => {
       this.modalService.dismissAll();
-      console.log(" Assign Data -->" , resData);
       return resData;
     }),
     catchError((err: any) => {
@@ -44,9 +42,24 @@ export class AssignService {
       throw err;
     })
   );
-  // .subscribe((RestData : assign)=>{
-  //   this.AssignDemand= RestData;
-  // })
-  // ;
 }
+
+getProfileBySkill( skill:any){
+  console.log("Skill ->" +skill);
+  return  this.http
+.get<assign[]>(this.baseURL + 'profiles/by/primaryskill/' +skill)
+.pipe(
+  map((resData: any) => {
+    this.modalService.dismissAll();
+    console.log(" Profile Based on skill  -->" , resData);
+    return resData;
+  }),
+  catchError((err: any) => {
+    this.modalService.dismissAll();
+    throw err;
+  })
+);
+}
+
+
 }

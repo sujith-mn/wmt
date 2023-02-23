@@ -2,25 +2,14 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { assign } from '../shared/model/assign';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Data } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map } from 'rxjs';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppConfig, APP_CONFIG } from 'src/app/app-config';
 import { AssignService } from '../shared/services/assign.service';
-
-// export class assignData {
-//   constructor(
-//     public manager: string,
-//     public created: string,
-//     public endDate: string,
-//     public ageing: string,
-//     public priority: string,
-//     public skill: string,
-//     public status: string,
-//     public id?: string
-//   ) { }
-// }
+import { DataSource } from '@angular/cdk/collections';
+// import { DataSource } from '@angular/cdk/collections';
 @Component({
   selector: 'app-assign',
   templateUrl: './assign.component.html',
@@ -29,10 +18,12 @@ import { AssignService } from '../shared/services/assign.service';
 export class AssignComponent implements OnInit {
 
 
-  displayedColumns:string[] = ['manager','created','priority','skill','status','agening'];
+  displayedColumns:string[] = ['manager','created','priority','skill','status'];
   dataSource: assign[] = [];
+  profiles:any;
   Id: string;
   paramsId: any;
+  skill:string;
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
@@ -48,36 +39,18 @@ export class AssignComponent implements OnInit {
     }
     );
     this.getDemandData();
+     
+
+    
   }
-
-  // getData(){
-  //   return  this.httpClient
-  //   .get<assign>(this.baseURL + 'api/demands/' +this.Id)
-  //   .pipe(
-  //     map((resData: assign) => {
-  //       this.modalService.dismissAll();
-  //       console.log(" Assign Data -->" , resData);
-  //       return resData;
-  //     }),
-  //     catchError((err: any) => {
-  //       this.modalService.dismissAll();
-  //       throw err;
-  //     })
-  //   )
-  //   .subscribe((RestData : assign)=>{
-  //     this.AssignDemand= RestData;
-  //   })
-  //   ;
-
-  // }
-
   getDemandData() {
     return this.assignService.getDemandById(this.Id).subscribe(
-
       {
         next: (result: assign) => {
+          this.skill=result.skill;
           this.dataSource.push(result);
           this.dataSource = [...this.dataSource];
+          this.getProfile();
         },
         error: (err: any) => {
           console.log(err);
@@ -89,5 +62,22 @@ export class AssignComponent implements OnInit {
     )
   }
 
+  getProfile(){
+    console.log(this.skill);
+    return this.assignService.getProfileBySkill(this.skill).subscribe(
+      {
+        next: (result: any) => {
+          this.profiles=result;
+          console.log("profiles : " +result);
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+        complete: () => {
+          console.log('complete');
+        }
+      }
+    )
+  }
 }
 

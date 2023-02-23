@@ -101,7 +101,7 @@ editedDemandValues: any;
     return this.dataStorageService.getAllDemands().subscribe(
       {
         next: (result: any) => {
-        console.log(result);
+        
         this.demands = result;
         this.dataSource=new MatTableDataSource<demandData>(this.demands);
         this.dataSource.paginator = this.paginator;
