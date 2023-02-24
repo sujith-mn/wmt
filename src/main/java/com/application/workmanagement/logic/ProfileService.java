@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.application.common.exception.ResourceNotFoundException;
 import com.application.workmanagement.domain.model.Profiles;
 import com.application.workmanagement.domain.repository.ProfileRepository;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
@@ -27,9 +28,8 @@ public class ProfileService {
 
 	public ProfileDto save(ProfileDto profile) {
 
-		ProfileDto addedProfile = new ProfileDto();
 
-		Profiles profiles = modelMapper.map(addedProfile, Profiles.class);
+		Profiles profiles = modelMapper.map(profile, Profiles.class);
 
 //		addedProfile.setName(profile.getName());
 //		addedProfile.setPrimarySkill(profile.getPrimarySkill());
@@ -37,9 +37,8 @@ public class ProfileService {
 //		addedProfile.setAvailability(profile.getAvailability());
 //		addedProfile.setProposedBy(profile.getProposedBy());
 //		addedProfile.setSource(profile.getSource());
-
 		profileRepository.save(profiles);
-		return addedProfile;
+		return profile;
 
 	}
 
@@ -136,8 +135,36 @@ public class ProfileService {
 	public List<ProfileDto> getProfilesBasedOnSkillAndAvailability(String skill, String available) {
 		List<ProfileDto> profiles = profileRepository.findAllByPrimarySkill(skill).stream()
 				.map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
+
+		return profiles.stream().filter(profile -> profile.getAvailability().equalsIgnoreCase(available))
+				.collect(Collectors.toList());
+
+	}
+
+	public ProfileDto getProfileById(long id) {
+		Profiles profile = profileRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
 		
-		return profiles.stream().filter(profile -> profile.getAvailability().equalsIgnoreCase(available)).collect(Collectors.toList());
+		return modelMapper.map(profile, ProfileDto.class);
+
+	}
+
+	public void deleteProfilesByid(long id) {
+		Profiles profile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
+		
+		profileRepository.delete(profile);
+		
+	}
+
+	public void updateProfilesById(long id,ProfileDto profile) {
+		Profiles updatedProfile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
+		updatedProfile.setLocation(profile.getLocation());
+		updatedProfile.setAvailability(profile.getLocation());
+		updatedProfile.setName(profile.getName());
+		updatedProfile.setPrimarySkill(profile.getPrimarySkill());
+		updatedProfile.setProposedBy(profile.getProposedBy());
+		updatedProfile.setSource(profile.getSource());
+		profileRepository.save(updatedProfile);
 		
 	}
 

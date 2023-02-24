@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.application.workmanagement.logic.DemandService;
 import com.application.workmanagement.service.rest.v1.model.DemandDto;
@@ -29,6 +31,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/demands")
 public class DemandController {
 
+	public static final String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	
 	@Autowired
 	private DemandService demandService;
 	
@@ -40,6 +44,28 @@ public class DemandController {
 		
 		DemandDto createDemandDto = this.demandService.createDemand(demandDto);
 		return new ResponseEntity<>(createDemandDto,HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/excel/upload")
+	public ResponseEntity<ResponseInfo> handleFileUpload(@RequestParam("file") MultipartFile file) throws Exception {
+		String message = "";
+		ResponseInfo responseInfo;
+		if (TYPE.equals(file.getContentType())) {
+			message = "upload success";
+			demandService.save(file);
+			System.out.println("hello");
+
+			responseInfo = new ResponseInfo(HttpStatus.OK, file.getOriginalFilename(), message);
+			return new ResponseEntity<>(responseInfo, HttpStatus.OK);
+
+		}
+
+		else {
+
+			message = "Please upload an excel file!";
+			responseInfo = new ResponseInfo(HttpStatus.BAD_REQUEST, file.getOriginalFilename(), message);
+			return new ResponseEntity<>(responseInfo, HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	

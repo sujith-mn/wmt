@@ -3,15 +3,21 @@ package com.application.workmanagement.logic;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.application.common.exception.ResourceNotFoundException;
 import com.application.workmanagement.domain.model.Demand;
+import com.application.workmanagement.domain.model.DemandsExcel;
 import com.application.workmanagement.domain.repository.DemandRepository;
 import com.application.workmanagement.service.rest.v1.model.DemandDto;
 import com.application.workmanagement.service.rest.v1.model.ProfilesListDto;
+import com.xlm.reader.SheetReader;
 
 
 @Service
@@ -138,6 +144,25 @@ public class DemandService {
 		
 		demandRepository.save(demand);
 
+		
+	}
+	@Async
+	public void save(MultipartFile file) {
+		try {
+
+			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+			XSSFSheet datatypeSheet = workbook.getSheetAt(0);
+			SheetReader<DemandsExcel> sr = new SheetReader<DemandsExcel>(workbook);
+			sr.setHeaderRow(0);
+
+			List<DemandsExcel> excels = sr.retrieveRows(datatypeSheet, DemandsExcel.class);
+			
+			List<Demand> excel = excels.stream().map(exc -> modelMapper.map(exc, Demand.class)).collect(Collectors.toList());
+			System.out.println(excel);
+			demandRepository.saveAll(excel);
+		} catch (Exception e) {
+			throw new RuntimeException("fail to store excel data: " + e.getStackTrace());
+		}
 		
 	}
 	
