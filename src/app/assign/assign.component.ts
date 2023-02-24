@@ -15,8 +15,6 @@ import { Profile } from '../shared/model/profile';
   styleUrls: ['./assign.component.css']
 })
 export class AssignComponent implements OnInit {
-  
- detailForm:FormGroup;
   ShowColumns: string[] = [ 'name', 'primarySkill', 'location', 'availability', 'source','actions','assign']
 
    displayedColumns:string[] = ['manager','created','priority','skill','status'];
@@ -26,7 +24,7 @@ export class AssignComponent implements OnInit {
   paramsId: any;
   skill:string;
   DetailProfileForm: [];
-  
+
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
@@ -36,16 +34,14 @@ export class AssignComponent implements OnInit {
 
   ) {
   }
-  this.detailForm = this.fb.group({
-      
+  detailForm:FormGroup = this.fb.group({
     name: [''],
     source: [''],
     location:[''],
     availability:[''],
     primarySkill: ['']
-    
-    
   })
+
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
       this.paramsId = { ...params.keys, ...params };
@@ -55,11 +51,8 @@ export class AssignComponent implements OnInit {
     this.getDemandData();
     this.fetchSelectedItems();
 
- 
-    
-    
   }
-  
+
   getDemandData() {
 
     return this.assignService.getDemandById(this.Id).subscribe(
@@ -99,14 +92,11 @@ export class AssignComponent implements OnInit {
     )
   }
   SubmitProfiles(){
-    
-    // this.DetailProfileForm =profile;
       this.fetchSelectedItems()
-    
   }
-  fetchSelectedItems() { 
+  fetchSelectedItems() {
     this.DetailProfileForm = this.profiles.filter((value: { isChecked: any; }, index: any) => {
-    
+
       return value.isChecked });
       this.dataSource[0].profilesList =  this.DetailProfileForm;
     console.log(this.dataSource[0]);
@@ -115,7 +105,7 @@ export class AssignComponent implements OnInit {
    return this.assignService.getProfileByAssign(this.Id,this.dataSource[0]).subscribe(
     {
     next: (result: any) => {
-      
+
       console.log("profiles : " +result);
     },
     error: (err: any) => {
@@ -129,7 +119,7 @@ export class AssignComponent implements OnInit {
     console.log(this.DetailProfileForm);
   }
 
-  
+
   //Detail Start
   openProfile(targetModal: any, profiles:any) {
     this.modalService.open(targetModal, {
@@ -139,21 +129,22 @@ export class AssignComponent implements OnInit {
     });
     console.log("Profiles  " , profiles);
     let editedDemandValues = {
-     
+
      // id: profiles.id,
       name: profiles.name,
       source: profiles.source,
       location:profiles.location,
-      
+
       availability:profiles.availability,
       primarySkill: profiles.primarySkill
       // proposedBy: profiles.proposedBy,
-     
+
     }
     console.log("editedDemandValues : " , editedDemandValues);
     this.detailForm.patchValue(editedDemandValues);
-    
+
   }
   //Detail End
 }
+
 
