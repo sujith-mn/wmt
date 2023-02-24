@@ -125,7 +125,7 @@ editedDemandValues: any;
       this.dataSource.paginator.firstPage();
     }
   }
-   //  open start
+   //  start
    open(content: any) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
@@ -155,7 +155,6 @@ console.log(a);
             console.log(result);
             },
             error: (err: any) => {
-            //this.notificationService.setErrorMsg(err.error)
             console.log(err);
             },
             complete: () => {
@@ -216,11 +215,8 @@ console.log(a);
 
     return this.dataStorageService.editDemand(this.editForm.value.id,this.editForm.value).subscribe(
       { next: (result: any) => {
-        // this.ngOnInit();
-        // this.modalService.dismissAll();
         },
         error: (err: any) => {
-        //this.notificationService.setErrorMsg(err.error)
         console.log(err);
         },
         complete: () => {
@@ -236,7 +232,6 @@ console.log(a);
 
    // openDelete start
    openDelete(targetModal: any, demand: Demand) {
-    // this.deleteId = demand.id;
     this.modalService.open(targetModal, {
       backdrop: 'static',
       size: 'md'
@@ -250,12 +245,9 @@ console.log(a);
 
     return this.dataStorageService.deleteDemand(this.deleteId).subscribe(
       { next: (result: any) => {
-        // this.ngOnInit();
         this.modalService.dismissAll();
         },
         error: (err: any) => {
-        //this.notificationService.setErrorMsg(err.error)
-        // this.ngOnInit();
         this.modalService.dismissAll();
         },
         complete: () => {

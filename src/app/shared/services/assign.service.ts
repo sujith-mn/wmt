@@ -5,6 +5,7 @@ import { catchError, map, Subject } from 'rxjs';
 import { NotificationService } from './notification.service';
 import {  NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { assign } from '../model/assign';
+import { profileList } from '../model/profileList';
 @Injectable({
   providedIn: 'root'
 })
@@ -34,32 +35,41 @@ export class AssignService {
   .get<assign[]>(this.baseURL + 'api/demands/' +Id)
   .pipe(
     map((resData: any) => {
-      this.modalService.dismissAll();
       return resData;
     }),
     catchError((err: any) => {
-      this.modalService.dismissAll();
       throw err;
     })
   );
 }
 
 getProfileBySkill( skill:any){
-  console.log("Skill ->" +skill);
   return  this.http
 .get<assign[]>(this.baseURL + 'profiles/by/primaryskill/' +skill)
 .pipe(
   map((resData: any) => {
-    this.modalService.dismissAll();
-    console.log(" Profile Based on skill  -->" , resData);
     return resData;
   }),
   catchError((err: any) => {
-    this.modalService.dismissAll();
     throw err;
   })
 );
 }
 
+getProfileByAssign(Id:any,values:assign){
+ 
+  return this.http.
+  put<assign[]>(this.baseURL + 'api/demands/ProfileList/'  +Id,values)
+  .pipe(
+    map((resData:any)=>{
+      this.notificationService.success('Profile Assigned to Demand successfully');
+      return resData;
+    }),
+    catchError((err:any)=>{
+      throw err;
+    })
+  )
+  
+}
 
 }
