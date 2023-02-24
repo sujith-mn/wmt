@@ -157,11 +157,12 @@ public class DemandService {
 
 			List<DemandsExcel> excels = sr.retrieveRows(datatypeSheet, DemandsExcel.class);
 			
-			List<Demand> excel = excels.stream().map(exc -> modelMapper.map(exc, Demand.class)).collect(Collectors.toList());
+			List<Demand> excel = excels.stream().map(exc -> modelMapper.map(exc, Demand.class))
+					.collect(Collectors.toList());
 			System.out.println(excel);
 			demandRepository.saveAll(excel);
 		} catch (Exception e) {
-			throw new RuntimeException("fail to store excel data: " + e.getStackTrace());
+			throw new RuntimeException("fail to store excel data: " + e.getMessage());
 		}
 		
 	}

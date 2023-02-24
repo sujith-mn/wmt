@@ -1,11 +1,10 @@
 package com.application.workmanagement.domain.model;
 
-import java.sql.Date;
+import java.util.Date;
 
 import com.xlm.util.XLColumn;
 import com.xlm.util.XLSheet;
 
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class DemandsExcel {
-	@Id
 	@XLColumn(name="Id")
 	private int Id;
 	@XLColumn(name="Manager")
