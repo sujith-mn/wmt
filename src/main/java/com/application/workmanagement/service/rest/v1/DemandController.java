@@ -53,7 +53,6 @@ public class DemandController {
 		if (TYPE.equals(file.getContentType())) {
 			message = "upload success";
 			demandService.save(file);
-			System.out.println("hello");
 
 			responseInfo = new ResponseInfo(HttpStatus.OK, file.getOriginalFilename(), message);
 			return new ResponseEntity<>(responseInfo, HttpStatus.OK);

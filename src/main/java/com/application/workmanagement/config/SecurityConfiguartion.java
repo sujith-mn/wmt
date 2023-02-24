@@ -14,7 +14,7 @@ public class SecurityConfiguartion {
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable().authorizeHttpRequests()
 				.requestMatchers("/profiles/**","/api/demands/**").authenticated()
-				.requestMatchers("/registrations/**","/swagger-ui.html/**").permitAll()
+				.requestMatchers("/registrations/**").permitAll()
 				.anyRequest().hasRole("Admin")
 				.and().formLogin()
 				.and().httpBasic();

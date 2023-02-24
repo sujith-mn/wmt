@@ -159,7 +159,6 @@ public class DemandService {
 			
 			List<Demand> excel = excels.stream().map(exc -> modelMapper.map(exc, Demand.class))
 					.collect(Collectors.toList());
-			System.out.println(excel);
 			demandRepository.saveAll(excel);
 		} catch (Exception e) {
 			throw new RuntimeException("fail to store excel data: " + e.getMessage());
