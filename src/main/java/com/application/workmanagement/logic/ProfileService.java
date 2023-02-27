@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.application.common.exception.ResourceNotFoundException;
 import com.application.workmanagement.domain.model.Profiles;
+import com.application.workmanagement.domain.model.ProfilesExcel;
 import com.application.workmanagement.domain.repository.ProfileRepository;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 import com.xlm.reader.SheetReader;
@@ -28,15 +29,8 @@ public class ProfileService {
 
 	public ProfileDto save(ProfileDto profile) {
 
-
 		Profiles profiles = modelMapper.map(profile, Profiles.class);
 
-//		addedProfile.setName(profile.getName());
-//		addedProfile.setPrimarySkill(profile.getPrimarySkill());
-//		addedProfile.setLocation(profile.getLocation());
-//		addedProfile.setAvailability(profile.getAvailability());
-//		addedProfile.setProposedBy(profile.getProposedBy());
-//		addedProfile.setSource(profile.getSource());
 		profileRepository.save(profiles);
 		return profile;
 
@@ -91,12 +85,12 @@ public class ProfileService {
 
 			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
 			XSSFSheet datatypeSheet = workbook.getSheetAt(0);
-			SheetReader<Profiles> sr = new SheetReader<Profiles>(workbook);
+			SheetReader<ProfilesExcel> sr = new SheetReader<ProfilesExcel>(workbook);
 			sr.setHeaderRow(0);
 
-			List<Profiles> excels = sr.retrieveRows(datatypeSheet, Profiles.class);
-
-			profileRepository.saveAll(excels);
+			List<ProfilesExcel> excels = sr.retrieveRows(datatypeSheet, ProfilesExcel.class);
+			List<Profiles> excel = excels.stream().map(profile -> modelMapper.map(profile, Profiles.class)).collect(Collectors.toList());
+			profileRepository.saveAll(excel);
 		} catch (Exception e) {
 			throw new RuntimeException("fail to store excel data: " + e.getMessage());
 		}
@@ -144,20 +138,22 @@ public class ProfileService {
 	public ProfileDto getProfileById(long id) {
 		Profiles profile = profileRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
-		
+
 		return modelMapper.map(profile, ProfileDto.class);
 
 	}
 
 	public void deleteProfilesByid(long id) {
-		Profiles profile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
-		
+		Profiles profile = profileRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
+
 		profileRepository.delete(profile);
-		
+
 	}
 
-	public void updateProfilesById(long id,ProfileDto profile) {
-		Profiles updatedProfile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
+	public void updateProfilesById(long id, ProfileDto profile) {
+		Profiles updatedProfile = profileRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
 		updatedProfile.setLocation(profile.getLocation());
 		updatedProfile.setAvailability(profile.getAvailability());
 		updatedProfile.setName(profile.getName());
@@ -165,7 +161,7 @@ public class ProfileService {
 		updatedProfile.setProposedBy(profile.getProposedBy());
 		updatedProfile.setSource(profile.getSource());
 		profileRepository.save(updatedProfile);
-		
+
 	}
 
 }

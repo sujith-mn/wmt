@@ -83,7 +83,7 @@ public class ProfileController {
 		return new ResponseEntity<> (info,HttpStatus.OK);
 	}
 
-	@GetMapping()
+	@GetMapping("/")
 	public ResponseEntity<List<ProfileDto>> getAllProfiles() {
 
 		List<ProfileDto> profilesList = profileService.getAllprofiles();

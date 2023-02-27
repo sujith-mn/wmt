@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.application.common.exception.ResourceNotFoundException;
+import com.application.common.exception.DemandIdNotFoundException;
 import com.application.workmanagement.domain.model.Demand;
 import com.application.workmanagement.domain.model.DemandsExcel;
 import com.application.workmanagement.domain.repository.DemandRepository;
@@ -40,10 +40,10 @@ public class DemandService {
 	
 	//Update demand.
    
-	public DemandDto updateDemand(DemandDto demandDto, Integer demandId) {
+	public DemandDto updateDemand(DemandDto demandDto, int demandId) {
 		// TODO Auto-generated method stub
 		Demand demand = this.demandRepository.findById(demandId)
-							.orElseThrow(()-> new ResourceNotFoundException("Demand", "id", demandId));
+							.orElseThrow(()-> new DemandIdNotFoundException("Demand with id: "+demandId+" not found"));
 		
 		//demand.setDemandId(demandDto.getDemandId());
 		demand.setManager(demandDto.getManager());
@@ -62,10 +62,10 @@ public class DemandService {
     
     //Read Single Demand.
     
-	public DemandDto getDemandById(Integer demandId) {
+	public DemandDto getDemandById(int demandId) {
 		
     	Demand demand = this.demandRepository.findById(demandId)
-    								   .orElseThrow(()-> new ResourceNotFoundException("Demand", "id", demandId));
+    								   .orElseThrow(()-> new DemandIdNotFoundException("Demand with id: "+demandId+" not found"));
     	
 		return this.demandToDto(demand);
 	}
@@ -85,22 +85,13 @@ public class DemandService {
 	
 	public void deleteDemand(Integer demandId) {
 		Demand demand = this.demandRepository.findById(demandId)
-									   .orElseThrow(()-> new ResourceNotFoundException("Demand", "id", demandId));
+									   .orElseThrow(()-> new DemandIdNotFoundException("Demand with id: "+demandId+" not found"));
 		this.demandRepository.delete(demand);
 	}
 
     private Demand dtoToDemand(DemandDto demandDto) {
 		
 		Demand demand = this.modelMapper.map(demandDto, Demand.class);
-//		Demand demand = new Demand();
-//		demand.setId(demandDto.getId());
-//		demand.setDemandId(demandDto.getDemandId());
-//		demand.setCustomerManager(demandDto.getCustomerManager());
-//		demand.setCreatedOn(demandDto.getCreatedOn());
-//		demand.setAgeing(demandDto.getAgeing());
-//		demand.setPriority(demandDto.getPriority());
-//		demand.setSkill(demandDto.getSkill());
-//		demand.setStatus(demandDto.getStatus());
 		
 		return demand;
 		
@@ -110,23 +101,13 @@ public class DemandService {
 		
 		DemandDto demandDto = this.modelMapper.map(demand, DemandDto.class);
 		
-//		DemandDto demandDto = new DemandDto();
-//		demandDto.setId(demand.getId());
-//		demandDto.setDemandId(demand.getDemandId());
-//		demandDto.setCustomerManager(demand.getCustomerManager());
-//		demandDto.setCreatedOn(demand.getCreatedOn());
-//		demandDto.setAgeing(demand.getAgeing());
-//		demandDto.setPriority(demand.getPriority());
-//		demandDto.setSkill(demand.getSkill());
-//		demandDto.setStatus(demand.getStatus());
-		
 		return demandDto;
 	}
 
 	public void addProfilesToDemand(DemandDto profilesList, int demandId) {
 		
 		 Demand demand = demandRepository.findById(demandId)
-				.orElseThrow(() -> new ResourceNotFoundException("Demand", "Id", demandId));
+				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: "+demandId+" not found"));
 		
 		demand.setProfiles(profilesList.getProfilesList());
 		
@@ -138,7 +119,7 @@ public class DemandService {
 		
 
 		 Demand demand = demandRepository.findById(demandId)
-				.orElseThrow(() -> new ResourceNotFoundException("Demand", "Id", demandId));
+				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: "+demandId+" not found"));
 		
 		demand.setProfiles(profilesList.getProfilesList());
 		
