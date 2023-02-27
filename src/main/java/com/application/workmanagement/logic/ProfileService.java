@@ -159,7 +159,7 @@ public class ProfileService {
 	public void updateProfilesById(long id,ProfileDto profile) {
 		Profiles updatedProfile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
 		updatedProfile.setLocation(profile.getLocation());
-		updatedProfile.setAvailability(profile.getLocation());
+		updatedProfile.setAvailability(profile.getAvailability());
 		updatedProfile.setName(profile.getName());
 		updatedProfile.setPrimarySkill(profile.getPrimarySkill());
 		updatedProfile.setProposedBy(profile.getProposedBy());
