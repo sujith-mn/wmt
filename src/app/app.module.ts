@@ -27,6 +27,7 @@ import { APP_CONFIG } from './app-config';
 import { environment } from 'src/environments/environment.prod';
 import { NotificationService } from './shared/services/notification.service';
 import { AssignComponent } from './assign/assign.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { AssignComponent } from './assign/assign.component';
     SearchComponent,
     NavbarComponent,
     ProfileComponent,
-    AssignComponent
+    AssignComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
