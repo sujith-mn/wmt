@@ -33,7 +33,7 @@ export class SearchComponent implements OnInit{
  editForm: FormGroup;
  detailForm:FormGroup;
 //  private fb: FormBuilder;
- private deleteId: number;
+ private deleteId: any;
  closeResult: string;
  displayedColumns:string[] = ['id','manager','created','endDate','ageing','priority','skill','status','actions'];
 
@@ -46,16 +46,14 @@ export class SearchComponent implements OnInit{
 editedDemandValues: any;
 
 
-  constructor(private httpClient: HttpClient,
+  constructor(
+    private httpClient: HttpClient,
     private modalService: NgbModal,  //Add parameter of type NgbModal
     private fb: FormBuilder,
     private  dataStorageService:DataStorageService,
     private router: Router
-    ) {
-
-    // Assign the data to the data source for the table to render
-   // this.dataSource = new MatTableDataSource<Demand>(this.demands);
-  }
+    ) { }
+    
   newDemand: FormGroup = this.fb.group({
     manager: [null, [Validators.required]],
     created:[null,[ Validators.required]],
@@ -63,7 +61,7 @@ editedDemandValues: any;
     ageing: [null, [Validators.required]],
     priority: [null, [Validators.required]],
     skill: [null, [Validators.required]],
-    status: [null, [Validators.required]]
+    status: [null, [Validators.required]],
   });
   ngOnInit():void {
 
@@ -72,16 +70,6 @@ editedDemandValues: any;
       this.getDemands();
     });
     this.getDemands();
-    this.editForm = this.fb.group({
-      id: [''],
-      manager: [null, Validators.required],
-      created:[null, Validators.required],
-      endDate:[null, Validators.required],
-      ageing: [null, Validators.required],
-      priority: [null, Validators.required],
-      skill: [null, Validators.required],
-      status: [null, Validators.required]
-    });
     this.detailForm = this.fb.group({
       id: [''],
       manager: [''],
@@ -90,8 +78,19 @@ editedDemandValues: any;
       ageing: [''],
       priority: [''],
       skill: [''],
-      status: ['']
+      status: [''],
     });
+    this.editForm = this.fb.group({
+      id: [''],
+      manager: [null, Validators.required],
+      created:[null, Validators.required],
+      endDate:[null, Validators.required],
+      ageing: [null, Validators.required],
+      priority: [null, Validators.required],
+      skill: [null, Validators.required],
+      status: [null, Validators.required],
+    });
+   
   }
 
 
@@ -181,7 +180,7 @@ console.log(a);
       ageing: demand.ageing,
       priority: demand.priority,
       skill: demand.skill,
-      status: demand.status
+      status: demand.status,
     }
     this.detailForm.patchValue(editedDemandValues);
   }
@@ -203,10 +202,12 @@ console.log(a);
       ageing: demand.ageing,
       priority: demand.priority,
       skill: demand.skill,
-      status: demand.status
+      status: demand.status,
     }
-
+    
     this.editForm.patchValue(editedDemandValues);
+    
+  console.log(this.editForm);
   }
   // Edit End .
 
@@ -215,6 +216,7 @@ console.log(a);
 
     return this.dataStorageService.editDemand(this.editForm.value.id,this.editForm.value).subscribe(
       { next: (result: any) => {
+        console.log(result)
         },
         error: (err: any) => {
         console.log(err);
@@ -232,6 +234,8 @@ console.log(a);
 
    // openDelete start
    openDelete(targetModal: any, demand: Demand) {
+    
+    this.deleteId = demand.id;
     this.modalService.open(targetModal, {
       backdrop: 'static',
       size: 'md'

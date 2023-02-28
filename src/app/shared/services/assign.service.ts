@@ -14,7 +14,7 @@ export class AssignService {
   private baseURL!: string;
   private Id:string;
   AssignSubject = new Subject<void>();
-
+  private availability = 'available';
 
   constructor(
     private http: HttpClient,
@@ -45,7 +45,7 @@ export class AssignService {
 
 getProfileBySkill( skill:any){
   return  this.http
-.get<assign[]>(this.baseURL + 'profiles/by/primaryskill/' +skill)
+.get<assign[]>(this.baseURL + 'profiles/by/skill/' +skill + '/availability/' +this.availability)
 .pipe(
   map((resData: any) => {
     return resData;

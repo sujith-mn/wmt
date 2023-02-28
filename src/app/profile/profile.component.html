@@ -1,10 +1,14 @@
 <div class="container">
   <div class="row m-2">
-
-    <div class="col-6">
+    <div class="col-3">
+      <button class="btn btn-md btn-outline-primary" (click)="open(contentProfile)">
+        <i class="fa fa-user"></i>
+        <mat-icon>person_add</mat-icon> New Profile</button>
+      </div>
+    <div class="col-3">
       <button class="btn btn-md btn-outline-primary" (click)="open(content)"> 
         <i class="fa fa-user"></i>
-        <mat-icon>note_add</mat-icon> Excel Upload </button>
+        <mat-icon>cloud_upload</mat-icon> Excel Upload </button>
     </div>
     <div class="search col-6 d-flex justify-content-end">
       <mat-form-field class="example-full-width">
@@ -51,6 +55,25 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Source</th>
                 <td mat-cell *matCellDef="let element">{{ element.source }}</td>
               </ng-container>
+
+              <!-- Action Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>actions</th>
+                <!-- <td mat-cell *matCellDef="let row"> {{row.actions}} </td>  -->
+                <td mat-cell *matCellDef="let myRowData" class="actionGroup">
+
+                  <button mat-button (click)="openProfileDetails(ProfileDetails, myRowData)">
+                    <mat-icon>remove_red_eye</mat-icon></button>
+                  <button mat-button (click)="openProfileEdit(contentEdit, myRowData)">
+                    <mat-icon>edit</mat-icon>
+                  
+                  </button>
+                  <button mat-button (click)="openDelete(contentDelete, myRowData)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  
+                </td>
+              </ng-container>
           
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -70,7 +93,7 @@
     
   </div>
 
-<!-- New Profile start -->
+<!-- New Excel start -->
 <ng-template #content let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">New Demand</h4>
@@ -91,4 +114,210 @@
     <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
   </div>
 </ng-template>
-<!-- New Profile End -->
+<!-- New Excel End -->
+
+<!-- New Profile start -->
+<ng-template #contentProfile let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Add New Profile</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="newProfile"  (ngSubmit)="onSubmitProfile()">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <div class="input-group">
+          <input formControlName="name" type="text" name="name" id="name" class="form-control" required >
+        </div>
+      </div>
+
+
+      <div class="form-group mt-2">
+        <label for="primarySkill">Skill</label>
+        <select id="country" formControlName="primarySkill" class="form-select">
+          <option *ngFor="let val of skillVal" [ngValue] = "val">{{ val }}</option>
+        </select>
+      </div>
+
+      <div class="form-group mt-2">
+        <label for="location">Location</label>
+        <select id="country" formControlName="location" class="form-select">
+          <option *ngFor="let val of locationVal" [ngValue] = "val">{{ val }}</option>
+        </select>
+      </div>
+      <div class="form-group mt-2">
+        <label for="availability">Availability</label>
+        <select id="country" formControlName="availability" class="form-select">
+          <option *ngFor="let val of availabilityVal" [ngValue] = "val">{{ val }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="proposedBy">Proposed By</label>
+        <div class="input-group">
+          <input formControlName="proposedBy" type="text" name="proposedBy" id="proposedBy" class="form-control" required >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="proposedBy">Source</label>
+        <div class="input-group">
+          <input formControlName="source" type="text" name="source" id="source" class="form-control" required >
+        </div>
+      </div>
+
+      
+      <div class="text-center mt-2">
+        <button type="submit" [disabled]="!newProfile.valid"  class="btn btn-info">Submit</button>
+      </div>
+    </form>
+  </div>
+
+</ng-template>
+<!-- New Demand End -->
+
+
+<!-- Detail Demand Start-->
+<ng-template #ProfileDetails let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title"> Demand</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="detailProfileForm">
+
+      <div class="form-group">
+        <label>Name</label>
+        <div class="input-group">
+          <input formControlName="name" id="name_Detail" class="form-control" readonly>
+        </div>
+      </div>
+
+      <div class="form-group mt-2">
+        <label>Primary Skill</label>
+        <div class="input-group">
+          <input  formControlName="primarySkill" id="primarySkill_Detail" class="form-control" readonly>
+        </div>
+      </div>
+
+      <div class="form-group mt-2">
+        <label>Location</label>
+        <div class="input-group">
+          <input formControlName="location" id="location_Detail" class="form-control" readonly>
+        </div>
+      </div>
+      <div class="form-group mt-2">
+        <label>Availability</label>
+        <div class="input-group">
+          <input  formControlName="availability" id="availability_Detail" class="form-control" readonly>
+        </div>
+      </div>
+
+      <div class="form-group mt-2">
+        <label>Proposed By</label>
+        <div class="input-group">
+          <input formControlName="proposedBy" id="proposedBy_Detail" class="form-control" readonly>
+        </div>
+      </div>
+
+
+      <div class="form-group mt-2">
+        <label>Source</label>
+        <div class="input-group">
+          <input formControlName="source" id="source_Detail" class="form-control" readonly>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+</ng-template>
+<!-- Detail Demand End -->
+
+<!-- Edit Demand Start -->
+<ng-template #contentEdit let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edit Profile</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editForm" >
+
+
+      <div class="form-group">
+        <label for="name">Name</label>
+        <div class="input-group">
+          <input formControlName="name" class="form-control">
+        </div>
+      </div>
+
+
+      <div class="form-group mt-2">
+        <label for="primarySkill">Primary Skill</label>
+        <div class="input-group">
+          <input  formControlName="primarySkill" class="form-control" >
+        </div>
+      </div>
+
+      <div class="form-group mt-2">
+        <label for="location">Location</label>
+        <div class="input-group">
+          <input formControlName="location"  class="form-control" >
+        </div>
+      </div>
+      <div class="form-group mt-2">
+        <label for="availability">Availability</label>
+        <div class="input-group">
+          <input  formControlName="availability"  class="form-control" >
+        </div>
+      </div>
+
+      <div class="form-group mt-2">
+        <label for="proposedBy">Proposed By</label>
+        <div class="input-group">
+          <input formControlName="proposedBy"  class="form-control" >
+        </div>
+      </div>
+
+
+      <div class="form-group mt-2">
+        <label for="source">Source</label>
+        <div class="input-group">
+          <input formControlName="source" class="form-control" >
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <button  [disabled]="!editForm.valid" data-dismiss="modal" class="btn btn-info" (click)="onSave()">Save Profile</button>
+      </div>
+    </form>
+  </div>
+
+</ng-template>
+<!-- Edit Demand End -->
+
+<!-- Delete Demand Start -->
+<ng-template #contentDelete let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title ">Consent!</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>Are you sure  want to delete this Demand.</div>
+
+  </div>
+  <div class="modal-footer">
+    <button data-dismiss="modal" class="btn btn-primary" (click)="onDelete()">Yes</button>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Cancel</button>
+  </div>
+</ng-template>
+<!-- Delete Demand End -->
+

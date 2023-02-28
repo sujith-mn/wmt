@@ -1,11 +1,20 @@
 <div class="container">
   <div class="row m-2">
-
-    <div class="col-6">
+    <!-- New Demand start -->
+    <div class="col-3">
     <button class="btn btn-md btn-outline-primary" (click)="open(content)">
       <i class="fa fa-user"></i>
       <mat-icon>note_add</mat-icon> New Demand</button>
     </div>
+    <!-- New Demand end -->
+    <!-- Excel upload start -->
+    <div class="col-3">
+      <button class="btn btn-md btn-outline-primary" (click)="open(contentExcel)"> 
+        <i class="fa fa-user"></i>
+        <mat-icon>note_add</mat-icon> Excel Upload </button>
+    </div>
+    <!-- Excel upload end -->
+    <!-- Search start -->
     <div class="search col-6 d-flex justify-content-end">
       <mat-form-field class="example-full-width">
         <span matPrefix> </span>
@@ -14,9 +23,10 @@
       </mat-form-field>
 
     </div>
+    <!-- Search end -->
   </div>
 
-
+  <!-- Dynamic table display start -->
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" matSort>
       <!-- ID Column -->
@@ -101,7 +111,29 @@
 
   </div>
 </div>
+  <!-- Dynamic table display end -->
+<!-- New Excel start -->
+<ng-template #contentExcel let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">New Demand</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #f="ngForm"  novalidate>
+      
+      Profile Excel : <input type="file" />
 
+      <button data-dismiss="modal" class="btn btn-md btn-outline-primary" >Upload</button>    
+      
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+  </div>
+</ng-template>
+<!-- New Excel End -->
 <!-- New Demand start -->
 <ng-template #content let-modal>
   <div class="modal-header">
@@ -171,8 +203,7 @@
             <option value="Spring framework">Spring framework</option>
             <option value="Python">Python</option>
           </select>
-          <!-- <input type="text" name="skill" id="skill" class="form-control" ngModel required #skill="ngModel"> -->
-        </div>
+          </div>
       </div>
 
 
@@ -321,9 +352,6 @@
 
       <div class="form-group  mt-2">
         <label for="skill">Skill</label>
-        <!-- <div class="input-group">
-          <input formControlName="skill" class="form-control">
-        </div> -->
         <select id="country" formControlName="skill" class="form-select">
           <option *ngFor="let val of skillVal" [ngValue] = "val">{{ val }}</option>
         </select>
@@ -369,5 +397,3 @@
 </ng-template>
 <!-- Delete Demand End -->
 
-
-<!-- <app-assign [Variable] = "Variable"></app-assign> -->

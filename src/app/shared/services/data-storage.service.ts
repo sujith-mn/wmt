@@ -84,6 +84,7 @@ export class DataStorageService {
     );
   }
   deleteDemand(id:any){
+    console.log("delete id ",id);
     return this.http.delete<Demand>(this.baseURL + 'api/demands/'+id)
     .pipe(
       map((resData: any) => {
