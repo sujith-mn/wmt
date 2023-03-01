@@ -27,8 +27,8 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@CrossOrigin(origins = "*") 
 @RequestMapping("/api/demands")
+@CrossOrigin(origins = "*") 
 public class DemandController {
 
 	public static final String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

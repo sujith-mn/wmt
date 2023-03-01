@@ -20,9 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.application.workmanagement.logic.ProfileService;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 
-@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping("/profiles")
+@CrossOrigin(origins = "*")
 public class ProfileController {
 
 	public static final String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
