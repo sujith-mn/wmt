@@ -13,9 +13,9 @@ public class SecurityConfiguartion {
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable().authorizeHttpRequests()
-				.requestMatchers("/profiles/**","/api/demands/**").authenticated()
+				.requestMatchers("/profiles/**","/api/demands/**").permitAll()
 				.requestMatchers("/registrations/**").permitAll()
-				.anyRequest().hasRole("Admin")
+				.anyRequest().permitAll()
 				.and().formLogin()
 				.and().httpBasic();
 

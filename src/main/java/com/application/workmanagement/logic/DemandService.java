@@ -16,6 +16,7 @@ import com.application.workmanagement.domain.model.Demand;
 import com.application.workmanagement.domain.model.DemandsExcel;
 import com.application.workmanagement.domain.repository.DemandRepository;
 import com.application.workmanagement.service.rest.v1.model.DemandDto;
+import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 import com.application.workmanagement.service.rest.v1.model.ProfilesListDto;
 import com.xlm.reader.SheetReader;
 
@@ -145,6 +146,13 @@ public class DemandService {
 			throw new RuntimeException("fail to store excel data: " + e.getMessage());
 		}
 		
+	}
+
+	public List<ProfileDto> getProfilesFromDemand(int demandId) {
+		Demand demand = this.demandRepository.findById(demandId)
+				   .orElseThrow(()-> new DemandIdNotFoundException("Demand with id: "+demandId+" not found"));
+		List<ProfileDto> profiles = demand.getProfiles().stream().map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
+		return profiles;
 	}
 	
 

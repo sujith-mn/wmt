@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.application.workmanagement.logic.DemandService;
 import com.application.workmanagement.service.rest.v1.model.DemandDto;
+import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 import com.application.workmanagement.service.rest.v1.model.ProfilesListDto;
 
 import jakarta.validation.Valid;
@@ -98,6 +99,12 @@ public class DemandController {
 		
 		return ResponseEntity.ok(this.demandService.getDemandById(demandId));
 	}
+
+	@GetMapping("/profilelist/{Id}")
+	public ResponseEntity<List<ProfileDto>> getProfilesFromDemand(@PathVariable("Id") int demandId){
+		List<ProfileDto> profiles = demandService.getProfilesFromDemand(demandId);
+		return new ResponseEntity<> (profiles,HttpStatus.OK);
+	}
 	
 	@PatchMapping("/profileslist/{Id}")
 	public ResponseEntity<ResponseInfo> addProfiles(@RequestBody DemandDto profilesList, @PathVariable("Id") int demandId){
@@ -108,7 +115,7 @@ public class DemandController {
 		
 		return new ResponseEntity<>(responseInfo,HttpStatus.OK);
 	}
-	@PutMapping("/{Id}")
+	@PutMapping("/profilelist/{Id}")
 	public ResponseEntity<ResponseInfo> addProfiles(@RequestBody ProfilesListDto profilesList, @PathVariable("Id") int demandId){
 		
 		demandService.addProfilesListToDemand(profilesList,demandId);
