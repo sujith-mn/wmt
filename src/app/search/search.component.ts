@@ -37,7 +37,7 @@ export class SearchComponent implements OnInit{
  closeResult: string;
  displayedColumns:string[] = ['id','manager','created','endDate','ageing','priority','skill','status','actions'];
 
- statusVal: string[] = ['Open', 'complete', 'pending', 'InProgress'];
+ statusVal: string[] = ['open', 'complete', 'pending', 'InProgress'];
  skillVal: string[] = ['Java', 'Angular', 'Spring framework', 'React'];
  dataSource: MatTableDataSource<demandData>;
 

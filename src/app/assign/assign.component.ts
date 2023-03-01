@@ -39,7 +39,7 @@ export class AssignComponent implements OnInit {
 
 
   detailForm:FormGroup = this.fb.group({
-
+    id:[''],
     name: [''],
     source: [''],
     location:[''],
@@ -139,7 +139,7 @@ export class AssignComponent implements OnInit {
     console.log("Profiles  " , profiles);
     let editedDemandValues = {
 
-     // id: profiles.id,
+      id: profiles.id,
       name: profiles.name,
       source: profiles.source,
       location:profiles.location,
