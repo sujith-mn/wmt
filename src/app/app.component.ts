@@ -11,11 +11,21 @@ export class AppComponent{
   constructor (private zone: NgZone, private router: Router) {
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
-        if (event.url === '/login') {
-          this.showHead= false;
-        } else {
-          this.showHead= true;
-        }
+          var a = event.url.substr(1);
+          console.log(a);
+          if(event.url.substr(1)){
+            if (event.url.substr(1) === 'login') {
+              this.showHead= false;
+            } else {
+              this.showHead= true;
+            }
+          }
+          else{
+            this.showHead= false;
+          }
+
+
+
       }
     });
   }

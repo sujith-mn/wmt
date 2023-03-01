@@ -15,7 +15,7 @@ import { Profile } from '../shared/model/profile';
   styleUrls: ['./assign.component.css']
 })
 export class AssignComponent implements OnInit {
- 
+
   ShowColumns: string[] = [ 'name', 'primarySkill', 'location', 'availability', 'source','actions','assign']
 
    displayedColumns:string[] = ['manager','created','priority','skill','status'];
@@ -25,7 +25,7 @@ export class AssignComponent implements OnInit {
   paramsId: any;
   skill:string;
   DetailProfileForm: [];
-  
+
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
@@ -35,11 +35,11 @@ export class AssignComponent implements OnInit {
 
   ) {
   }
-  
-  
-  
+
+
+
   detailForm:FormGroup = this.fb.group({
-      
+
     name: [''],
     source: [''],
     location:[''],
@@ -54,11 +54,11 @@ export class AssignComponent implements OnInit {
     }
     );
     this.getDemandData();
-    this.fetchSelectedItems();
+    //this.fetchSelectedItems();
 
- 
-    
-    
+
+
+
   }
 
   getDemandData() {
@@ -67,7 +67,7 @@ export class AssignComponent implements OnInit {
       {
         next: (result: assign) => {
           this.skill=result.skill;
-          
+
           this.dataSource.push(result);
           this.dataSource = [...this.dataSource];
           console.log("Datasource ",this.dataSource);
@@ -89,7 +89,7 @@ export class AssignComponent implements OnInit {
       {
         next: (result: any) => {
           this.profiles=result;
-          
+
         },
         error: (err: any) => {
           console.log(err);
@@ -138,7 +138,7 @@ export class AssignComponent implements OnInit {
     });
     console.log("Profiles  " , profiles);
     let editedDemandValues = {
-     
+
      // id: profiles.id,
       name: profiles.name,
       source: profiles.source,

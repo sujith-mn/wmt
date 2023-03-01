@@ -5,18 +5,20 @@ import { ProfileComponent } from './profile/profile.component';
 import { SearchComponent } from './search/search.component';
 import { AssignComponent } from './assign/assign.component';
 import { LoginComponent } from './login/login.component';
+import { AuthGuardService } from './shared/services/auth-guard.service';
 
 const routes: Routes = [
-  {path: '', component: HomeComponent},
+  {path: '', component: LoginComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'home', component: HomeComponent},
-  {path: 'profile', component: ProfileComponent},
-  {path: 'demand', component: SearchComponent},
-  {path: 'assign', component: AssignComponent}
+  {path: 'home', component: HomeComponent,canActivate:[AuthGuardService]},
+  {path: 'profile', component: ProfileComponent,canActivate:[AuthGuardService]},
+  {path: 'demand', component: SearchComponent,canActivate:[AuthGuardService]},
+  {path: 'assign', component: AssignComponent,canActivate:[AuthGuardService]}
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [AuthGuardService]
 })
 export class AppRoutingModule { }

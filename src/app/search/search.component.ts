@@ -37,7 +37,7 @@ export class SearchComponent implements OnInit{
  closeResult: string;
  displayedColumns:string[] = ['id','manager','created','endDate','ageing','priority','skill','status','actions'];
 
- statusVal: string[] = ['Open', 'complete', 'Pending', 'InProgress'];
+ statusVal: string[] = ['Open', 'complete', 'pending', 'InProgress'];
  skillVal: string[] = ['Java', 'Angular', 'Spring framework', 'React'];
  dataSource: MatTableDataSource<demandData>;
 
@@ -53,7 +53,7 @@ editedDemandValues: any;
     private  dataStorageService:DataStorageService,
     private router: Router
     ) { }
-    
+
   newDemand: FormGroup = this.fb.group({
     manager: [null, [Validators.required]],
     created:[null,[ Validators.required]],
@@ -90,7 +90,7 @@ editedDemandValues: any;
       skill: [null, Validators.required],
       status: [null, Validators.required],
     });
-   
+
   }
 
 
@@ -100,7 +100,7 @@ editedDemandValues: any;
     return this.dataStorageService.getAllDemands().subscribe(
       {
         next: (result: any) => {
-        
+
         this.demands = result;
         this.dataSource=new MatTableDataSource<demandData>(this.demands);
         this.dataSource.paginator = this.paginator;
@@ -234,9 +234,9 @@ console.log(a);
       skill: demand.skill,
       status: demand.status,
     }
-    
+
     this.editForm.patchValue(editedDemandValues);
-    
+
   console.log(this.editForm);
   }
   // Edit End .
@@ -264,7 +264,7 @@ console.log(a);
 
    // openDelete start
    openDelete(targetModal: any, demand: Demand) {
-    
+
     this.deleteId = demand.id;
     this.modalService.open(targetModal, {
       backdrop: 'static',
@@ -290,14 +290,14 @@ console.log(a);
 
       });
     }
-    
+
     assign(IdData: assign){
-     
+
       this.router.navigate(
         ['/assign'],
         { queryParams: { Id: IdData.id} }
       );
-      
+
     }
 }
 

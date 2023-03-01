@@ -18,7 +18,7 @@ export class ProfileService {
     public notificationService: NotificationService,
     private modalService: NgbModal,
     @Inject(APP_CONFIG) appConfig: AppConfig
-  ) { 
+  ) {
     this.baseURL = appConfig.apiURL;
   }
 
@@ -91,7 +91,7 @@ export class ProfileService {
       observe: 'response',
     };
     let body = JSON.stringify(value);
-    
+
     return this.http
       .post<Profile[]>(this.baseURL + 'profiles/add',value,httpOptions)
       .pipe(
@@ -133,8 +133,15 @@ export class ProfileService {
   //Profile Edit end
 
   deleteProfile(id:any){
-    return this.http.delete<Profile>(this.baseURL + 'profiles/'+id)
-    
+    const httpOptions : Object = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+      responseType: 'text',
+      observe: 'response',
+    };
+    return this.http.delete(this.baseURL + 'profiles/'+id,httpOptions)
+
     .pipe(
       map((resData: any) => {
         this.modalService.dismissAll();
