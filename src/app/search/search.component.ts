@@ -164,6 +164,36 @@ console.log(a);
         )
 
   }
+  // Excel Upload start
+  onSubmitExcel(f: NgForm) {
+    this.modalService.dismissAll(); //dismiss the modal
+  }
+
+  file: any;
+  selectFile(event: any) {
+    console.log(event);
+    this.file = event.target.files[0];
+    console.log(this.file);
+  }
+
+  uploadFile() {
+    return this.dataStorageService.uploadDemand(this.file).subscribe(
+      {
+        next: (result: any) => {
+          console.log(result);
+        },
+        error: (err: any) => {
+          //this.notificationService.setErrorMsg(err.error)
+          console.log(err);
+        },
+        complete: () => {
+          console.log('Demand Excel Upload complete');
+        }
+      }
+    )
+  }
+
+  //Excel Upload End
 
   //Detail Start
   openDetails(targetModal: any, demand: Demand) {

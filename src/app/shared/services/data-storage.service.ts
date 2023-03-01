@@ -100,4 +100,29 @@ export class DataStorageService {
       })
     );
   }
+
+  uploadDemand(x: string | Blob){
+    let formData = new FormData();
+    formData.append("file",x);
+    const httpOptions: Object = {
+      headers: new HttpHeaders({
+        'Access-Control-Allow-Headers': '*',
+      }),
+    };
+    return this.http
+    .post(this.baseURL + 'api/demands/excel/upload',formData)
+    .pipe(
+      map((resData: any) => {
+        this.DemandSubject.next();
+        this.modalService.dismissAll();
+        this.notificationService.success('Demand Uploaded successfully');
+        return resData;
+      }),
+      catchError((err: any) => {
+        this.modalService.dismissAll();
+        this.notificationService.error('Unable to proceed');
+        throw err;
+      })
+    );
+  }
 }

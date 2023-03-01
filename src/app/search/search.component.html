@@ -121,11 +121,11 @@
     </button>
   </div>
   <div class="modal-body">
-    <form #f="ngForm"  novalidate>
+    <form #f="ngForm" (ngSubmit)="onSubmitExcel(f)" novalidate>
       
-      Profile Excel : <input type="file" />
+      Demand Excel : <input type="file" (change)="selectFile($event)" />
 
-      <button data-dismiss="modal" class="btn btn-md btn-outline-primary" >Upload</button>    
+      <button data-dismiss="modal" class="btn btn-md btn-outline-primary" (click)="uploadFile()">Upload</button>    
       
     </form>
   </div>
