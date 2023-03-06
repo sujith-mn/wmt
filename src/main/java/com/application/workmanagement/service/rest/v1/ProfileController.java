@@ -1,8 +1,10 @@
 package com.application.workmanagement.service.rest.v1;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.application.workmanagement.domain.model.Profiles;
 import com.application.workmanagement.logic.ProfileService;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 
@@ -27,6 +30,9 @@ import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 public class ProfileController {
 
 	public static final String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	public static final String PDF = "application/pdf";
+	public static final String DOC = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
 
 	@Autowired
 	private ProfileService profileService;
@@ -149,5 +155,36 @@ public class ProfileController {
 		return new ResponseEntity<>(profilesList, HttpStatus.OK);
 
 	}
+	
+	@PutMapping("/{id}/resume")
+	public ResponseEntity<String> uploadResume(@RequestParam("resume") MultipartFile file, @PathVariable("id") long id)
+			throws IOException {
+		profileService.saveResume(file, id);
+		String message = "Successfully uploaded";
+		if (PDF.equals(file.getContentType()) || DOC.equals(file.getContentType())) {
+			try {
+				profileService.saveResume(file, id);
+				message = "Uploaded the file successfully: " + file.getOriginalFilename();
+				return new ResponseEntity<>(message, HttpStatus.OK);
+			} catch (Exception e) {
+				message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+				return new ResponseEntity<>(message, HttpStatus.EXPECTATION_FAILED);
+			}
+		} else {
 
-}
+			message = "Please upload an excel file!";
+			return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+
+		}
+
+	}
+	
+	@GetMapping("/files/{id}")
+	  public ResponseEntity<byte[]> getFile(@PathVariable("id") long id) {
+	    Profiles profile = profileService.getFile(id);
+
+	    return ResponseEntity.ok()
+	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + profile.getName() + "\"")
+	        .body(profile.getResume());
+	  }
+	}

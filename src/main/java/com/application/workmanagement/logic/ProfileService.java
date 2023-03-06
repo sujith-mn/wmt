@@ -1,5 +1,6 @@
 package com.application.workmanagement.logic;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -161,6 +162,18 @@ public class ProfileService {
 		updatedProfile.setProposedBy(profile.getProposedBy());
 		updatedProfile.setSource(profile.getSource());
 		profileRepository.save(updatedProfile);
+
+	}
+
+	public void saveResume(MultipartFile file,long id) throws IOException {
+		
+		Profiles profile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
+		profile.setResume(file.getBytes());
+		profileRepository.save(profile);
+	}
+
+	public Profiles getFile(long id) {
+	    return profileRepository.findById(id).get();
 
 	}
 

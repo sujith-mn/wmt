@@ -2,6 +2,7 @@ package com.application.workmanagement.domain.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,5 +28,8 @@ public class Profiles {
 	private String proposedBy;
 
 	private String source;
+	
+	@Lob
+	private byte[] resume;
 
 }
