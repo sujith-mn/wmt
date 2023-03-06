@@ -110,7 +110,25 @@ export class ProfileComponent implements OnInit {
     )
   }
 
+  // Upload Resume
+  
 
+  uploadResumeFile() {
+    return this.profileService.uploadResume(this.file).subscribe(
+      {
+        next: (result: any) => {
+          console.log(result);
+        },
+        error: (err: any) => {
+          //this.notificationService.setErrorMsg(err.error)
+          console.log(err);
+        },
+        complete: () => {
+          console.log('complete');
+        }
+      }
+    )
+  }
   getProfile() {
     return this.profileService.getAllProfiles().subscribe(
       {

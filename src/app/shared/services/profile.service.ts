@@ -80,6 +80,32 @@ export class ProfileService {
     );
   }
 
+  //Upload Resume 
+
+  uploadResume(x: string | Blob){
+    let formData = new FormData();
+    formData.append("file",x);
+    const httpOptions: Object = {
+      headers: new HttpHeaders({
+        'Access-Control-Allow-Headers': '*',
+      }),
+    };
+    return this.http
+    .put(this.baseURL + 'profiles/{id}/resume',formData, httpOptions)
+    .pipe(
+      map((resData: any) => {
+        this.ProfileSubject.next();
+        this.modalService.dismissAll();
+        this.notificationService.success('Profile Uploaded successfully');
+        return resData;
+      }),
+      catchError((err: any) => {
+        this.modalService.dismissAll();
+        this.notificationService.error('Unable to proceed');
+        throw err;
+      })
+    );
+  }
   // Add New profiles start .
     NewProfile(value: NgForm){
     const httpOptions: Object = {

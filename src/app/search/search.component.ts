@@ -30,6 +30,7 @@ export interface demandData {
 export class SearchComponent implements OnInit{
   [x: string]: any;
  Variable : any ;
+ ageingValue:any;
  demands: demandData[];
  editForm: FormGroup;
  detailForm:FormGroup;
@@ -60,15 +61,37 @@ export class SearchComponent implements OnInit{
   newDemand: FormGroup = this.fb.group({
     manager: [null, [Validators.required]],
     created:[null,[ Validators.required]],
-    // endDate:[null, [Validators.required]],
-    // ageing: [null, [Validators.required]],
+    endDate:[],
+    ageing: [],
     priority: [null, [Validators.required]],
     skill: [null, [Validators.required]],
     status: [null, [Validators.required]],
   });
   ngOnInit():void {
 
+    this.newDemand.get('created')?.valueChanges.subscribe((value)=>{
+      console.log(value)
+      var a:any = new Date(value);
+      var today = new Date();
+      var year = today.toLocaleString("default", { year: "numeric" });
+      var month = today.toLocaleString("default", { month: "2-digit" });
+      var day = today.toLocaleString("default", { day: "2-digit" });
 
+      const formattedDate :any = year + "-" + month + "-" + day;
+      const dt = new Date(formattedDate)
+
+
+      const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+      const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+      const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
+      console.log(Math.floor((utc2 - utc1) / _MS_PER_DAY).toString());
+      this.newDemand.patchValue({ageing :Math.floor((utc2 - utc1) / _MS_PER_DAY).toString()}); 
+      
+      
+      
+      
+      return value;
+    }) 
     this.dataStorageService.refreshneeds.subscribe(() => {
       this.getDemands();
 
@@ -91,11 +114,12 @@ export class SearchComponent implements OnInit{
       created:[null, Validators.required],
       // endDate:[null, Validators.required],
       ageing: [null, Validators.required],
-      // priority: [null, Validators.required],
+      priority: [null, Validators.required],
       skill: [null, Validators.required],
       status: [null, Validators.required],
     });
 
+    
   }
 
 
@@ -123,8 +147,8 @@ export class SearchComponent implements OnInit{
           const _MS_PER_DAY = 1000 * 60 * 60 * 24;
           const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
           const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
-        console.log(Math.floor((utc2 - utc1) / _MS_PER_DAY).toString());
-        value.ageing = Math.floor((utc2 - utc1) / _MS_PER_DAY).toString();
+          console.log(Math.floor((utc2 - utc1) / _MS_PER_DAY).toString());
+          value.ageing = Math.floor((utc2 - utc1) / _MS_PER_DAY).toString();
           return value;
       });
 
@@ -201,6 +225,7 @@ console.log(a);
       return this.dataStorageService.storeDemand(a).subscribe(
           { next: (result: any) => {
             console.log(result);
+            
             },
             error: (err: any) => {
             console.log(err);
@@ -272,18 +297,39 @@ console.log(a);
       backdrop: 'static',
       size: 'md'
     });
+    this.editForm.get('created')?.valueChanges.subscribe((value)=>{
+      console.log(value)
+      var a:any = new Date(value);
+      var today = new Date();
+      var year = today.toLocaleString("default", { year: "numeric" });
+      var month = today.toLocaleString("default", { month: "2-digit" });
+      var day = today.toLocaleString("default", { day: "2-digit" });
 
+      const formattedDate :any = year + "-" + month + "-" + day;
+      const dt = new Date(formattedDate)
+
+
+      const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+      const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+      const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
+      console.log(Math.floor((utc2 - utc1) / _MS_PER_DAY).toString());
+      this.editForm.patchValue({ageing :Math.floor((utc2 - utc1) / _MS_PER_DAY).toString()}); 
+      
+      
+      
+      
+      return value;
+    }) 
     let editedDemandValues = {
       id: demand.id,
       manager: demand.manager,
       created: demand.created,
       // endDate:demand.endDate,
-      ageing: demand.ageing,
+      ageing:  demand.ageing,
       priority: demand.priority,
       skill: demand.skill,
       status: demand.status,
     }
-
     this.editForm.patchValue(editedDemandValues);
 
   console.log(this.editForm);
@@ -295,6 +341,7 @@ console.log(a);
 
     return this.dataStorageService.editDemand(this.editForm.value.id,this.editForm.value).subscribe(
       { next: (result: any) => {
+        
         console.log(result)
         },
         error: (err: any) => {
@@ -351,4 +398,8 @@ console.log(a);
 }
 
 
+
+function getEdittedStartDate() {
+  throw new Error('Function not implemented.');
+}
 

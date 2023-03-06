@@ -167,6 +167,20 @@
           <input formControlName="source" type="text" name="source" id="source" class="form-control" required >
         </div>
       </div>
+      <div class="form-group">
+        <label for="resume">Resume</label>
+        <div class="input-group">
+          <!-- <input formControlName="source" type="text" name="resume" id="resume" class="form-control" required >
+         -->
+         <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+      
+          <input type="file" (change)="selectFile($event)"/>
+    
+          <button data-dismiss="modal" class="btn btn-md btn-outline-primary" (click)="uploadResumeFile()">Upload</button>    
+          
+        </form>
+        </div>
+      </div>
 
       
       <div class="text-center mt-2">
