@@ -28,6 +28,7 @@ export interface demandData {
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit{
+  [x: string]: any;
  Variable : any ;
  demands: demandData[];
  editForm: FormGroup;
@@ -35,15 +36,16 @@ export class SearchComponent implements OnInit{
 //  private fb: FormBuilder;
  private deleteId: any;
  closeResult: string;
- displayedColumns:string[] = ['id','manager','created','endDate','ageing','priority','skill','status','actions'];
-
+//  displayedColumns:string[] = ['id','manager','created','endDate','ageing','priority','skill','status','actions'];
+ displayedColumns:string[] = ['id','manager','created','ageing','skill','status','actions'];
  statusVal: string[] = ['open', 'complete', 'pending', 'InProgress'];
  skillVal: string[] = ['Java', 'Angular', 'Spring framework', 'React'];
  dataSource: MatTableDataSource<demandData>;
-
+ editedDemandValues: any;
+ private ageingCal :any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-editedDemandValues: any;
+
 
 
   constructor(
@@ -51,14 +53,15 @@ editedDemandValues: any;
     private modalService: NgbModal,  //Add parameter of type NgbModal
     private fb: FormBuilder,
     private  dataStorageService:DataStorageService,
-    private router: Router
+    private router: Router,
+    
     ) { }
 
   newDemand: FormGroup = this.fb.group({
     manager: [null, [Validators.required]],
     created:[null,[ Validators.required]],
-    endDate:[null, [Validators.required]],
-    ageing: [null, [Validators.required]],
+    // endDate:[null, [Validators.required]],
+    // ageing: [null, [Validators.required]],
     priority: [null, [Validators.required]],
     skill: [null, [Validators.required]],
     status: [null, [Validators.required]],
@@ -68,13 +71,15 @@ editedDemandValues: any;
 
     this.dataStorageService.refreshneeds.subscribe(() => {
       this.getDemands();
+      
     });
     this.getDemands();
+   
     this.detailForm = this.fb.group({
       id: [''],
       manager: [''],
       created: [''],
-      endDate:[''],
+      // endDate:[''],
       ageing: [''],
       priority: [''],
       skill: [''],
@@ -84,27 +89,30 @@ editedDemandValues: any;
       id: [''],
       manager: [null, Validators.required],
       created:[null, Validators.required],
-      endDate:[null, Validators.required],
+      // endDate:[null, Validators.required],
       ageing: [null, Validators.required],
-      priority: [null, Validators.required],
+      // priority: [null, Validators.required],
       skill: [null, Validators.required],
       status: [null, Validators.required],
     });
-
+    
   }
 
-
+ 
   // return this.datastorageservice.storePaitent(value)
 
   getDemands() {
     return this.dataStorageService.getAllDemands().subscribe(
       {
         next: (result: any) => {
-
+          console.log(result)
         this.demands = result;
         this.dataSource=new MatTableDataSource<demandData>(this.demands);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        
+        this.demands.forEach(this.getAgeing);
+        
         },
         error: (err: any) => {
         console.log(err);
@@ -116,6 +124,24 @@ editedDemandValues: any;
     )
   }
 
+  getAgeing(_item: any){
+    var a:any = new Date(_item.created);
+    var today = new Date();
+    var year = today.toLocaleString("default", { year: "numeric" });
+    var month = today.toLocaleString("default", { month: "2-digit" });
+    var day = today.toLocaleString("default", { day: "2-digit" });
+
+    const formattedDate :any = year + "-" + month + "-" + day;
+    const dt = new Date(formattedDate)
+    
+    
+    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+    const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+    const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
+    
+    console.log((utc2 - utc1) / _MS_PER_DAY)
+    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -145,9 +171,13 @@ editedDemandValues: any;
     }
   }
 
+ 
+
+  
   onSubmit() {
 
     var a = this.newDemand.value;
+    
 console.log(a);
       return this.dataStorageService.storeDemand(a).subscribe(
           { next: (result: any) => {
@@ -165,7 +195,7 @@ console.log(a);
 
   }
   // Excel Upload start
-  onSubmitExcel(f: NgForm) {
+  onSubmitExcel(_f: NgForm) {
     this.modalService.dismissAll(); //dismiss the modal
   }
 
@@ -206,7 +236,7 @@ console.log(a);
       id: demand.id,
       manager: demand.manager,
       created: demand.created,
-      endDate:demand.endDate,
+      // endDate:demand.endDate,
       ageing: demand.ageing,
       priority: demand.priority,
       skill: demand.skill,
@@ -228,7 +258,7 @@ console.log(a);
       id: demand.id,
       manager: demand.manager,
       created: demand.created,
-      endDate:demand.endDate,
+      // endDate:demand.endDate,
       ageing: demand.ageing,
       priority: demand.priority,
       skill: demand.skill,
@@ -278,10 +308,10 @@ console.log(a);
 
 
     return this.dataStorageService.deleteDemand(this.deleteId).subscribe(
-      { next: (result: any) => {
+      { next: (_result: any) => {
         this.modalService.dismissAll();
         },
-        error: (err: any) => {
+        error: (_err: any) => {
         this.modalService.dismissAll();
         },
         complete: () => {
