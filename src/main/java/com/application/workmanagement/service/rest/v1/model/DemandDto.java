@@ -26,12 +26,10 @@ public class DemandDto {
 	private Date created;
 	
 	//new start
-	@NotNull(message = "Ending Date Field can't be null")
 	private Date endDate;
 	
 	//new end
 	
-	@NotNull(message = "Ageing Field can't be null")
 	private Integer ageing;
 	
 	@NotNull(message = "Priority Field can't be null")
