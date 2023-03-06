@@ -54,7 +54,7 @@ export class SearchComponent implements OnInit{
     private fb: FormBuilder,
     private  dataStorageService:DataStorageService,
     private router: Router,
-    
+
     ) { }
 
   newDemand: FormGroup = this.fb.group({
@@ -71,10 +71,10 @@ export class SearchComponent implements OnInit{
 
     this.dataStorageService.refreshneeds.subscribe(() => {
       this.getDemands();
-      
+
     });
     this.getDemands();
-   
+
     this.detailForm = this.fb.group({
       id: [''],
       manager: [''],
@@ -95,10 +95,10 @@ export class SearchComponent implements OnInit{
       skill: [null, Validators.required],
       status: [null, Validators.required],
     });
-    
+
   }
 
- 
+
   // return this.datastorageservice.storePaitent(value)
 
   getDemands() {
@@ -107,12 +107,31 @@ export class SearchComponent implements OnInit{
         next: (result: any) => {
           console.log(result)
         this.demands = result;
+
+
+      this.demands.forEach((value) => {
+          var a:any = new Date(value.created);
+          var today = new Date();
+          var year = today.toLocaleString("default", { year: "numeric" });
+          var month = today.toLocaleString("default", { month: "2-digit" });
+          var day = today.toLocaleString("default", { day: "2-digit" });
+
+          const formattedDate :any = year + "-" + month + "-" + day;
+          const dt = new Date(formattedDate)
+
+
+          const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+          const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+          const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
+        console.log(Math.floor((utc2 - utc1) / _MS_PER_DAY).toString());
+        value.ageing = Math.floor((utc2 - utc1) / _MS_PER_DAY).toString();
+          return value;
+      });
+
         this.dataSource=new MatTableDataSource<demandData>(this.demands);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        
-        this.demands.forEach(this.getAgeing);
-        
+
         },
         error: (err: any) => {
         console.log(err);
@@ -133,12 +152,12 @@ export class SearchComponent implements OnInit{
 
     const formattedDate :any = year + "-" + month + "-" + day;
     const dt = new Date(formattedDate)
-    
-    
+
+
     const _MS_PER_DAY = 1000 * 60 * 60 * 24;
     const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
     const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
-    
+
     console.log((utc2 - utc1) / _MS_PER_DAY)
     return Math.floor((utc2 - utc1) / _MS_PER_DAY);
   }
@@ -171,13 +190,13 @@ export class SearchComponent implements OnInit{
     }
   }
 
- 
 
-  
+
+
   onSubmit() {
 
     var a = this.newDemand.value;
-    
+
 console.log(a);
       return this.dataStorageService.storeDemand(a).subscribe(
           { next: (result: any) => {
