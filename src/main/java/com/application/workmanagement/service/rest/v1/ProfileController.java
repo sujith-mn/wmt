@@ -159,8 +159,7 @@ public class ProfileController {
 	@PutMapping("/{id}/resume")
 	public ResponseEntity<String> uploadResume(@RequestParam("resume") MultipartFile file, @PathVariable("id") long id)
 			throws IOException {
-		profileService.saveResume(file, id);
-		String message = "Successfully uploaded";
+		String message ="";
 		if (PDF.equals(file.getContentType()) || DOC.equals(file.getContentType())) {
 			try {
 				profileService.saveResume(file, id);

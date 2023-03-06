@@ -2,6 +2,7 @@ package com.application.workmanagement.service.rest.v1;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -91,6 +92,14 @@ public class DemandController {
 	@GetMapping("/")
 	public ResponseEntity<List<DemandDto>> getAllDemands(){
 		return ResponseEntity.ok(this.demandService.getAllDemands());
+	}
+	
+	@GetMapping("/status/")
+	public ResponseEntity<List<DemandDto>> getAllDemandsWithOpenAndInprogress(){
+		
+		List<DemandDto> demands =demandService.getAllDemands().stream().filter(demand -> demand.getStatus().equalsIgnoreCase("open")|| demand.getStatus().equalsIgnoreCase("in-progress")).collect(Collectors.toList());
+		return new ResponseEntity<>(demands,HttpStatus.OK);
+		
 	}
 	
 	//Get single Demand
