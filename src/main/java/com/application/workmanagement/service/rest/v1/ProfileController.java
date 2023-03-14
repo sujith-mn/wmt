@@ -1,10 +1,8 @@
 package com.application.workmanagement.service.rest.v1;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.application.workmanagement.domain.model.Profiles;
 import com.application.workmanagement.logic.ProfileService;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 
@@ -156,34 +153,59 @@ public class ProfileController {
 
 	}
 	
-	@PutMapping("/{id}/resume")
-	public ResponseEntity<String> uploadResume(@RequestParam("resume") MultipartFile file, @PathVariable("id") long id)
-			throws IOException {
-		String message ="";
+	@PostMapping("/local/upload")
+	public ResponseEntity<ResponseInfo> excelUpload(@RequestParam("resume") MultipartFile file) {
+
+		String message = "";
+		ResponseInfo responseInfo;
+
 		if (PDF.equals(file.getContentType()) || DOC.equals(file.getContentType())) {
 			try {
-				profileService.saveResume(file, id);
+				profileService.localSave(file);
 				message = "Uploaded the file successfully: " + file.getOriginalFilename();
-				return new ResponseEntity<>(message, HttpStatus.OK);
+				responseInfo = new ResponseInfo(HttpStatus.CREATED, file.getOriginalFilename(), message);
+
+				return new ResponseEntity<>(responseInfo, HttpStatus.CREATED);
 			} catch (Exception e) {
 				message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-				return new ResponseEntity<>(message, HttpStatus.EXPECTATION_FAILED);
+				responseInfo = new ResponseInfo(HttpStatus.EXPECTATION_FAILED, file.getOriginalFilename(), message);
+				return new ResponseEntity<>(responseInfo, HttpStatus.EXPECTATION_FAILED);
 			}
-		} else {
-
-			message = "Please upload an excel file!";
-			return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-
 		}
 
+		message = "Please upload an excel file!";
+		responseInfo = new ResponseInfo(HttpStatus.BAD_REQUEST, file.getOriginalFilename(), message);
+		return new ResponseEntity<>(responseInfo, HttpStatus.BAD_REQUEST);
 	}
 	
-	@GetMapping("/files/{id}")
-	  public ResponseEntity<byte[]> getFile(@PathVariable("id") long id) {
-	    Profiles profile = profileService.getFile(id);
-
-	    return ResponseEntity.ok()
-	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + profile.getName() + "\"")
-	        .body(profile.getResume());
-	  }
+//	@PutMapping("/{id}/resume")
+//	public ResponseEntity<String> uploadResume(@RequestParam("resume") MultipartFile file, @PathVariable("id") long id)
+//			throws IOException {
+//		String message ="";
+//		if (PDF.equals(file.getContentType()) || DOC.equals(file.getContentType())) {
+//			try {
+//				profileService.saveResume(file, id);
+//				message = "Uploaded the file successfully: " + file.getOriginalFilename();
+//				return new ResponseEntity<>(message, HttpStatus.OK);
+//			} catch (Exception e) {
+//				message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+//				return new ResponseEntity<>(message, HttpStatus.EXPECTATION_FAILED);
+//			}
+//		} else {
+//
+//			message = "Please upload an excel file!";
+//			return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+//
+//		}
+//
+//	}
+//	
+//	@GetMapping("/files/{id}")
+//	  public ResponseEntity<byte[]> getFile(@PathVariable("id") long id) {
+//	    Profiles profile = profileService.getFile(id);
+//
+//	    return ResponseEntity.ok()
+//	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + profile.getName() + "\"")
+//	        .body(profile.getResume());
+//	  }
 	}

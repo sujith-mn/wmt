@@ -1,5 +1,7 @@
 package com.application.workmanagement.logic;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,14 +29,25 @@ public class ProfileService {
 
 	@Autowired
 	private ModelMapper modelMapper;
-
+	
+	@Async
 	public ProfileDto save(ProfileDto profile) {
 
 		Profiles profiles = modelMapper.map(profile, Profiles.class);
-
 		profileRepository.save(profiles);
 		return profile;
+	}
+	
 
+	public void localSave(MultipartFile file) throws IOException {
+		
+		File path = new File("C:\\data\\" + file.getOriginalFilename());
+  		path.createNewFile();
+  		
+  		FileOutputStream output = new FileOutputStream(path);
+  		output.write(file.getBytes());
+  		output.close();	
+		
 	}
 
 	public List<ProfileDto> getAllprofiles() {
@@ -165,12 +178,12 @@ public class ProfileService {
 
 	}
 
-	public void saveResume(MultipartFile file,long id) throws IOException {
-		
-		Profiles profile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
-		profile.setResume(file.getBytes());
-		profileRepository.save(profile);
-	}
+//	public void saveResume(MultipartFile file,long id) throws IOException {
+//		
+//		Profiles profile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
+//		profile.setResume(file.getBytes());
+//		profileRepository.save(profile);
+//	}
 
 	public Profiles getFile(long id) {
 	    return profileRepository.findById(id).get();
