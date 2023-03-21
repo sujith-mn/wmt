@@ -30,6 +30,8 @@ public class Profiles {
 
 	private String source;
 	
+	private String path;
+	
 //	@Lob
 //	private byte[] resume;
 

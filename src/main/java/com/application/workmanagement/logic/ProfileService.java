@@ -30,24 +30,51 @@ public class ProfileService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
+	private String resumePath;
+	
+	
+	
 	@Async
 	public ProfileDto save(ProfileDto profile) {
 
 		Profiles profiles = modelMapper.map(profile, Profiles.class);
+		profiles.setPath(resumePath);
 		profileRepository.save(profiles);
+		resumePath = null;
 		return profile;
 	}
 	
-
-	public void localSave(MultipartFile file) throws IOException {
+//
+//	public void localSave(MultipartFile file,ProfileDto profile) throws IOException {
+//		
+//		File path = new File("C:\\data\\" + file.getOriginalFilename());
+//  		path.createNewFile();
+//  		String resumePath ="C:\\data\\" + file.getOriginalFilename();
+//  		FileOutputStream output = new FileOutputStream(path);
+//  		output.write(file.getBytes());
+//  		output.close();	
+//  		ProfileService profileService = new ProfileService();
+//  	
+//  		
+//  		
+//  		
+//		
+//	}
+	
+public String localSave(MultipartFile file) throws IOException {
+		
 		
 		File path = new File("C:\\data\\" + file.getOriginalFilename());
   		path.createNewFile();
-  		
+
   		FileOutputStream output = new FileOutputStream(path);
   		output.write(file.getBytes());
   		output.close();	
-		
+  		
+  		resumePath = "C:\\data\\" + file.getOriginalFilename();
+  		
+  		return resumePath;
+  		
 	}
 
 	public List<ProfileDto> getAllprofiles() {

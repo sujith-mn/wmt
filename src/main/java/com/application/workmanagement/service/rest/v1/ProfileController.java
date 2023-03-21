@@ -33,13 +33,15 @@ public class ProfileController {
 
 	@Autowired
 	private ProfileService profileService;
+	
+
 
 	@PostMapping("/add")
 	public ResponseEntity<ProfileDto> addProfile(@RequestBody ProfileDto profile) {
+		
+		profileService.save(profile);
 	
-		ProfileDto addedProfile = profileService.save(profile);
-
-		return new ResponseEntity<>(addedProfile, HttpStatus.CREATED);
+	return new ResponseEntity<> (profile,HttpStatus.CREATED);
 	}
 
 	@PostMapping("/excel/upload")
@@ -161,7 +163,7 @@ public class ProfileController {
 
 		if (PDF.equals(file.getContentType()) || DOC.equals(file.getContentType())) {
 			try {
-				profileService.localSave(file);
+				 profileService.localSave(file);
 				message = "Uploaded the file successfully: " + file.getOriginalFilename();
 				responseInfo = new ResponseInfo(HttpStatus.CREATED, file.getOriginalFilename(), message);
 
