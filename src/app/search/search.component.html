@@ -1,11 +1,12 @@
 <!-- Search Filter -->
-<div>
+<div class="container-fluid p-0">
+  <div class="row m-2">
   <form class="date-block" [formGroup]="filterForm">
     <div class="date-block__list">
       <mat-form-field>
-        <input matInput 
-          [matDatepicker]="fromDatePicker" 
-          placeholder="From Date" 
+        <input matInput
+          [matDatepicker]="fromDatePicker"
+          placeholder="From Date"
           formControlName="fromDatePicker">
         <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
         <mat-datepicker #fromDatePicker></mat-datepicker>
@@ -13,9 +14,9 @@
     </div>
       <div class="date-block__list">
       <mat-form-field>
-        <input matInput 
-          [matDatepicker]="toDate" 
-          placeholder="To Date" 
+        <input matInput
+          [matDatepicker]="toDate"
+          placeholder="To Date"
           formControlName="toDate">
         <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
         <mat-datepicker #toDate></mat-datepicker>
@@ -24,7 +25,7 @@
      <button mat-button color="primary" class="primary" (click)="applyFilterDate()">Submit</button>
   </form>
 </div>
-<div class="container">
+
   <div class="row m-2">
     <!-- New Demand start -->
     <div class="col-3">
@@ -35,7 +36,7 @@
     <!-- New Demand end -->
     <!-- Excel upload start -->
     <div class="col-3">
-      <button class="btn btn-md btn-outline-primary" (click)="open(contentExcel)"> 
+      <button class="btn btn-md btn-outline-primary" (click)="open(contentExcel)">
         <i class="fa fa-user"></i>
         <mat-icon>note_add</mat-icon> Excel Upload </button>
     </div>
@@ -52,7 +53,7 @@
     <!-- Search end -->
   </div>
 
-  
+
 
   <!-- Dynamic table display start -->
   <div class="mat-elevation-z8">
@@ -113,7 +114,7 @@
             <mat-icon>remove_red_eye</mat-icon></button>
           <button mat-button (click)="openEdit(contentEdit, myRowData)">
             <mat-icon>edit</mat-icon>
-           
+
           </button>
           <button mat-button (click)="openDelete(contentDelete, myRowData)">
             <mat-icon>delete</mat-icon>
@@ -150,11 +151,11 @@
   </div>
   <div class="modal-body">
     <form #f="ngForm" (ngSubmit)="onSubmitExcel(f)" novalidate>
-      
+
       Demand Excel : <input type="file" (change)="selectFile($event)" />
 
-      <button data-dismiss="modal" class="btn btn-md btn-outline-primary" (click)="uploadFile()">Upload</button>    
-      
+      <button data-dismiss="modal" class="btn btn-md btn-outline-primary" (click)="uploadFile()">Upload</button>
+
     </form>
   </div>
   <div class="modal-footer">
@@ -303,7 +304,7 @@
           <input formControlName="priority" id="priority_Detail" class="form-control" readonly>
         </div>
       </div>
-      
+
       <div class="form-group mt-2">
         <label>Skill</label>
         <div class="input-group">
@@ -351,7 +352,7 @@
         <label for="created">Start Date</label>
         <div class="input-group">
           <input type="date" name="created" id="created" class="form-control" formControlName="created"
-            placeholder="yyyy-MM-dd" min="2000-01-01" max="2030-12-31" 
+            placeholder="yyyy-MM-dd" min="2000-01-01" max="2030-12-31"
             required />
         </div>
       </div>
