@@ -61,6 +61,7 @@ export class ProfileService {
     const httpOptions: Object = {
       headers: new HttpHeaders({
         'Access-Control-Allow-Headers': '*',
+        'Content-Type' : 'file'
       }),
     };
     return this.http
@@ -91,7 +92,7 @@ export class ProfileService {
       }),
     };
     return this.http
-    .put(this.baseURL + 'profiles/{id}/resume',formData, httpOptions)
+    .put(this.baseURL + 'profiles/local/upload',formData, httpOptions)
     .pipe(
       map((resData: any) => {
         this.ProfileSubject.next();

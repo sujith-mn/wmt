@@ -28,7 +28,8 @@ import { environment } from 'src/environments/environment.prod';
 import { NotificationService } from './shared/services/notification.service';
 import { AssignComponent } from './assign/assign.component';
 import { LoginComponent } from './login/login.component';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,7 +60,9 @@ import { LoginComponent } from './login/login.component';
     MatTableModule,
     MatIconModule,
     MatToolbarModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   exports: [
     MatButtonModule,

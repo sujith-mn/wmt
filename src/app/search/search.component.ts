@@ -3,14 +3,14 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-// import { Demand } from '../demand/demand.component';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { __values } from 'tslib';
 import { DataStorageService } from '../shared/services/data-storage.service';
 import { Demand } from '../shared/model/demand';
 import { assign } from '../shared/model/assign';
+import { DatePipe } from '@angular/common';
 
 export interface demandData {
   id: string;
@@ -34,14 +34,27 @@ export class SearchComponent implements OnInit{
  demands: demandData[];
  editForm: FormGroup;
  detailForm:FormGroup;
-//  private fb: FormBuilder;
  private deleteId: any;
- closeResult: string;
-//  displayedColumns:string[] = ['id','manager','created','endDate','ageing','priority','skill','status','actions'];
+ closeResult: string; 
  displayedColumns:string[] = ['id','manager','created','ageing','skill','status','actions'];
  statusVal: string[] = ['open', 'complete', 'pending', 'InProgress'];
  skillVal: string[] = ['Java', 'Angular', 'Spring framework', 'React'];
  dataSource: MatTableDataSource<demandData>;
+ pipe: DatePipe; 
+ 
+ public filterForm = new FormGroup({
+    fromDatePicker: new FormControl(''),
+    toDate: new FormControl(),
+  });
+
+  get fromDate() { 
+    return this.filterForm.get('fromDatePicker').value;
+   }
+  get toDate() { 
+    return this.filterForm.get('toDate').value; 
+  }
+  
+
  editedDemandValues: any;
  private ageingCal :any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -56,7 +69,11 @@ export class SearchComponent implements OnInit{
     private  dataStorageService:DataStorageService,
     private router: Router,
 
-    ) { }
+    ) { 
+      this.pipe = new DatePipe('en');
+      
+    }
+  
 
   newDemand: FormGroup = this.fb.group({
     manager: [null, [Validators.required]],
@@ -94,9 +111,11 @@ export class SearchComponent implements OnInit{
     }) 
     this.dataStorageService.refreshneeds.subscribe(() => {
       this.getDemands();
+      
 
     });
     this.getDemands();
+    
 
     this.detailForm = this.fb.group({
       id: [''],
@@ -121,16 +140,19 @@ export class SearchComponent implements OnInit{
 
     
   }
-
-
-  // return this.datastorageservice.storePaitent(value)
+  applyFilterDate() {
+    // this.getFilterDate();
+    this.dataSource.filter = ''+Math.random();
+    console.log(this.dataSource.filter);
+    
+  }
 
   getDemands() {
     return this.dataStorageService.getAllDemands().subscribe(
-      {
-        next: (result: any) => {
-          console.log(result)
-        this.demands = result;
+      
+        response =>{
+          // console.log(result)
+        this.demands = response;
 
 
       this.demands.forEach((value) => {
@@ -147,7 +169,7 @@ export class SearchComponent implements OnInit{
           const _MS_PER_DAY = 1000 * 60 * 60 * 24;
           const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
           const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
-          console.log(Math.floor((utc2 - utc1) / _MS_PER_DAY).toString());
+          // console.log(Math.floor((utc2 - utc1) / _MS_PER_DAY).toString());
           value.ageing = Math.floor((utc2 - utc1) / _MS_PER_DAY).toString();
           return value;
       });
@@ -156,16 +178,65 @@ export class SearchComponent implements OnInit{
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
-        },
-        error: (err: any) => {
-        console.log(err);
-        },
-        complete: () => {
-        console.log('complete');
         }
-      }
-    )
+        ,errorResponse => {
+        console.log(errorResponse);
+        }
+        ,()=> { 
+        console.log('complete');
+        this.dataSource.filterPredicate = (data, filter) =>{
+          if (this.fromDatePicker && this.toDate) {
+            return data.created >= this.fromDatePicker && data.created <= this.toDate;
+          }
+          return true;
+        }
+        }
+        
+      
+    );
   }
+  // getDemands() {
+  //   return this.dataStorageService.getAllDemands().subscribe(
+  //     {
+  //       next: (result: any) => {
+  //         // console.log(result)
+  //       this.demands = result;
+
+
+  //     this.demands.forEach((value) => {
+  //         var a:any = new Date(value.created);
+  //         var today = new Date();
+  //         var year = today.toLocaleString("default", { year: "numeric" });
+  //         var month = today.toLocaleString("default", { month: "2-digit" });
+  //         var day = today.toLocaleString("default", { day: "2-digit" });
+
+  //         const formattedDate :any = year + "-" + month + "-" + day;
+  //         const dt = new Date(formattedDate)
+
+
+  //         const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+  //         const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  //         const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  //         // console.log(Math.floor((utc2 - utc1) / _MS_PER_DAY).toString());
+  //         value.ageing = Math.floor((utc2 - utc1) / _MS_PER_DAY).toString();
+  //         return value;
+  //     });
+
+  //       this.dataSource=new MatTableDataSource<demandData>(this.demands);
+  //       this.dataSource.paginator = this.paginator;
+  //       this.dataSource.sort = this.sort;
+
+  //       },
+  //       error: (err: any) => {
+  //       console.log(err);
+  //       },
+  //       complete: () => {
+  //       console.log('complete');
+        
+  //       }
+  //     }
+  //   )
+  // }
 
   getAgeing(_item: any){
     var a:any = new Date(_item.created);

@@ -1,3 +1,29 @@
+<!-- Search Filter -->
+<div>
+  <form class="date-block" [formGroup]="filterForm">
+    <div class="date-block__list">
+      <mat-form-field>
+        <input matInput 
+          [matDatepicker]="fromDatePicker" 
+          placeholder="From Date" 
+          formControlName="fromDatePicker">
+        <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #fromDatePicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+      <div class="date-block__list">
+      <mat-form-field>
+        <input matInput 
+          [matDatepicker]="toDate" 
+          placeholder="To Date" 
+          formControlName="toDate">
+        <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
+        <mat-datepicker #toDate></mat-datepicker>
+      </mat-form-field>
+    </div>
+     <button mat-button color="primary" class="primary" (click)="applyFilterDate()">Submit</button>
+  </form>
+</div>
 <div class="container">
   <div class="row m-2">
     <!-- New Demand start -->
@@ -25,6 +51,8 @@
     </div>
     <!-- Search end -->
   </div>
+
+  
 
   <!-- Dynamic table display start -->
   <div class="mat-elevation-z8">
