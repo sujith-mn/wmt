@@ -83,25 +83,26 @@ export class ProfileService {
 
   //Upload Resume 
 
-  uploadResume(x: string | Blob){
+  uploadResume(x: File){
     let formData = new FormData();
-    formData.append("file",x);
+    formData.append("resume",x);
     const httpOptions: Object = {
       headers: new HttpHeaders({
         'Access-Control-Allow-Headers': '*',
       }),
     };
     return this.http
-    .put(this.baseURL + 'profiles/local/upload',formData, httpOptions)
+    .post(this.baseURL + 'profiles/local/upload',formData)
     .pipe(
       map((resData: any) => {
         this.ProfileSubject.next();
-        this.modalService.dismissAll();
+        // this.modalService.dismissAll();
         this.notificationService.success('Profile Uploaded successfully');
+        console.log(resData)
         return resData;
       }),
       catchError((err: any) => {
-        this.modalService.dismissAll();
+        // this.modalService.dismissAll();
         this.notificationService.error('Unable to proceed');
         throw err;
       })
@@ -125,13 +126,13 @@ export class ProfileService {
         map((resData: any) => {
           console.log(resData);
           this.ProfileSubject.next();
-          this.modalService.dismissAll();
+          // this.modalService.dismissAll();
           this.notificationService.success('Profile successfully added');
           return resData;
         }),
         catchError((err: any) => {
           console.log(err);
-          this.modalService.dismissAll();
+          // this.modalService.dismissAll();
           this.notificationService.error('Unable to proceed');
           throw err;
         })

@@ -266,6 +266,7 @@ export class SearchComponent implements OnInit {
       },
       complete: () => {
         console.log('complete');
+        this.newDemand.reset();
       },
     });
   }

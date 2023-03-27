@@ -187,21 +187,25 @@ export class ProfileComponent implements OnInit {
     var a = this.newProfile.value;
 console.log(a);
       return this.profileService.NewProfile(a).subscribe(
-          { next: (result: any) => {
+          { 
+            next: (result: any) => {
             console.log(result);
+            this.uploadResumeFile();
             },
             error: (err: any) => {
             console.log(err);
             },
             complete: () => {
             console.log('complete');
+             this.newProfile.reset();
+
             }
           }
 
         )
   }
   onSubmit(f: NgForm) {
-    this.modalService.dismissAll(); //dismiss the modal
+    // this.modalService.dismissAll(); //dismiss the modal
   }
 
   
