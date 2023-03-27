@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 //@RestControllerAdvice
 //public class GlobalExceptionHandler {
@@ -44,6 +45,11 @@ public class GlobalExceptionHandler extends RuntimeException {
 	public ResponseEntity<ErrorMessage> demandIdNotFoundExceptionHandler(DemandIdNotFoundException exception, WebRequest request) {
 		return new ResponseEntity<>(new ErrorMessage(HttpStatus.NOT_FOUND.value(), new Date(), exception.getMessage(),
 				request.getDescription(false)),HttpStatus.NOT_FOUND);
+	}
+	@ExceptionHandler( MaxUploadSizeExceededException.class )
+	public ResponseEntity<ErrorMessage> demandIdNotFoundExceptionHandler(MaxUploadSizeExceededException exception, WebRequest request) {
+		return new ResponseEntity<>(new ErrorMessage(HttpStatus.INSUFFICIENT_STORAGE.value(), new Date(), exception.getMessage(),
+				request.getDescription(false)),HttpStatus.INSUFFICIENT_STORAGE);
 	}
 
 //	@ExceptionHandler(value = { UsersNotFoundException.class })

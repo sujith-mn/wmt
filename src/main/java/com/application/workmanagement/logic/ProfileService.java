@@ -217,4 +217,9 @@ public String localSave(MultipartFile file) throws IOException {
 
 	}
 
+	public List<ProfileDto> getProfilesHasNoResume() {
+		List<Profiles> profiles = profileRepository.findAll().stream().filter(profile -> profile.getPath() == null).collect(Collectors.toList());
+		return  profiles.stream().map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
+	}
+
 }

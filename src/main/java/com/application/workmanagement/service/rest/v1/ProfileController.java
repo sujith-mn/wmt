@@ -1,9 +1,16 @@
 package com.application.workmanagement.service.rest.v1;
 
+
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -132,6 +139,12 @@ public class ProfileController {
 		List<ProfileDto> profileList = profileService.getProfilesBasedOnSkillAndAvailability(skill, available);
 		return new ResponseEntity<>(profileList, HttpStatus.OK);
 	}
+	
+	@GetMapping("/resume")
+	public ResponseEntity<List<ProfileDto>> getProfilesHasNoResume() {
+		List<ProfileDto> profilesList = profileService.getProfilesHasNoResume();
+		return new ResponseEntity<> (profilesList,HttpStatus.OK);
+	}
 
 	@GetMapping("/by/search/{search}")
 	public ResponseEntity<List<ProfileDto>> getAllProfilesBySearch(@PathVariable("search") String search) {
@@ -156,10 +169,15 @@ public class ProfileController {
 	}
 	
 	@PostMapping("/local/upload")
-	public ResponseEntity<ResponseInfo> excelUpload(@RequestParam("resume") MultipartFile file) {
+	public ResponseEntity<ResponseInfo> resumeUpload(@RequestParam("resume") MultipartFile file) {
 
 		String message = "";
 		ResponseInfo responseInfo;
+		if(file.getSize()>1000000) {
+			message = "Maximum upload size exceeded";
+			responseInfo = new ResponseInfo(HttpStatus.INSUFFICIENT_STORAGE, file.getOriginalFilename(), message);
+			return new ResponseEntity<>(responseInfo,HttpStatus.INSUFFICIENT_STORAGE);
+		}
 
 		if (PDF.equals(file.getContentType()) || DOC.equals(file.getContentType())) {
 			try {
@@ -175,7 +193,7 @@ public class ProfileController {
 			}
 		}
 
-		message = "Please upload an excel file!";
+		message = "Please upload file with docx or pdf format";
 		responseInfo = new ResponseInfo(HttpStatus.BAD_REQUEST, file.getOriginalFilename(), message);
 		return new ResponseEntity<>(responseInfo, HttpStatus.BAD_REQUEST);
 	}
@@ -202,12 +220,25 @@ public class ProfileController {
 //
 //	}
 //	
-//	@GetMapping("/files/{id}")
-//	  public ResponseEntity<byte[]> getFile(@PathVariable("id") long id) {
-//	    Profiles profile = profileService.getFile(id);
-//
-//	    return ResponseEntity.ok()
-//	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + profile.getName() + "\"")
-//	        .body(profile.getResume());
-//	  }
+	@GetMapping("/download/{fileName:.+}")
+	public ResponseEntity<?> downloadFileFromLocal(@PathVariable String fileName) {
+		Path path = Paths.get("C:\\data\\" + fileName);
+		String format = null;
+		if(fileName.endsWith("pdf")) {
+			format=PDF;
+		}
+		else if(fileName.endsWith("docx")) {
+			format=DOC;
+		}
+		UrlResource resource = null;
+		try {
+			resource = new UrlResource(path.toUri());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return ResponseEntity.ok()
+				.contentType(MediaType.parseMediaType(format))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
+	}
 	}

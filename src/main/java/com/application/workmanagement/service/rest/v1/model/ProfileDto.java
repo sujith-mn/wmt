@@ -16,5 +16,6 @@ public class ProfileDto {
 	private String availability;
 	private String proposedBy;
 	private String source;
+	private String path;
 
 }
