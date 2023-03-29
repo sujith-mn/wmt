@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.application.common.exception.ResumeNotFoundException;
 import com.application.workmanagement.logic.ProfileService;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 
@@ -220,9 +221,15 @@ public class ProfileController {
 //
 //	}
 //	
-	@GetMapping("/download/{fileName:.+}")
-	public ResponseEntity<?> downloadFileFromLocal(@PathVariable String fileName) {
-		Path path = Paths.get("C:\\data\\" + fileName);
+	@GetMapping("/download/{id}")
+	public ResponseEntity<Object> downloadFileFromLocal(@PathVariable long id) {
+		
+		 ProfileDto profile = profileService.getProfileById(id);
+		
+		 if(profile.getPath()!=null) {
+			String fileName=profile.getPath();
+
+		Path path = Paths.get(fileName);
 		String format = null;
 		if(fileName.endsWith("pdf")) {
 			format=PDF;
@@ -241,4 +248,8 @@ public class ProfileController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
 	}
+	else {
+		throw new ResumeNotFoundException("Resume Not Available ");
 	}
+	}
+}

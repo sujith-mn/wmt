@@ -5,47 +5,26 @@ import java.util.Date;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-//@RestControllerAdvice
-//public class GlobalExceptionHandler {
-//	@ExceptionHandler(ResourceNotFoundException.class)
-//	public String resourceNotFoundException(ResourceNotFoundException ex){
-//		String message =ex.getMessage();
-//		
-//		return message;
-//		
-//	}
-//	
-//	@ExceptionHandler(MethodArgumentNotValidException.class)
-//	public ResponseEntity<Map<String ,String>> handleMethodArgsNotValidException(MethodArgumentNotValidException ex){
-//		Map<String,String> resp = new HashMap<>();
-//		ex.getBindingResult().getAllErrors().forEach((error)->{
-//			String fieldName =((FieldError)error).getField();
-//			String message = error.getDefaultMessage();
-//			resp.put(fieldName, message);
-//		
-//		});
-//		return new ResponseEntity<Map<String,String>>(resp,HttpStatus.BAD_REQUEST);
-//		
-//	}
-//}   
-
 @RestControllerAdvice
-public class GlobalExceptionHandler extends RuntimeException {
+public class GlobalExceptionHandler {
 
-	/**
-	* 
-	*/
-	private static final long serialVersionUID = 1L;
 	
 	@ExceptionHandler( DemandIdNotFoundException.class )
 	public ResponseEntity<ErrorMessage> demandIdNotFoundExceptionHandler(DemandIdNotFoundException exception, WebRequest request) {
 		return new ResponseEntity<>(new ErrorMessage(HttpStatus.NOT_FOUND.value(), new Date(), exception.getMessage(),
 				request.getDescription(false)),HttpStatus.NOT_FOUND);
 	}
+
+//	@ExceptionHandler( ResumeNotFoundException.class )
+//	public ResponseEntity<ErrorMessage> resumeNotFoundExceptionHandler(ResumeNotFoundException exception, WebRequest request) {
+//		return new ResponseEntity<>(new ErrorMessage(HttpStatus.NO_CONTENT.value(), new Date(), exception.getMessage(),
+//				request.getDescription(false)),HttpStatus.NO_CONTENT);
+//	}
 	@ExceptionHandler( MaxUploadSizeExceededException.class )
 	public ResponseEntity<ErrorMessage> demandIdNotFoundExceptionHandler(MaxUploadSizeExceededException exception, WebRequest request) {
 		return new ResponseEntity<>(new ErrorMessage(HttpStatus.INSUFFICIENT_STORAGE.value(), new Date(), exception.getMessage(),
@@ -59,13 +38,19 @@ public class GlobalExceptionHandler extends RuntimeException {
 //		return new ErrorMessage(HttpStatus.NOT_FOUND.value(), new Date(), exception.getMessage(),
 //				request.getDescription(false));
 //	}
+	@ExceptionHandler(value = { ResumeNotFoundException.class })
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	public ErrorMessage exceptionHandeler(ResumeNotFoundException exception, WebRequest request) {
+		return new ErrorMessage(HttpStatus.NO_CONTENT.value(), new Date(), exception.getMessage(),
+				request.getDescription(false));
+	}
 
-//	@ExceptionHandler(value = { Exception.class })
-//	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-//	public ErrorMessage exceptionHandeler(Exception exception, WebRequest request) {
-//		return new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), new Date(), exception.getMessage(),
-//				request.getDescription(false));
-//	}
+	@ExceptionHandler(value = { Exception.class })
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	public ErrorMessage exceptionHandeler(Exception exception, WebRequest request) {
+		return new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), new Date(), exception.getMessage(),
+				request.getDescription(false));
+	}
 
 }
 
