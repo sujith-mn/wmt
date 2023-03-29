@@ -71,6 +71,10 @@
                   <button mat-button (click)="openDelete(contentDelete, myRowData)">
                     <mat-icon>delete</mat-icon>
                   </button>
+                  <!-- <a href="profiles/download/" (click)="DownloadFile(myRowData)"><mat-icon>cloud_download</mat-icon> Resume</a> -->
+                  <button class="btn btn-outline-dark" (click)="DownloadFile(myRowData)"  >
+                    <mat-icon>cloud_download</mat-icon> Resume
+                   </button>
                   
                 </td>
               </ng-container>

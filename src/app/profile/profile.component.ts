@@ -3,7 +3,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { map } from 'rxjs';
+import { map, take } from 'rxjs';
+import { saveAs } from 'file-saver';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ProfileService } from '../shared/services/profile.service';
@@ -45,6 +46,7 @@ export class ProfileComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   detailProfileForm: FormGroup;
   editForm: FormGroup;
+  Data: any;
 
   constructor(
     private _http: HttpClient,
@@ -171,7 +173,7 @@ export class ProfileComponent implements OnInit {
   }
   // open end 
 
-
+  
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
@@ -303,5 +305,28 @@ console.log(a);
         }
 
       });
-    }
+    }//On delete END
+
+     //Resume Download Start
+ DownloadFile(Data : any){
+  console.log(Data.id);
+  return this.profileService.GetResume(Data.id).pipe(take(1))
+  .subscribe((response :any) => {
+    console.log(response)
+      const downloadLink = document.createElement('a');
+      // downloadLink.href = URL.createObjectURL(new Blob([response.body], { type: response.body.type }));
+      downloadLink.href = response.url;
+      console.log(downloadLink.href)
+      // const contentDisposition = response.headers.get('content-disposition');
+      // console.log(contentDisposition)
+      // const fileName = contentDisposition.split(';')[1].split('filename')[1].split('=')[1].trim();
+      downloadLink.download = "Resume";
+      downloadLink.click();
+  });
+
 }
+
+ //Resume Download END
+}
+ 
+

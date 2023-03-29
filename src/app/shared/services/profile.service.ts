@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { AppConfig, APP_CONFIG } from 'src/app/app-config';
 import { catchError, map, Subject } from 'rxjs';
 import { NotificationService } from './notification.service';
@@ -7,6 +7,7 @@ import {  NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Profile } from '../model/profile';
 import { NgForm } from '@angular/forms';
 
+import { saveAs } from 'file-saver';
 @Injectable({
   providedIn: 'root'
 })
@@ -184,5 +185,18 @@ export class ProfileService {
       })
     );
   }
+
+  //Profile Resume start
+  GetResume(id: any){
+    const httpOptions: Object = {
+      headers: new HttpHeaders({
+        'Access-Control-Allow-Headers': '*',
+        'Accept': 'application/pdf,application/doc'
+      })
+    };
+    return this.http.get<Profile>(this.baseURL + 'profiles/download/'+id,{ responseType: 'blob' as 'json', observe: 'response' });
+    
+  }
+  //Profile Resume End
 
 }
