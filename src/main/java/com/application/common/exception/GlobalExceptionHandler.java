@@ -44,6 +44,20 @@ public class GlobalExceptionHandler {
 		return new ErrorMessage(HttpStatus.NO_CONTENT.value(), new Date(), exception.getMessage(),
 				request.getDescription(false));
 	}
+	
+	@ExceptionHandler(value = { ResumeSizeLimitExceededException.class })
+	@ResponseStatus(value = HttpStatus.EXPECTATION_FAILED)
+	public ErrorMessage exceptionHandeler(ResumeSizeLimitExceededException exception, WebRequest request) {
+		return new ErrorMessage(HttpStatus.EXPECTATION_FAILED.value(), new Date(), exception.getMessage(),
+				request.getDescription(false));
+	}
+	
+	@ExceptionHandler(value = { ResumeAlreadyExistsException.class })
+	@ResponseStatus(value = HttpStatus.EXPECTATION_FAILED)
+	public ErrorMessage exceptionHandeler(ResumeAlreadyExistsException exception, WebRequest request) {
+		return new ErrorMessage(HttpStatus.EXPECTATION_FAILED.value(), new Date(), exception.getMessage(),
+				request.getDescription(false));
+	}
 
 	@ExceptionHandler(value = { Exception.class })
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)

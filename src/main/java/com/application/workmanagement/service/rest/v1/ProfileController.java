@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.application.common.exception.ResumeAlreadyExistsException;
 import com.application.common.exception.ResumeNotFoundException;
+import com.application.common.exception.ResumeSizeLimitExceededException;
 import com.application.workmanagement.logic.ProfileService;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 
@@ -174,11 +176,6 @@ public class ProfileController {
 
 		String message = "";
 		ResponseInfo responseInfo;
-		if(file.getSize()>1000000) {
-			message = "Maximum upload size exceeded";
-			responseInfo = new ResponseInfo(HttpStatus.INSUFFICIENT_STORAGE, file.getOriginalFilename(), message);
-			return new ResponseEntity<>(responseInfo,HttpStatus.INSUFFICIENT_STORAGE);
-		}
 
 		if (PDF.equals(file.getContentType()) || DOC.equals(file.getContentType())) {
 			try {
@@ -187,7 +184,18 @@ public class ProfileController {
 				responseInfo = new ResponseInfo(HttpStatus.CREATED, file.getOriginalFilename(), message);
 
 				return new ResponseEntity<>(responseInfo, HttpStatus.CREATED);
-			} catch (Exception e) {
+			}
+			catch(ResumeSizeLimitExceededException e) {
+				message = "Maximum Upload size exceeded";
+				responseInfo = new ResponseInfo(HttpStatus.EXPECTATION_FAILED, file.getOriginalFilename(), message);
+				return new ResponseEntity<>(responseInfo, HttpStatus.EXPECTATION_FAILED);
+			}
+			catch(ResumeAlreadyExistsException e) {
+				message = "file with filename: " + file.getOriginalFilename() + " already exists";
+				responseInfo = new ResponseInfo(HttpStatus.EXPECTATION_FAILED, file.getOriginalFilename(), message);
+				return new ResponseEntity<>(responseInfo, HttpStatus.EXPECTATION_FAILED);
+			}
+			catch (Exception e) {
 				message = "Could not upload the file: " + file.getOriginalFilename() + "!";
 				responseInfo = new ResponseInfo(HttpStatus.EXPECTATION_FAILED, file.getOriginalFilename(), message);
 				return new ResponseEntity<>(responseInfo, HttpStatus.EXPECTATION_FAILED);

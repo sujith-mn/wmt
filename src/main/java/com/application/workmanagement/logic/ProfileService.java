@@ -3,6 +3,9 @@ package com.application.workmanagement.logic;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.application.common.exception.ResourceNotFoundException;
+import com.application.common.exception.ResumeAlreadyExistsException;
+import com.application.common.exception.ResumeSizeLimitExceededException;
 import com.application.workmanagement.domain.model.Profiles;
 import com.application.workmanagement.domain.model.ProfilesExcel;
 import com.application.workmanagement.domain.repository.ProfileRepository;
@@ -63,7 +68,14 @@ public class ProfileService {
 	
 public String localSave(MultipartFile file) throws IOException {
 		
-		
+		Path filePath = Paths.get("C:\\data\\" + file.getOriginalFilename());
+		if(Files.exists(filePath)){
+			throw new ResumeAlreadyExistsException("Resume is already Exits");
+		}
+		else if(file.getSize()>1500000) {
+			throw new ResumeSizeLimitExceededException("Maximum upload size exceeded");
+		}
+		else {
 		File path = new File("C:\\data\\" + file.getOriginalFilename());
   		path.createNewFile();
 
@@ -74,6 +86,8 @@ public String localSave(MultipartFile file) throws IOException {
   		resumePath = "C:\\data\\" + file.getOriginalFilename();
   		
   		return resumePath;
+		}
+
   		
 	}
 
