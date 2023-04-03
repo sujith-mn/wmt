@@ -27,8 +27,6 @@ import com.application.workmanagement.domain.repository.ProfileRepository;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 import com.xlm.reader.SheetReader;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class ProfileService {
 
@@ -37,27 +35,26 @@ public class ProfileService {
 
 	@Autowired
 	private ModelMapper modelMapper;
-	
-	private String resumePath;
-	
-	
-	
+
+	private String resumePath=null;;
+
 	@Async
-	@Transactional
 	public ProfileDto save(ProfileDto profile) {
 
 		Profiles profiles = modelMapper.map(profile, Profiles.class);
-		profiles.setPath(resumePath);
 		if(resumePath!=null) {
+		profiles.setPath(resumePath);
+		resumePath=null;
 		profileRepository.save(profiles);
+		return modelMapper.map(profiles, ProfileDto.class);
 		}
 		else {
-			throw new ResumeNotUploadedException("Please Upload the resume");
+			throw new ResumeNotUploadedException("Please upload the resume");
 		}
-		resumePath = null;
-		return profile;
+
+
 	}
-	
+
 //
 //	public void localSave(MultipartFile file,ProfileDto profile) throws IOException {
 //		
@@ -74,31 +71,27 @@ public class ProfileService {
 //  		
 //		
 //	}
-	
-@Transactional
-public String localSave(MultipartFile file) throws IOException {
+
+	@Async
+	public void localSave(MultipartFile file) throws IOException {
 		
+
 		Path filePath = Paths.get("C:\\data\\" + file.getOriginalFilename());
-		if(Files.exists(filePath)){
+		if (Files.exists(filePath)) {
 			throw new ResumeAlreadyExistsException("Resume is already Exits");
-		}
-		else if(file.getSize()>1500000) {
+		} else if (file.getSize() > 1500000) {
 			throw new ResumeSizeLimitExceededException("Maximum upload size exceeded");
-		}
-		else {
-		File path = new File("C:\\data\\" + file.getOriginalFilename());
-  		path.createNewFile();
+		} else {
+			File path = new File("C:\\data\\" + file.getOriginalFilename());
+			path.createNewFile();
 
-  		FileOutputStream output = new FileOutputStream(path);
-  		output.write(file.getBytes());
-  		output.close();	
-  		
-  		resumePath = "C:\\data\\" + file.getOriginalFilename();
-  		
-  		return resumePath;
+			FileOutputStream output = new FileOutputStream(path);
+			output.write(file.getBytes());
+			resumePath = "C:\\data\\" + file.getOriginalFilename();
+			output.close();
+
 		}
 
-  		
 	}
 
 	public List<ProfileDto> getAllprofiles() {
@@ -154,7 +147,8 @@ public String localSave(MultipartFile file) throws IOException {
 			sr.setHeaderRow(0);
 
 			List<ProfilesExcel> excels = sr.retrieveRows(datatypeSheet, ProfilesExcel.class);
-			List<Profiles> excel = excels.stream().map(profile -> modelMapper.map(profile, Profiles.class)).collect(Collectors.toList());
+			List<Profiles> excel = excels.stream().map(profile -> modelMapper.map(profile, Profiles.class))
+					.collect(Collectors.toList());
 			profileRepository.saveAll(excel);
 		} catch (Exception e) {
 			throw new RuntimeException("fail to store excel data: " + e.getMessage());
@@ -237,13 +231,15 @@ public String localSave(MultipartFile file) throws IOException {
 //	}
 
 	public Profiles getFile(long id) {
-	    return profileRepository.findById(id).get();
+		return profileRepository.findById(id).get();
 
 	}
 
 	public List<ProfileDto> getProfilesHasNoResume() {
-		List<Profiles> profiles = profileRepository.findAll().stream().filter(profile -> profile.getPath() == null).collect(Collectors.toList());
-		return  profiles.stream().map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
+		List<Profiles> profiles = profileRepository.findAll().stream().filter(profile -> profile.getPath() == null)
+				.collect(Collectors.toList());
+		return profiles.stream().map(profile -> modelMapper.map(profile, ProfileDto.class))
+				.collect(Collectors.toList());
 	}
 
 }
