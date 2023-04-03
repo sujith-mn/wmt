@@ -19,12 +19,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.application.common.exception.ResourceNotFoundException;
 import com.application.common.exception.ResumeAlreadyExistsException;
+import com.application.common.exception.ResumeNotUploadedException;
 import com.application.common.exception.ResumeSizeLimitExceededException;
 import com.application.workmanagement.domain.model.Profiles;
 import com.application.workmanagement.domain.model.ProfilesExcel;
 import com.application.workmanagement.domain.repository.ProfileRepository;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 import com.xlm.reader.SheetReader;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ProfileService {
@@ -40,11 +43,17 @@ public class ProfileService {
 	
 	
 	@Async
+	@Transactional
 	public ProfileDto save(ProfileDto profile) {
 
 		Profiles profiles = modelMapper.map(profile, Profiles.class);
 		profiles.setPath(resumePath);
+		if(resumePath!=null) {
 		profileRepository.save(profiles);
+		}
+		else {
+			throw new ResumeNotUploadedException("Please Upload the resume");
+		}
 		resumePath = null;
 		return profile;
 	}
@@ -66,6 +75,7 @@ public class ProfileService {
 //		
 //	}
 	
+@Transactional
 public String localSave(MultipartFile file) throws IOException {
 		
 		Path filePath = Paths.get("C:\\data\\" + file.getOriginalFilename());

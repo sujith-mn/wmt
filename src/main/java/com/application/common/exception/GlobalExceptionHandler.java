@@ -58,6 +58,14 @@ public class GlobalExceptionHandler {
 		return new ErrorMessage(HttpStatus.EXPECTATION_FAILED.value(), new Date(), exception.getMessage(),
 				request.getDescription(false));
 	}
+	
+
+	@ExceptionHandler(value = { ResumeNotUploadedException.class })
+	@ResponseStatus(value = HttpStatus.EXPECTATION_FAILED)
+	public ErrorMessage exceptionHandeler(ResumeNotUploadedException exception, WebRequest request) {
+		return new ErrorMessage(HttpStatus.EXPECTATION_FAILED.value(), new Date(), exception.getMessage(),
+				request.getDescription(false));
+	}
 
 	@ExceptionHandler(value = { Exception.class })
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
