@@ -8,6 +8,6 @@ import com.application.workmanagement.domain.model.Users;
 
 public interface UserRepository extends JpaRepository<Users, Long> {
 
-	List<Users> findByEmail(String username);
+	List<Users> findByUsername(String username);
 
 }

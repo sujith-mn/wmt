@@ -30,7 +30,7 @@ public class PwdAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String pwd = authentication.getCredentials().toString();
-        List<Users> user = userRepository.findByEmail(username);
+        List<Users> user = userRepository.findByUsername(username);
         if (user.size() > 0) {
             if (passwordEncoder.matches(pwd, user.get(0).getPassword())) {
                 List<GrantedAuthority> authorities = new ArrayList<>();

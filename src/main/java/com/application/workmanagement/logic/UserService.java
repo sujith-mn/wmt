@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.application.common.exception.UserNotFoundException;
 import com.application.workmanagement.domain.model.Users;
 import com.application.workmanagement.domain.repository.UserRepository;
 import com.application.workmanagement.service.rest.v1.model.UsersDto;
@@ -40,6 +41,18 @@ public class UserService {
 	public void deleteUsers() {
 		userRepository.deleteAll();
 		
+	}
+
+	public String validateUser(UsersDto user) {
+		List<UsersDto> users = userRepository.findByUsername(user.getUsername()).stream().map(u -> modelMapper.map(u, UsersDto.class)).collect(Collectors.toList());
+
+		if(passwordEncoder.matches(user.getPassword(), users.get(0).getPassword())) {
+			
+			return "User is Authenticated";
+		}
+		else {
+			throw new UserNotFoundException("User is not Authenticated");
+		}
 	}
 
 }

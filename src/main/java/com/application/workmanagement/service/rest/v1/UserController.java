@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.common.exception.UserNotFoundException;
 import com.application.workmanagement.logic.UserService;
 import com.application.workmanagement.service.rest.v1.model.UsersDto;
 
@@ -33,6 +34,21 @@ public class UserController {
 		
 		info = new ResponseInfo(HttpStatus.CREATED, user, "User added");
 		return new ResponseEntity<> (info,HttpStatus.CREATED);
+	}
+	
+	
+	@PostMapping("/validate")
+	public ResponseEntity<ResponseInfo> validateUser(@RequestBody UsersDto user) {
+		try {
+		String message = userService.validateUser(user);
+		
+		info = new ResponseInfo(HttpStatus.CREATED, "User Exists", message);
+		return new ResponseEntity<> (info,HttpStatus.CREATED);
+		}
+		catch(UserNotFoundException e) {
+			info = new ResponseInfo(HttpStatus.NOT_FOUND,"Usesname or password is wrong" ,e.getMessage() );
+			return new ResponseEntity<> (info,HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	@GetMapping()
