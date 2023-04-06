@@ -192,7 +192,7 @@ public class ProfileController {
 				return new ResponseEntity<>(responseInfo, HttpStatus.EXPECTATION_FAILED);
 			}
 			catch(ResumeAlreadyExistsException e) {
-				message = "file with filename: " + file.getOriginalFilename() + " already exists";
+				message = "file already exists";
 				responseInfo = new ResponseInfo(HttpStatus.EXPECTATION_FAILED, file.getOriginalFilename(), message);
 				return new ResponseEntity<>(responseInfo, HttpStatus.EXPECTATION_FAILED);
 			}
