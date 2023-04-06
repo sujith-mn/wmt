@@ -33,11 +33,11 @@ export class ProfileComponent implements OnInit {
   closeResult: string;
   private deleteId: any;
   dataSource: MatTableDataSource<ProfileData>;
- 
+
   skillVal: string[] = ['Java', 'Angular', 'Spring framework', 'React'];
-  locationVal:string[] = ['Mumbai','Banglore','Chennai','Hyderabad'];
-  availabilityVal:string[]=['Blocked','Available'];
-  displayedColumns: string[] = ['id', 'name', 'primarySkill', 'location', 'availability', 'proposedBy', 'source','actions']
+  locationVal: string[] = ['Mumbai', 'Banglore', 'Chennai', 'Hyderabad'];
+  availabilityVal: string[] = ['Blocked', 'Available'];
+  displayedColumns: string[] = ['id', 'name', 'primarySkill', 'location', 'availability', 'proposedBy', 'source', 'actions']
 
 
   fileUploadUrl_Local = 'http://localhost:7001/profiles/excel/upload';
@@ -56,8 +56,8 @@ export class ProfileComponent implements OnInit {
   ) { }
   newProfile: FormGroup = this.fb.group({
     name: [null, [Validators.required]],
-    primarySkill:[null,[ Validators.required]],
-    location:[null, [Validators.required]],
+    primarySkill: [null, [Validators.required]],
+    location: [null, [Validators.required]],
     availability: [null, [Validators.required]],
     proposedBy: [null, [Validators.required]],
     source: [null, [Validators.required]]
@@ -68,23 +68,23 @@ export class ProfileComponent implements OnInit {
     })
     this.getProfile();
     this.editForm = this.fb.group({
-      id:[''],  
+      id: [''],
       name: [null, [Validators.required]],
-      primarySkill:[null,[ Validators.required]],
-      location:[null, [Validators.required]],
+      primarySkill: [null, [Validators.required]],
+      location: [null, [Validators.required]],
       availability: [null, [Validators.required]],
       proposedBy: [null, [Validators.required]],
       source: [null, [Validators.required]]
-  });
-    this.detailProfileForm=this.fb.group({
-        id:[''],
-        name: [''],
-        primarySkill:[''],
-        location:[''],
-        availability: [''],
-        proposedBy: [''],
-        source: ['']
-      
+    });
+    this.detailProfileForm = this.fb.group({
+      id: [''],
+      name: [''],
+      primarySkill: [''],
+      location: [''],
+      availability: [''],
+      proposedBy: [''],
+      source: ['']
+
     });
   }
 
@@ -113,12 +113,13 @@ export class ProfileComponent implements OnInit {
   }
 
   // Upload Resume
-  
+
 
   uploadResumeFile() {
     return this.profileService.uploadResume(this.file).subscribe(
       {
         next: (result: any) => {
+          this.addProfile();
           console.log(result);
         },
         error: (err: any) => {
@@ -173,7 +174,7 @@ export class ProfileComponent implements OnInit {
   }
   // open end 
 
-  
+
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
@@ -184,33 +185,41 @@ export class ProfileComponent implements OnInit {
     }
   }
 
- 
-  onSubmitProfile(){
+  addProfile() {
+
     var a = this.newProfile.value;
-console.log(a);
-      return this.profileService.NewProfile(a).subscribe(
-          { 
-            next: (result: any) => {
-            console.log(result);
-            this.uploadResumeFile();
-            },
-            error: (err: any) => {
-            console.log(err);
-            },
-            complete: () => {
-            console.log('complete');
-             this.newProfile.reset();
+    console.log(a);
 
-            }
-          }
+    return this.profileService.NewProfile(a).subscribe(
+      {
+        next: (result: any) => {
+          console.log(result);
+          // this.uploadResumeFile();
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+        complete: () => {
+          console.log('complete');
+          this.newProfile.reset();
 
-        )
+        }
+      }
+
+    )
+
+  }
+
+  onSubmitProfile() {
+    this.uploadResumeFile();
+
+
   }
   onSubmit(f: NgForm) {
     // this.modalService.dismissAll(); //dismiss the modal
   }
 
-  
+
   //Profile Detail Start
   openProfileDetails(targetModal: any, profile: Profile) {
     this.modalService.open(targetModal, {
@@ -219,19 +228,19 @@ console.log(a);
       size: 'md'
     });
     let editedProfileValues = {
-      id:profile.id,
-        name:profile.name,
-        primarySkill:profile.primarySkill,
-        location:profile.location,
-        availability:profile.availability,
-        proposedBy:profile.proposedBy,
-        source: profile.source
+      id: profile.id,
+      name: profile.name,
+      primarySkill: profile.primarySkill,
+      location: profile.location,
+      availability: profile.availability,
+      proposedBy: profile.proposedBy,
+      source: profile.source
     }
     this.detailProfileForm.patchValue(editedProfileValues);
   }
   //Profile Detail End
 
-  
+
   //Edit start
   openProfileEdit(targetModal: any, profile: Profile) {
     this.modalService.open(targetModal, {
@@ -241,30 +250,31 @@ console.log(a);
     });
 
     let editedProfileValues = {
-      id:profile.id,
+      id: profile.id,
       name: profile.name,
       primarySkill: profile.primarySkill,
       location: profile.location,
-      availability:profile.availability,
+      availability: profile.availability,
       proposedBy: profile.proposedBy,
       source: profile.source
-  }
-    
+    }
+
 
     this.editForm.patchValue(editedProfileValues);
   }
   // Edit End .
-   //Save Edit start
-   onSave() {
+  //Save Edit start
+  onSave() {
 
-    return this.profileService.editProfile(this.editForm.value.id,this.editForm.value).subscribe(
-      { next: (result: any) => {
+    return this.profileService.editProfile(this.editForm.value.id, this.editForm.value).subscribe(
+      {
+        next: (result: any) => {
         },
         error: (err: any) => {
-        console.log(err);
+          console.log(err);
         },
         complete: () => {
-        console.log('complete');
+          console.log('complete');
         }
       }
 
@@ -276,7 +286,7 @@ console.log(a);
 
   // openDelete start
   openDelete(targetModal: any, profile: Profile) {
-    this.deleteId=profile.id;
+    this.deleteId = profile.id;
     console.log(profile.id);
     this.modalService.open(targetModal, {
       backdrop: 'static',
@@ -290,43 +300,43 @@ console.log(a);
 
 
     return this.profileService.deleteProfile(this.deleteId).subscribe(
-      
+
       {
-        
-         next: (result: any) => {
-        
-        this.modalService.dismissAll();
+
+        next: (result: any) => {
+
+          this.modalService.dismissAll();
         },
         error: (err: any) => {
-        this.modalService.dismissAll();
+          this.modalService.dismissAll();
         },
         complete: () => {
-        console.log('complete');
+          console.log('complete');
         }
 
       });
-    }//On delete END
+  }//On delete END
 
-     //Resume Download Start
- DownloadFile(Data : any){
-  console.log(Data.id);
-  return this.profileService.GetResume(Data.id).pipe(take(1))
-  .subscribe((response :any) => {
-    console.log(response)
-      const downloadLink = document.createElement('a');
-      // downloadLink.href = URL.createObjectURL(new Blob([response.body], { type: response.body.type }));
-      downloadLink.href = response.url;
-      console.log(downloadLink.href)
-      // const contentDisposition = response.headers.get('content-disposition');
-      // console.log(contentDisposition)
-      // const fileName = contentDisposition.split(';')[1].split('filename')[1].split('=')[1].trim();
-      downloadLink.download = "Resume";
-      downloadLink.click();
-  });
+  //Resume Download Start
+  DownloadFile(Data: any) {
+    console.log(Data.id);
+    return this.profileService.GetResume(Data.id).pipe(take(1))
+      .subscribe((response: any) => {
+        console.log(response)
+        const downloadLink = document.createElement('a');
+        // downloadLink.href = URL.createObjectURL(new Blob([response.body], { type: response.body.type }));
+        downloadLink.href = response.url;
+        console.log(downloadLink.href)
+        // const contentDisposition = response.headers.get('content-disposition');
+        // console.log(contentDisposition)
+        // const fileName = contentDisposition.split(';')[1].split('filename')[1].split('=')[1].trim();
+        downloadLink.download = "Resume";
+        downloadLink.click();
+      });
 
+  }
+
+  //Resume Download END
 }
 
- //Resume Download END
-}
- 
 
