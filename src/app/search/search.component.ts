@@ -35,7 +35,7 @@ export interface demandData {
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css'],
+  styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
 
@@ -70,7 +70,7 @@ export class SearchComponent implements OnInit {
   skillVal: string[] = ['All','Java', 'Angular', 'Spring framework', 'React'];
   dataSource: MatTableDataSource<demandData>;
   pipe: DatePipe = new DatePipe('en-US');
-
+  filter:string;
   filterDictionary= new Map<string,string>();
   empFilters: EmpFilter[]=[];
   defaultValue = "All";
@@ -183,6 +183,16 @@ export class SearchComponent implements OnInit {
 
 
   }
+
+
+
+clearFilters(){
+  this.filterForm.reset();
+  this.empFilters[0].defaultValue = 'All';
+  this.empFilters[1].defaultValue = 'All';
+   this.dataSource.filter = '';
+   this.filter = '';
+}
   applyFilterDate() {
 
     var a = [];

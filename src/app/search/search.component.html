@@ -1,9 +1,13 @@
 <!-- Search Filter -->
+
 <div class="container-fluid p-0">
-  <div class="row m-2">
-  <form class="date-block" [formGroup]="filterForm">
-    <div class="date-block__list">
-      <mat-form-field>
+  <div class=" m-2 d-flex">
+    <div class="col-6">
+
+  <form class="col-12 d-flex date-block align-items-baseline" [formGroup]="filterForm">
+    <span class="me-2">	<mat-icon>date_range</mat-icon></span>
+
+      <mat-form-field class="me-2">
         <input matInput
           [matDatepicker]="fromDatePicker"
           placeholder="From Date"
@@ -11,9 +15,8 @@
         <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
         <mat-datepicker #fromDatePicker></mat-datepicker>
       </mat-form-field>
-    </div>
-      <div class="date-block__list">
-      <mat-form-field>
+
+      <mat-form-field class="me-2">
         <input matInput
           [matDatepicker]="toDate"
           placeholder="To Date"
@@ -21,25 +24,29 @@
         <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
         <mat-datepicker #toDate></mat-datepicker>
       </mat-form-field>
-    </div>
 
-
-     <button type="button" mat-button color="primary" class="primary" (click)="applyFilterDate()">Submit</button>
+     <button type="button" mat-raised-button color="primary" mat-button  (click)="applyFilterDate()">Submit</button>
   </form>
+</div>
+  <div class="col-6">
+    <span class="me-2"><mat-icon>filter_list</mat-icon></span>
+  <mat-form-field class="me-2" appearance="fill" *ngFor="let empfilter of empFilters">
+    <mat-label>{{ empfilter.name }}</mat-label>
+    <mat-select
+      [(value)]="empfilter.defaultValue"
+      (selectionChange)="applyEmpFilter($event, empfilter)">
+      <mat-option *ngFor="let op of empfilter.options" [value]="op">
+        {{ op }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-button matSuffix mat-button aria-label="Clear" (click)="clearFilters()">Clear</button>
+</div>
 </div>
 
 
-<mat-form-field appearance="fill" *ngFor="let empfilter of empFilters">
-  <mat-label>{{ empfilter.name }}</mat-label>
-  <mat-select
-    [(value)]="empfilter.defaultValue"
-    (selectionChange)="applyEmpFilter($event, empfilter)"
-  >
-    <mat-option *ngFor="let op of empfilter.options" [value]="op">
-      {{ op }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+
 
 
   <div class="row m-2">

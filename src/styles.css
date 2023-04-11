@@ -8,9 +8,15 @@
 .error-snackbar .mdc-snackbar__surface{
   background: #dc3545 !important;
   POSITION: ABSOLUTE;
-  TOP: 0;
+  TOP: -50;
   TEXT-ALIGN: CENTER;
   COLOR: #fff;
+}
+.cdk-overlay-container{
+  z-index: 1111;
+    position: absolute;
+    left: 0;
+    right: 0;
 }
 
 html, body { height: 100%; }

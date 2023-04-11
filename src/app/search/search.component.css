@@ -6,7 +6,7 @@
     text-align: left;
     background-color: white;
 } */
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
 .mat-mdc-form-field {
     color: rgb(241, 245, 249);
     border-color: black;

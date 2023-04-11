@@ -1,3 +1,4 @@
+
 <div class="container-fluid p-0">
   <div class="row m-2">
     <div class="col-3">
@@ -25,7 +26,6 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>id</th>
                 <td mat-cell *matCellDef="let element">{{ element.id }}</td>
               </ng-container>
-
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
                 <td mat-cell *matCellDef="let element">{{ element.name }}</td>
@@ -72,11 +72,9 @@
                     <mat-icon>delete</mat-icon>
                   </button>
                   <!-- <a href="profiles/download/" (click)="DownloadFile(myRowData)"><mat-icon>cloud_download</mat-icon> Resume</a> -->
-                  <button class="btn btn-outline-dark" (click)="DownloadFile(myRowData)"  >
+                  <button *ngIf="myRowData?.path" class="btn btn-outline-dark" (click)="DownloadFile(myRowData)"  >
                     <mat-icon>cloud_download</mat-icon> Resume
                    </button>
-
-
                 </td>
               </ng-container>
 
@@ -91,9 +89,6 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
-
-
-
       </div>
 
   </div>
@@ -309,6 +304,14 @@
         <label for="source">Source</label>
         <div class="input-group">
           <input formControlName="source" class="form-control" >
+        </div>
+      </div>
+
+      <div class="form-group  mt-2">
+        <label for="resume">Resume</label>
+        <div class="input-group">
+            <input type="file" formControlName="path" (change)="selectFile($event)" >
+
         </div>
       </div>
 

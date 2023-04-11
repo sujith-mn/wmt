@@ -35,7 +35,7 @@ export class LoginService {
       observe: 'response',
     };
     let body = JSON.stringify(value);
-
+    console.log(body)
     return this.http
       .post(this.baseURL + 'registrations/validate', body, httpOptions)
       .pipe(

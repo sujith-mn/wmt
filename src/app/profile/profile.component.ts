@@ -4,11 +4,12 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { map, take } from 'rxjs';
-import { saveAs } from 'file-saver';
+// import { saveAs } from 'file-saver';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ProfileService } from '../shared/services/profile.service';
 import { Profile } from '../shared/model/profile';
+
 export class ProfileData {
 
   constructor(
@@ -38,7 +39,7 @@ export class ProfileComponent implements OnInit {
   locationVal: string[] = ['Mumbai', 'Banglore', 'Chennai', 'Hyderabad'];
   availabilityVal: string[] = ['Blocked', 'Available'];
   displayedColumns: string[] = ['id', 'name', 'primarySkill', 'location', 'availability', 'proposedBy', 'source', 'actions']
-
+  profilepath = '';
 
   fileUploadUrl_Local = 'http://localhost:7001/profiles/excel/upload';
 
@@ -60,7 +61,8 @@ export class ProfileComponent implements OnInit {
     location: [null, [Validators.required]],
     availability: [null, [Validators.required]],
     proposedBy: [null, [Validators.required]],
-    source: [null, [Validators.required]]
+    source: [null, [Validators.required]],
+    path: [null, [Validators.required]]
   });
   ngOnInit(): void {
     this.profileService.refreshneeds.subscribe(() => {
@@ -74,7 +76,8 @@ export class ProfileComponent implements OnInit {
       location: [null, [Validators.required]],
       availability: [null, [Validators.required]],
       proposedBy: [null, [Validators.required]],
-      source: [null, [Validators.required]]
+      source: [null, [Validators.required]],
+      path: [null, [Validators.required]]
     });
     this.detailProfileForm = this.fb.group({
       id: [''],
@@ -83,8 +86,8 @@ export class ProfileComponent implements OnInit {
       location: [''],
       availability: [''],
       proposedBy: [''],
-      source: ['']
-
+      source: [''],
+      path: ['']
     });
   }
 
@@ -172,7 +175,7 @@ export class ProfileComponent implements OnInit {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
   }
-  // open end 
+  // open end
 
 
   private getDismissReason(reason: any): string {
@@ -234,7 +237,8 @@ export class ProfileComponent implements OnInit {
       location: profile.location,
       availability: profile.availability,
       proposedBy: profile.proposedBy,
-      source: profile.source
+      source: profile.source,
+      path:profile.path
     }
     this.detailProfileForm.patchValue(editedProfileValues);
   }
@@ -256,10 +260,11 @@ export class ProfileComponent implements OnInit {
       location: profile.location,
       availability: profile.availability,
       proposedBy: profile.proposedBy,
-      source: profile.source
+      source: profile.source,
+      path:profile.path
     }
 
-
+    this.profilepath = profile.path
     this.editForm.patchValue(editedProfileValues);
   }
   // Edit End .

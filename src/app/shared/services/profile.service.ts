@@ -7,7 +7,7 @@ import {  NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Profile } from '../model/profile';
 import { NgForm } from '@angular/forms';
 
-import { saveAs } from 'file-saver';
+// import { saveAs } from 'file-saver';
 @Injectable({
   providedIn: 'root'
 })
@@ -82,7 +82,7 @@ export class ProfileService {
     );
   }
 
-  //Upload Resume 
+  //Upload Resume
 
   uploadResume(x: File){
     let formData = new FormData();
@@ -103,8 +103,9 @@ export class ProfileService {
         return resData;
       }),
       catchError((err: any) => {
+        console.log(err.error.message)
         // this.modalService.dismissAll();
-        this.notificationService.error('Unable to proceed');
+        this.notificationService.error(err.error.message);
         throw err;
       })
     );
@@ -150,7 +151,7 @@ export class ProfileService {
         this.modalService.dismissAll();
         this.ProfileSubject.next();
           this.notificationService.success('Profile Updated successfully ');
-        return resData;
+        return  this.ProfileSubject.next(resData);
       }),
       catchError((err: any) => {
         this.modalService.dismissAll();
@@ -195,7 +196,7 @@ export class ProfileService {
       })
     };
     return this.http.get<Profile>(this.baseURL + 'profiles/download/'+id,{ responseType: 'blob' as 'json', observe: 'response' });
-    
+
   }
   //Profile Resume End
 

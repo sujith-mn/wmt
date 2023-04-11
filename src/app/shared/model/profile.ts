@@ -1,4 +1,5 @@
 export interface Profile{
+    path?: any
     id: number
     name: string
     primarySkill: string

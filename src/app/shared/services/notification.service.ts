@@ -112,11 +112,11 @@ export class NotificationService {
     message: string,
     action: string,
     className = 'my-custom-snackbar',
-    duration =3000
+    duration: number = 3000
   ) {
     this.snackBar.open(message, action, {
-      duration:duration,
-      panelClass: [className]
+      panelClass: className,
+     duration: duration
     });
   }
 }
