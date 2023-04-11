@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { AppConfig, APP_CONFIG } from 'src/app/app-config';
 import { catchError, map, Subject } from 'rxjs';
 import { NotificationService } from './notification.service';
-import {  NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Profile } from '../model/profile';
 import { NgForm } from '@angular/forms';
 
@@ -23,11 +23,11 @@ export class ProfileService {
     this.baseURL = appConfig.apiURL;
   }
 
-  get refreshneeds(){
+  get refreshneeds() {
     return this.ProfileSubject;
   }
 
-  getAllProfiles(){
+  getAllProfiles() {
     const httpOptions: Object = {
       headers: new HttpHeaders({
         'Access-Control-Allow-Headers': '*',
@@ -49,69 +49,70 @@ export class ProfileService {
   }
 
 
-  file:any;
-  selectFile(event: any){
+  file: any;
+  selectFile(event: any) {
     console.log(event);
     this.file = event.target.files[0];
     console.log(this.file);
   }
 
-  uploadProfile(x: string | Blob){
+  uploadProfile(x: string | Blob) {
     let formData = new FormData();
-    formData.append("file",x);
+    formData.append("file", x);
     const httpOptions: Object = {
       headers: new HttpHeaders({
         'Access-Control-Allow-Headers': '*',
-        'Content-Type' : 'file'
+        'Content-Type': 'file'
       }),
     };
     return this.http
-    .post(this.baseURL + 'profiles/excel/upload',formData, httpOptions)
-    .pipe(
-      map((resData: any) => {
-        this.ProfileSubject.next();
-        this.modalService.dismissAll();
-        this.notificationService.success('Profile Uploaded successfully');
-        return resData;
-      }),
-      catchError((err: any) => {
-        this.modalService.dismissAll();
-        this.notificationService.error('Unable to proceed');
-        throw err;
-      })
-    );
+      .post(this.baseURL + 'profiles/excel/upload', formData, httpOptions)
+      .pipe(
+        map((resData: any) => {
+          this.ProfileSubject.next();
+          this.modalService.dismissAll();
+          this.notificationService.success('Profile Uploaded successfully');
+          return resData;
+        }),
+        catchError((err: any) => {
+          this.modalService.dismissAll();
+          this.notificationService.error('Unable to proceed');
+          throw err;
+        })
+      );
   }
+
 
   //Upload Resume
 
-  uploadResume(x: File){
+  uploadResume(x: File) {
     let formData = new FormData();
-    formData.append("resume",x);
+    formData.append("resume", x);
     const httpOptions: Object = {
       headers: new HttpHeaders({
         'Access-Control-Allow-Headers': '*',
       }),
     };
     return this.http
-    .post(this.baseURL + 'profiles/local/upload',formData)
-    .pipe(
-      map((resData: any) => {
-        this.ProfileSubject.next();
-        // this.modalService.dismissAll();
-        this.notificationService.success('Profile Uploaded successfully');
-        console.log(resData)
-        return resData;
-      }),
-      catchError((err: any) => {
-        console.log(err.error.message)
-        // this.modalService.dismissAll();
-        this.notificationService.error(err.error.message);
-        throw err;
-      })
-    );
+      .post(this.baseURL + 'profiles/local/upload', formData)
+      .pipe(
+        map((resData: any) => {
+          this.ProfileSubject.next();
+          // this.modalService.dismissAll();
+          this.notificationService.success('Profile Uploaded successfully');
+          console.log(resData)
+          return resData;
+        }),
+        catchError((err: any) => {
+          console.log(err.error.message)
+          // this.modalService.dismissAll();
+          this.notificationService.error(err.error.message);
+          throw err;
+        })
+      );
   }
   // Add New profiles start .
-    NewProfile(value: NgForm){
+  NewProfile(value: NgForm) {
     const httpOptions: Object = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -123,7 +124,7 @@ export class ProfileService {
     let body = JSON.stringify(value);
 
     return this.http
-      .post<Profile[]>(this.baseURL + 'profiles/add',value,httpOptions)
+      .post<Profile[]>(this.baseURL + 'profiles/add', value, httpOptions)
       .pipe(
         map((resData: any) => {
           console.log(resData);
@@ -143,59 +144,59 @@ export class ProfileService {
   // Add New profiles end.
 
   //Profile Edit start
-  editProfile(id: any,values: any){
-    console.log("Edit profile : " ,values)
-    return this.http.put<Profile>(this.baseURL + 'profiles/'+id,values)
-    .pipe(
-      map((resData: any) => {
-        this.modalService.dismissAll();
-        this.ProfileSubject.next();
+  editProfile(id: any, values: any) {
+    console.log("Edit profile : ", values)
+    return this.http.put<Profile>(this.baseURL + 'profiles/' + id, values)
+      .pipe(
+        map((resData: any) => {
+          this.modalService.dismissAll();
+          this.ProfileSubject.next();
           this.notificationService.success('Profile Updated successfully ');
-        return  this.ProfileSubject.next(resData);
-      }),
-      catchError((err: any) => {
-        this.modalService.dismissAll();
-        this.notificationService.error('Unable to proceed');
-        throw err;
-      })
-    );
+          return this.ProfileSubject.next(resData);
+        }),
+        catchError((err: any) => {
+          this.modalService.dismissAll();
+          this.notificationService.error('Unable to proceed');
+          throw err;
+        })
+      );
   }
   //Profile Edit end
 
-  deleteProfile(id:any){
-    const httpOptions : Object = {
+  deleteProfile(id: any) {
+    const httpOptions: Object = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
       responseType: 'text',
       observe: 'response',
     };
-    return this.http.delete(this.baseURL + 'profiles/'+id,httpOptions)
+    return this.http.delete(this.baseURL + 'profiles/' + id, httpOptions)
 
-    .pipe(
-      map((resData: any) => {
-        this.modalService.dismissAll();
-        this.ProfileSubject.next();
-        this.notificationService.success('Profile Deleted successfully');
-        return resData;
-      }),
-      catchError((err: any) => {
-        this.modalService.dismissAll();
-        this.notificationService.error('Unable to proceed');
-        throw err;
-      })
-    );
+      .pipe(
+        map((resData: any) => {
+          this.modalService.dismissAll();
+          this.ProfileSubject.next();
+          this.notificationService.success('Profile Deleted successfully');
+          return resData;
+        }),
+        catchError((err: any) => {
+          this.modalService.dismissAll();
+          this.notificationService.error('Unable to proceed');
+          throw err;
+        })
+      );
   }
 
   //Profile Resume start
-  GetResume(id: any){
+  GetResume(id: any) {
     const httpOptions: Object = {
       headers: new HttpHeaders({
         'Access-Control-Allow-Headers': '*',
         'Accept': 'application/pdf,application/doc'
       })
     };
-    return this.http.get<Profile>(this.baseURL + 'profiles/download/'+id,{ responseType: 'blob' as 'json', observe: 'response' });
+    return this.http.get<Profile>(this.baseURL + 'profiles/download/' + id, { responseType: 'blob' as 'json', observe: 'response' });
 
   }
   //Profile Resume End

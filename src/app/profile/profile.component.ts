@@ -238,7 +238,7 @@ export class ProfileComponent implements OnInit {
       availability: profile.availability,
       proposedBy: profile.proposedBy,
       source: profile.source,
-      path:profile.path
+      path: profile.path
     }
     this.detailProfileForm.patchValue(editedProfileValues);
   }
@@ -261,7 +261,7 @@ export class ProfileComponent implements OnInit {
       availability: profile.availability,
       proposedBy: profile.proposedBy,
       source: profile.source,
-      path:profile.path
+      path: profile.path
     }
 
     this.profilepath = profile.path
@@ -269,8 +269,9 @@ export class ProfileComponent implements OnInit {
   }
   // Edit End .
   //Save Edit start
-  onSave() {
 
+
+  editedProfile() {
     return this.profileService.editProfile(this.editForm.value.id, this.editForm.value).subscribe(
       {
         next: (result: any) => {
@@ -284,6 +285,29 @@ export class ProfileComponent implements OnInit {
       }
 
     )
+
+  }
+
+  uploadEditedResumeFile() {
+    return this.profileService.uploadResume(this.file).subscribe(
+      {
+        next: (result: any) => {
+          this.editedProfile();
+          console.log(result);
+        },
+        error: (err: any) => {
+          //this.notificationService.setErrorMsg(err.error)
+          console.log(err);
+        },
+        complete: () => {
+          console.log('complete');
+        }
+      }
+    )
+  }
+
+  onSave() {
+    this.uploadEditedResumeFile();
 
 
   }
