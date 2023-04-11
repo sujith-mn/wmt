@@ -7,7 +7,7 @@
         <input matInput
           [matDatepicker]="fromDatePicker"
           placeholder="From Date"
-          formControlName="fromDatePicker">
+          formControlName="fromDatePicker" (dateChange)="addEvent('change', $event)">
         <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
         <mat-datepicker #fromDatePicker></mat-datepicker>
       </mat-form-field>
@@ -17,14 +17,30 @@
         <input matInput
           [matDatepicker]="toDate"
           placeholder="To Date"
-          formControlName="toDate">
+          formControlName="toDate" (dateChange)="addEvent('change', $event)">
         <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
         <mat-datepicker #toDate></mat-datepicker>
       </mat-form-field>
     </div>
-     <button mat-button color="primary" class="primary" (click)="applyFilterDate()">Submit</button>
+
+
+     <button type="button" mat-button color="primary" class="primary" (click)="applyFilterDate()">Submit</button>
   </form>
 </div>
+
+
+<mat-form-field appearance="fill" *ngFor="let empfilter of empFilters">
+  <mat-label>{{ empfilter.name }}</mat-label>
+  <mat-select
+    [(value)]="empfilter.defaultValue"
+    (selectionChange)="applyEmpFilter($event, empfilter)"
+  >
+    <mat-option *ngFor="let op of empfilter.options" [value]="op">
+      {{ op }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
 
   <div class="row m-2">
     <!-- New Demand start -->

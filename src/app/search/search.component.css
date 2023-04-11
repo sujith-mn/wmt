@@ -17,9 +17,9 @@
   min-width: auto;
 }
 .search .mat-mdc-text-field-wrapper{
-  border-bottom: 1px solid red !important;
+  /* border-bottom: 1px solid red !important; */
 }
 form .ng-invalid{
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 

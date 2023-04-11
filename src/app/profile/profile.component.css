@@ -5,7 +5,7 @@
     flex-direction: column;
     min-width: 0;
     text-align: right;
-    /* padding-left: 860px; 
+    /* padding-left: 860px;
 }
 .search{
     position: absolute;
@@ -13,7 +13,7 @@
     width: 100px;
     bottom: 393px;
     height: 75px;
-    
+
 } */
 .mat-mdc-form-field {
     color: rgb(241, 245, 249);
@@ -21,7 +21,7 @@
 }
 
 .mdc-data-table__cell, .mdc-data-table__header-cell{
-  padding: 0;
+  /* padding: 0; */
 }
 .mdc-button{
   min-width: auto;

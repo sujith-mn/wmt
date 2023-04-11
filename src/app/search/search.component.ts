@@ -17,6 +17,10 @@ import { DataStorageService } from '../shared/services/data-storage.service';
 import { Demand } from '../shared/model/demand';
 import { assign } from '../shared/model/assign';
 import { DatePipe } from '@angular/common';
+import { MatSelectChange } from '@angular/material/select';
+import { EmpFilter } from '../shared/model/emptyfier';
+import { filter } from 'rxjs/internal/operators/filter';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 export interface demandData {
   id: string;
@@ -34,6 +38,17 @@ export interface demandData {
   styleUrls: ['./search.component.css'],
 })
 export class SearchComponent implements OnInit {
+
+  constructor(
+    private httpClient: HttpClient,
+    private modalService: NgbModal, //Add parameter of type NgbModal
+    private fb: FormBuilder,
+    private dataStorageService: DataStorageService,
+    private router: Router
+  ) {
+    this.pipe = new DatePipe('en');
+  }
+
   [x: string]: any;
   Variable: any;
   ageingValue: any;
@@ -51,14 +66,20 @@ export class SearchComponent implements OnInit {
     'status',
     'actions',
   ];
-  statusVal: string[] = ['open', 'complete', 'pending', 'InProgress'];
-  skillVal: string[] = ['Java', 'Angular', 'Spring framework', 'React'];
+  statusVal: string[] = ['All','Open', 'complete', 'pending', 'InProgress'];
+  skillVal: string[] = ['All','Java', 'Angular', 'Spring framework', 'React'];
   dataSource: MatTableDataSource<demandData>;
   pipe: DatePipe = new DatePipe('en-US');
 
-  public filterForm = new FormGroup({
+  filterDictionary= new Map<string,string>();
+  empFilters: EmpFilter[]=[];
+  defaultValue = "All";
+   filterValues = {}
+  filterForm: FormGroup = this.fb.group({
     fromDatePicker: new FormControl(''),
     toDate: new FormControl(),
+    skill: [null, [Validators.required]],
+    Status: [null, [Validators.required]],
   });
 
   get fromDatePicker() {
@@ -73,15 +94,7 @@ export class SearchComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(
-    private httpClient: HttpClient,
-    private modalService: NgbModal, //Add parameter of type NgbModal
-    private fb: FormBuilder,
-    private dataStorageService: DataStorageService,
-    private router: Router
-  ) {
-    this.pipe = new DatePipe('en');
-  }
+
 
   newDemand: FormGroup = this.fb.group({
     manager: [null, [Validators.required]],
@@ -92,6 +105,28 @@ export class SearchComponent implements OnInit {
     skill: [null, [Validators.required]],
     status: [null, [Validators.required]],
   });
+
+
+  filterSelectObj = [
+    {
+      name: 'ID',
+      columnProp: 'id',
+      options: []
+    }, {
+      name: 'skill',
+      columnProp: 'skill',
+      options: []
+    },
+     {
+      name: 'status',
+      columnProp: 'status',
+      options: []
+    }
+  ]
+
+
+
+
   ngOnInit(): void {
     this.newDemand.get('created')?.valueChanges.subscribe((value) => {
       console.log(value);
@@ -139,10 +174,23 @@ export class SearchComponent implements OnInit {
       skill: [null, Validators.required],
       status: [null, Validators.required],
     });
+
+    // multiple filter
+
+    this.empFilters.push({name:'skill',options:this.skillVal,defaultValue:this.defaultValue});
+    this.empFilters.push({name:'status',options:this.statusVal,defaultValue:this.defaultValue});
+
+
+
   }
   applyFilterDate() {
-    // this.getFilterDate();
-    this.dataSource.filter = '' + Math.random();
+
+    var a = [];
+    this.dataSource.filter = ''+Math.random();
+    // a =  [["skill","All"],["status","All"],''+Math.random()];
+
+    // this.dataSource.filter = JSON.stringify(a)
+    console.log(a);
   }
 
   getDemands() {
@@ -173,26 +221,65 @@ export class SearchComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
-        this.dataSource.filterPredicate = (data, filter) => {
-          if (this.fromDatePicker && this.toDate) {
-            console.log(this.fromDatePicker);
-            console.log(this.toDate);
-            let mySimpleFormatFromDate = this.pipe.transform(
-              this.fromDatePicker,
-              'yyyy-MM-dd'
-            );
-            let mySimpleFormatToDate = this.pipe.transform(
-              this.toDate,
-              'yyyy-MM-dd'
-            );
 
-            return (
-              data.created >= mySimpleFormatFromDate &&
-              data.created <= mySimpleFormatToDate
-            );
+          this.dataSource.filterPredicate = (data, filter) => {
+
+            // var count = (filter.match(/All/g) || []).length;
+            // console.log(count);
+
+            //   if (this.fromDatePicker && this.toDate && count == 2)  {
+
+            //         let mySimpleFormatFromDate = this.pipe.transform(
+            //           this.fromDatePicker,
+            //           'yyyy-MM-dd'
+            //         );
+            //         let mySimpleFormatToDate = this.pipe.transform(
+            //           this.toDate,
+            //           'yyyy-MM-dd'
+            //         );
+
+            //         return (
+            //           data.created >= mySimpleFormatFromDate &&
+            //           data.created <= mySimpleFormatToDate
+            //         );
+            //       }
+            //       return true;
+            //     };
+
+
+            if(filter.includes('status') || filter.includes('skill')){
+              var map = new Map(JSON.parse(filter));
+              let isMatch = false;
+              for (let [key, value] of map) {
+                isMatch = value == 'All' || data[key as keyof Demand] == value;
+                if (!isMatch) return false;
+              }
+              return isMatch;
+            }
+            else{
+              if (this.fromDatePicker && this.toDate)  {
+
+                let mySimpleFormatFromDate = this.pipe.transform(
+                  this.fromDatePicker,
+                  'yyyy-MM-dd'
+                );
+                let mySimpleFormatToDate = this.pipe.transform(
+                  this.toDate,
+                  'yyyy-MM-dd'
+                );
+
+                return (
+                  data.created >= mySimpleFormatFromDate &&
+                  data.created <= mySimpleFormatToDate
+                );
+              }
+              return true;
+
+            }
+
+
           }
-          return true;
-        };
+
       },
       (errorResponse) => {
         console.log(errorResponse);
@@ -201,6 +288,38 @@ export class SearchComponent implements OnInit {
         console.log('complete');
       }
     );
+  }
+  addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
+    this.empFilters['defaultValue'] = 'All';
+  }
+
+  filterChange(filter, event) {
+
+    this.filterValues[filter.name] = event.target.value.trim().toLowerCase()
+    this.dataSource.filter = JSON.stringify(this.filterValues)
+    console.log(this.dataSource.filter);
+  }
+  getFilterObject(fullObj, key) {
+    const uniqChk = [];
+    fullObj.filter((obj) => {
+      if (!uniqChk.includes(obj[key])) {
+        uniqChk.push(obj[key]);
+      }
+      return obj;
+    });
+    return uniqChk;
+  }
+
+
+
+
+  applyEmpFilter(ob:MatSelectChange,empfilter:EmpFilter) {
+
+    this.filterDictionary.set(empfilter.name,ob.value);
+    var jsonString = JSON.stringify(Array.from(this.filterDictionary.entries()));
+    console.log(jsonString);
+    this.dataSource.filter = jsonString;
+    //console.log(this.filterValues);
   }
 
   getAgeing(_item: any) {

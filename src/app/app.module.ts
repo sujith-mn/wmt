@@ -30,6 +30,7 @@ import { AssignComponent } from './assign/assign.component';
 import { LoginComponent } from './login/login.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import {MatSelectModule} from '@angular/material/select';
 @NgModule({
   declarations: [
     AppComponent,
@@ -62,7 +63,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatToolbarModule,
     MatSnackBarModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSelectModule
   ],
   exports: [
     MatButtonModule,
