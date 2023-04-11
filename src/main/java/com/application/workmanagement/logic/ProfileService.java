@@ -219,6 +219,8 @@ public class ProfileService {
 		updatedProfile.setPrimarySkill(profile.getPrimarySkill());
 		updatedProfile.setProposedBy(profile.getProposedBy());
 		updatedProfile.setSource(profile.getSource());
+		updatedProfile.setPath(resumePath);
+		resumePath=null;
 		profileRepository.save(updatedProfile);
 
 	}
