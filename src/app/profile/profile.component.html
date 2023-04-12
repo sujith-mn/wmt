@@ -310,8 +310,8 @@
       <div class="form-group  mt-2">
         <label for="resume">Resume</label>
         <div class="input-group">
-            <input type="file" formControlName="path" (change)="selectFile($event)" >
-
+            <input type="file" (change)="selectFile($event)" >
+            <span class="">{{profilepath}}</span>
         </div>
       </div>
 
