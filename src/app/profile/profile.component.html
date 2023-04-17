@@ -170,18 +170,18 @@
       <div class="form-group">
         <label for="resume">Resume</label>
         <div class="input-group">
-          <!-- <input formControlName="source" type="text" name="resume" id="resume" class="form-control" required >
-         -->
-         <!-- <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate> -->
+      
 
-          <input type="file" (change)="selectFile($event)"/>
+          <input type="file" formControlName="path" required (change)="selectFile($event)"/>
 
-          <!-- <button class="btn btn-md btn-outline-primary" (click)="uploadResumeFile()">Upload</button>     -->
-
-        <!-- </form> -->
         </div>
       </div>
 
+         
+        <span *ngIf="path.errors?.inValidExt 
+              && !path.errors?.required" class="error">
+              Invalid file extension.
+        </span>
 
       <div class="text-center mt-2">
         <button type="submit" [disabled]="!newProfile.valid"  class="btn btn-info">Submit</button>
@@ -311,7 +311,8 @@
         <label for="resume">Resume</label>
         <div class="input-group">
             <input type="file" (change)="selectFile($event)" >
-            <span class="">{{profilepath}}</span>
+            <span class="">
+              {{profilepath}}</span>
         </div>
       </div>
 

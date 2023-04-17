@@ -6,9 +6,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { map, take } from 'rxjs';
 // import { saveAs } from 'file-saver';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ProfileService } from '../shared/services/profile.service';
 import { Profile } from '../shared/model/profile';
+import { fileExtensionValidator } from './file-extension-validator.directive';
 
 export class ProfileData {
 
@@ -40,6 +41,7 @@ export class ProfileComponent implements OnInit {
   availabilityVal: string[] = ['Blocked', 'Available'];
   displayedColumns: string[] = ['id', 'name', 'primarySkill', 'location', 'availability', 'proposedBy', 'source', 'actions']
   profilepath = '';
+  acceptedExtensions = "pdf,doc,docx";
 
   fileUploadUrl_Local = 'http://localhost:7001/profiles/excel/upload';
 
@@ -62,8 +64,12 @@ export class ProfileComponent implements OnInit {
     availability: [null, [Validators.required]],
     proposedBy: [null, [Validators.required]],
     source: [null, [Validators.required]],
-    path: [null, [Validators.required]]
+    path: [null,[Validators.required, fileExtensionValidator(this.acceptedExtensions)]]
   });
+
+  get path(): FormArray {
+    return this.newProfile.get('path') as FormArray;
+  }
   ngOnInit(): void {
     this.profileService.refreshneeds.subscribe(() => {
       this.getProfile();
