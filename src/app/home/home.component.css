@@ -3,3 +3,7 @@
   background-size: cover;
   height: calc(100vh - 68px);
 }
+.status_div iframe{
+ width: 50% !important;
+ text-align: center ;
+}
