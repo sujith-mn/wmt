@@ -101,9 +101,10 @@ public class ProfileController {
 	}
 
 	@GetMapping("/")
-	public ResponseEntity<List<ProfileDto>> getAllProfiles() {
+	public ResponseEntity<List<ProfileDto>> getAllProfiles(@RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "5") int size) {
 
-		List<ProfileDto> profilesList = profileService.getAllprofiles();
+		List<ProfileDto> profilesList = profileService.getAllprofiles(page,size);
 
 		return new ResponseEntity<>(profilesList, HttpStatus.OK);
 

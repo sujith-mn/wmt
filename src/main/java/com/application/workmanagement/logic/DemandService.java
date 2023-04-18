@@ -7,6 +7,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,9 +76,10 @@ public class DemandService {
 
     //Read All Demands.
 	
-	public List<DemandDto> getAllDemands() {
+	public List<DemandDto> getAllDemands(int page,int size) {
 		
-		List<Demand> demands = this.demandRepository.findAll();
+		Pageable paging = PageRequest.of(page, size);
+		Page<Demand> demands =  demandRepository.findAll(paging);
 		List<DemandDto> demandDtos = demands.stream()
 											.map(demand->this.demandToDto(demand))
 											.collect(Collectors.toList());
@@ -154,7 +158,7 @@ public class DemandService {
 		List<ProfileDto> profiles = demand.getProfiles().stream().map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
 		return profiles;
 	}
-	
+
 
 	
 	

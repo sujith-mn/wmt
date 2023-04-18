@@ -20,7 +20,7 @@ public class DemandDto {
 	//private Integer DemandId;
 	
 	@NotNull(message = "Customer Manager Field can't be null")
-	private String Manager;
+	private String manager;
 	
 	@NotNull(message = "Created On Field can't be null")
 	private Date created;
@@ -30,7 +30,7 @@ public class DemandDto {
 	
 	//new end
 	
-	private Integer ageing;
+	private int ageing;
 	
 	@NotNull(message = "Priority Field can't be null")
 	private Integer priority;

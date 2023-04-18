@@ -90,14 +90,18 @@ public class DemandController {
 	
 	//Get All Demands
 	@GetMapping("/")
-	public ResponseEntity<List<DemandDto>> getAllDemands(){
-		return ResponseEntity.ok(this.demandService.getAllDemands());
+	public ResponseEntity<List<DemandDto>> getAllDemands(@RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "5") int size){
+		
+		return ResponseEntity.ok(this.demandService.getAllDemands(page,size));
+		
 	}
 	
 	@GetMapping("/status/")
-	public ResponseEntity<List<DemandDto>> getAllDemandsWithOpenAndInprogress(){
+	public ResponseEntity<List<DemandDto>> getAllDemandsWithOpenAndInprogress(@RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "5" )int size){
 		
-		List<DemandDto> demands =demandService.getAllDemands().stream().filter(demand -> demand.getStatus().equalsIgnoreCase("open")|| demand.getStatus().equalsIgnoreCase("in-progress")).collect(Collectors.toList());
+		List<DemandDto> demands =demandService.getAllDemands(page,size).stream().filter(demand -> demand.getStatus().equalsIgnoreCase("open")|| demand.getStatus().equalsIgnoreCase("in-progress")).collect(Collectors.toList());
 		return new ResponseEntity<>(demands,HttpStatus.OK);
 		
 	}

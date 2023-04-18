@@ -23,7 +23,7 @@ public class Demand {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private int Id;
-	private String Manager;
+	private String manager;
 	private Date created;
 	private Date EndDate;
 	private int ageing;

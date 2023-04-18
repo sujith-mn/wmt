@@ -13,6 +13,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,9 +96,11 @@ public class ProfileService {
 
 	}
 
-	public List<ProfileDto> getAllprofiles() {
+	public List<ProfileDto> getAllprofiles(int page,int size) {
+		
+		Pageable paging = PageRequest.of(page, size);
 
-		return profileRepository.findAll().stream().map(profile -> modelMapper.map(profile, ProfileDto.class))
+		return profileRepository.findAll(paging).stream().map(profile -> modelMapper.map(profile, ProfileDto.class))
 				.collect(Collectors.toList());
 	}
 
