@@ -1,9 +1,12 @@
 package com.application.workmanagement.service.rest.v1;
 
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.application.workmanagement.domain.model.Demand;
+import com.application.workmanagement.domain.repository.DemandRepository;
 import com.application.workmanagement.logic.DemandService;
 import com.application.workmanagement.service.rest.v1.model.DemandDto;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
@@ -39,6 +44,12 @@ public class DemandController {
 	private DemandService demandService;
 	
 	private ResponseInfo responseInfo;
+	
+	@Autowired
+	private DemandRepository demandRepo;
+	
+	@Autowired
+	private ModelMapper modelMapper;
 	
 	//create demand
 	@PostMapping("/")
@@ -137,6 +148,68 @@ public class DemandController {
 		
 		return new ResponseEntity<>(responseInfo,HttpStatus.OK);
 	}
+	
+	
+
+	//Filtering with All values
+	@GetMapping("/getByAllFields/{skill}/{status}/{startDate}/{endDate}")
+	public ResponseEntity<List<DemandDto>> getDemandsByAdvanceSearch(
+			@PathVariable("skill")String skill,
+			@PathVariable("status")String status,
+			@PathVariable("startDate") String startDate,
+			@PathVariable("endDate") String endDate
+			)
+			{
+		List<DemandDto>	result = demandRepo.getByAllFields(skill,status,startDate,endDate)
+				.stream()
+				.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+				.collect(Collectors.toList());
+		
+		return new ResponseEntity<>(result , HttpStatus.OK);
+		}
+	
+	//Filtering with Date
+		@GetMapping("/getByDate/{startDate}/{endDate}")
+		public ResponseEntity<List<DemandDto>> getDemandsByDateSearch(
+				
+				@PathVariable("startDate") String startDate,
+				@PathVariable("endDate") String endDate
+				)
+				{
+			List<DemandDto>	result = demandRepo.getByDateField(startDate,endDate)
+					.stream()
+					.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+					.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(result , HttpStatus.OK);
+			}
+	
+		//Filtering with skill values
+		@GetMapping("/getBySkillField/{skill}")
+		public ResponseEntity<List<DemandDto>> getDemandsBySkillSearch(
+				@PathVariable("skill")String skill)
+				{
+			List<DemandDto>	result = demandRepo.getBySkillField(skill).stream()
+					.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+					.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(result , HttpStatus.OK);
+			}
+		
+		//Filtering with status values
+		@GetMapping("/getByStatusField/{status}")
+		public ResponseEntity<List<DemandDto>> getDemandsByStatusSearch(@PathVariable("status")String status)
+				{
+			List<DemandDto>	result = demandRepo.getByStatusField(status).stream()
+					.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+					.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(result , HttpStatus.OK);
+			}
 }
 	
 

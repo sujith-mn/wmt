@@ -43,4 +43,11 @@ public class DemandDto {
 	
 	private List<Profiles> profilesList;
 
+	@Override
+	public String toString() {
+		return "DemandDto [Id=" + Id + ", manager=" + manager + ", created=" + created + ", endDate=" + endDate
+				+ ", ageing=" + ageing + ", priority=" + priority + ", skill=" + skill + ", status=" + status
+				+ ", profilesList=" + profilesList + "]";
+	}
+
 }
