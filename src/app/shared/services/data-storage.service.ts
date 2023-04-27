@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { AppConfig, APP_CONFIG } from 'src/app/app-config';
 import { catchError, map, Subject } from 'rxjs';
 import { Demand } from '../model/demand';
@@ -12,6 +12,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class DataStorageService {
   private baseURL!: string;
  DemandSubject = new Subject<void>();
+ filterSubject = new Subject<void>();
   constructor(
     private http: HttpClient,
     public notificationService: NotificationService,
@@ -83,6 +84,38 @@ export class DataStorageService {
       })
     );
   }
+
+  filterDemand(val){
+    let variable;
+
+    if(val.fromdate && val.todate){
+      variable = decodeURIComponent(encodeURIComponent(`${val.status}`));
+      variable = 'getByDate/'+val.fromdate/val.todate;
+    }
+    else if(val.status){
+      variable = decodeURIComponent(encodeURIComponent(`${val.status}`));
+      variable = 'getByStatusField/'+variable;
+    }
+    else{
+      variable = decodeURIComponent(encodeURIComponent(`${val.skill}/${val.status}`)).replace(/\/$/,'');
+      variable = 'getBySkillField/'+variable;
+    }
+    return this.http.get(`${this.baseURL}api/demands/${variable}`)
+    .pipe(
+      map((resData: any) => {
+        console.log(resData);
+        // this.modalService.dismissAll();
+        this.DemandSubject.next(resData);
+        //   this.notificationService.success('Demand Updated successfully ');
+        return resData;
+      }),
+      catchError((err: any) => {
+
+        throw err;
+      })
+    );
+  }
+
   deleteDemand(id:any){
     console.log("delete id ",id);
     return this.http.delete<Demand>(this.baseURL + 'api/demands/'+id)

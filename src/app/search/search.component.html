@@ -2,10 +2,10 @@
 
 <div class="container-fluid p-0">
   <div class=" m-2 d-flex">
-    <div class="col-6">
+    <div class="col-12">
 
-  <form class="col-12 d-flex date-block align-items-baseline" [formGroup]="filterForm">
-    <span class="me-2">	<mat-icon>date_range</mat-icon></span>
+  <form class="col-12 d-flex justify-content-center date-block align-items-baseline" [formGroup]="filterForm">
+    <!-- <span class="me-2">	<mat-icon>date_range</mat-icon></span> -->
 
       <mat-form-field class="me-2">
         <input matInput
@@ -25,24 +25,26 @@
         <mat-datepicker #toDate></mat-datepicker>
       </mat-form-field>
 
+      <mat-form-field class="me-2" appearance="fill" *ngFor="let empfilter of empFilters">
+        <mat-label>{{ empfilter.name }}</mat-label>
+        <mat-select
+          [(value)]="empfilter.defaultValue"
+          formControlName="{{ empfilter.name }}" >
+          <mat-option *ngFor="let op of empfilter.options" [value]="op">
+            {{ op }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-button matSuffix mat-button aria-label="Clear" (click)="clearFilters()">Clear</button>
      <button type="button" mat-raised-button color="primary" mat-button  (click)="applyFilterDate()">Submit</button>
   </form>
 </div>
-  <div class="col-6">
+  <!-- <div class="col-6">
     <span class="me-2"><mat-icon>filter_list</mat-icon></span>
-  <mat-form-field class="me-2" appearance="fill" *ngFor="let empfilter of empFilters">
-    <mat-label>{{ empfilter.name }}</mat-label>
-    <mat-select
-      [(value)]="empfilter.defaultValue"
-      (selectionChange)="applyEmpFilter($event, empfilter)">
-      <mat-option *ngFor="let op of empfilter.options" [value]="op">
-        {{ op }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
 
-  <button mat-button matSuffix mat-button aria-label="Clear" (click)="clearFilters()">Clear</button>
-</div>
+
+
+</div> -->
 </div>
 
 

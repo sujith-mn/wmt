@@ -31,6 +31,7 @@ import { LoginComponent } from './login/login.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
+import { DatePipe } from '@angular/common';
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,6 +43,7 @@ import {MatSelectModule} from '@angular/material/select';
     LoginComponent
   ],
   imports: [
+
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
@@ -71,7 +73,7 @@ import {MatSelectModule} from '@angular/material/select';
     MatFormFieldModule,
     MatRippleModule,
   ],
-  providers: [DataStorageService,NotificationService,{ provide: APP_CONFIG, useValue: environment }],
+  providers: [  DatePipe,DataStorageService,NotificationService,{ provide: APP_CONFIG, useValue: environment }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

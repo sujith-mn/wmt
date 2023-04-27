@@ -35,16 +35,16 @@ export interface demandData {
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css']
+  styleUrls: ['./search.component.css'],
 })
 export class SearchComponent implements OnInit {
-
   constructor(
     private httpClient: HttpClient,
     private modalService: NgbModal, //Add parameter of type NgbModal
     private fb: FormBuilder,
     private dataStorageService: DataStorageService,
-    private router: Router
+    private router: Router,
+    private datePipe: DatePipe
   ) {
     this.pipe = new DatePipe('en');
   }
@@ -66,20 +66,20 @@ export class SearchComponent implements OnInit {
     'status',
     'actions',
   ];
-  statusVal: string[] = ['All','Open', 'complete', 'pending', 'InProgress'];
-  skillVal: string[] = ['All','Java', 'Angular', 'Spring framework', 'React'];
+  statusVal: string[] = ['All', 'Open', 'complete', 'pending', 'InProgress'];
+  skillVal: string[] = ['All', 'Java', 'Angular', 'Spring framework', 'React'];
   dataSource: MatTableDataSource<demandData>;
   pipe: DatePipe = new DatePipe('en-US');
-  filter:string;
-  filterDictionary= new Map<string,string>();
-  empFilters: EmpFilter[]=[];
-  defaultValue = "All";
-   filterValues = {}
+  filter: string;
+  filterDictionary = new Map<string, string>();
+  empFilters: EmpFilter[] = [];
+  defaultValue = 'All';
+  filterValues = {};
   filterForm: FormGroup = this.fb.group({
     fromDatePicker: new FormControl(''),
     toDate: new FormControl(),
-    skill: [null, [Validators.required]],
-    Status: [null, [Validators.required]],
+    skill: [null],
+    status: [null],
   });
 
   get fromDatePicker() {
@@ -94,8 +94,6 @@ export class SearchComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-
-
   newDemand: FormGroup = this.fb.group({
     manager: [null, [Validators.required]],
     created: [null, [Validators.required]],
@@ -106,53 +104,48 @@ export class SearchComponent implements OnInit {
     status: [null, [Validators.required]],
   });
 
-
   filterSelectObj = [
     {
       name: 'ID',
       columnProp: 'id',
-      options: []
-    }, {
+      options: [],
+    },
+    {
       name: 'skill',
       columnProp: 'skill',
-      options: []
+      options: [],
     },
-     {
+    {
       name: 'status',
       columnProp: 'status',
-      options: []
-    }
-  ]
-
-
-
+      options: [],
+    },
+  ];
 
   ngOnInit(): void {
     this.newDemand.get('created')?.valueChanges.subscribe((value) => {
       console.log(value);
-      var a: any = new Date(value);
-      var today = new Date();
-      var year = today.toLocaleString('default', { year: 'numeric' });
-      var month = today.toLocaleString('default', { month: '2-digit' });
-      var day = today.toLocaleString('default', { day: '2-digit' });
-
-      const formattedDate: any = year + '-' + month + '-' + day;
-      const dt = new Date(formattedDate);
-
-      const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-      const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-      const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
-      console.log(Math.floor((utc2 - utc1) / _MS_PER_DAY).toString());
-      this.newDemand.patchValue({
-        ageing: Math.floor((utc2 - utc1) / _MS_PER_DAY).toString(),
-      });
-
-      return value;
-    });
-    this.dataStorageService.refreshneeds.subscribe(() => {
-      this.getDemands();
+      return this.getAgeing(value);
     });
     this.getDemands();
+    this.dataStorageService.refreshneeds.subscribe(
+      (response: any) => {
+        this.demands = response;
+
+        this.demands.forEach((value) => {
+          return this.getAgeing(value);
+        });
+        this.dataSource = new MatTableDataSource<demandData>(this.demands);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      },
+      (errorResponse) => {
+        console.log(errorResponse);
+      },
+      () => {
+        console.log('complete');
+      }
+    );
 
     this.detailForm = this.fb.group({
       id: [''],
@@ -177,30 +170,60 @@ export class SearchComponent implements OnInit {
 
     // multiple filter
 
-    this.empFilters.push({name:'skill',options:this.skillVal,defaultValue:this.defaultValue});
-    this.empFilters.push({name:'status',options:this.statusVal,defaultValue:this.defaultValue});
-
-
-
+    this.empFilters.push({
+      name: 'skill',
+      options: this.skillVal,
+      defaultValue: this.defaultValue,
+    });
+    this.empFilters.push({
+      name: 'status',
+      options: this.statusVal,
+      defaultValue: this.defaultValue,
+    });
   }
 
-
-
-clearFilters(){
-  this.filterForm.reset();
-  this.empFilters[0].defaultValue = 'All';
-  this.empFilters[1].defaultValue = 'All';
-   this.dataSource.filter = '';
-   this.filter = '';
-}
+  clearFilters() {
+    this.filterForm.reset();
+    this.empFilters[0].defaultValue = 'All';
+    this.empFilters[1].defaultValue = 'All';
+    this.dataSource.filter = '';
+    this.filter = '';
+  }
   applyFilterDate() {
+    var fromdate = this.datePipe.transform(
+      this.filterForm.value['fromDatePicker'],
+      'yyyy-MM-dd'
+    );
+    var todate = this.datePipe.transform(
+      this.filterForm.value['toDate'],
+      'yyyy-MM-dd'
+    );
+    var status = this.filterForm.value['status']
+      ? this.filterForm.value['status'].toLowerCase()
+      : '';
+    var skill = this.filterForm.value['skill']
+      ? this.filterForm.value['skill']
+      : '';
 
-    var a = [];
-    this.dataSource.filter = ''+Math.random();
-    // a =  [["skill","All"],["status","All"],''+Math.random()];
+    let value = {
+      fromdate: fromdate,
+      todate: todate,
+      status: status,
+      skill: skill,
+    };
 
-    // this.dataSource.filter = JSON.stringify(a)
-    console.log(a);
+    return this.dataStorageService.filterDemand(value).subscribe({
+      next: (_result: any) => {
+        console.log(_result);
+        //  return this.demands = _result;
+      },
+      error: (_err: any) => {
+        console.log(_err);
+      },
+      complete: () => {
+        console.log('complete');
+      },
+    });
   }
 
   getDemands() {
@@ -210,86 +233,12 @@ clearFilters(){
         this.demands = response;
 
         this.demands.forEach((value) => {
-          var a: any = new Date(value.created);
-          var today = new Date();
-          var year = today.toLocaleString('default', { year: 'numeric' });
-          var month = today.toLocaleString('default', { month: '2-digit' });
-          var day = today.toLocaleString('default', { day: '2-digit' });
-
-          const formattedDate: any = year + '-' + month + '-' + day;
-          const dt = new Date(formattedDate);
-
-          const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-          const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-          const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
-          // console.log(Math.floor((utc2 - utc1) / _MS_PER_DAY).toString());
-          value.ageing = Math.floor((utc2 - utc1) / _MS_PER_DAY).toString();
-          return value;
+          this.getAgeing(value);
         });
 
         this.dataSource = new MatTableDataSource<demandData>(this.demands);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-
-
-          this.dataSource.filterPredicate = (data, filter) => {
-
-            // var count = (filter.match(/All/g) || []).length;
-            // console.log(count);
-
-            //   if (this.fromDatePicker && this.toDate && count == 2)  {
-
-            //         let mySimpleFormatFromDate = this.pipe.transform(
-            //           this.fromDatePicker,
-            //           'yyyy-MM-dd'
-            //         );
-            //         let mySimpleFormatToDate = this.pipe.transform(
-            //           this.toDate,
-            //           'yyyy-MM-dd'
-            //         );
-
-            //         return (
-            //           data.created >= mySimpleFormatFromDate &&
-            //           data.created <= mySimpleFormatToDate
-            //         );
-            //       }
-            //       return true;
-            //     };
-
-
-            if(filter.includes('status') || filter.includes('skill')){
-              var map = new Map(JSON.parse(filter));
-              let isMatch = false;
-              for (let [key, value] of map) {
-                isMatch = value == 'All' || data[key as keyof Demand] == value;
-                if (!isMatch) return false;
-              }
-              return isMatch;
-            }
-            else{
-              if (this.fromDatePicker && this.toDate)  {
-
-                let mySimpleFormatFromDate = this.pipe.transform(
-                  this.fromDatePicker,
-                  'yyyy-MM-dd'
-                );
-                let mySimpleFormatToDate = this.pipe.transform(
-                  this.toDate,
-                  'yyyy-MM-dd'
-                );
-
-                return (
-                  data.created >= mySimpleFormatFromDate &&
-                  data.created <= mySimpleFormatToDate
-                );
-              }
-              return true;
-
-            }
-
-
-          }
-
       },
       (errorResponse) => {
         console.log(errorResponse);
@@ -303,12 +252,6 @@ clearFilters(){
     this.empFilters['defaultValue'] = 'All';
   }
 
-  filterChange(filter, event) {
-
-    this.filterValues[filter.name] = event.target.value.trim().toLowerCase()
-    this.dataSource.filter = JSON.stringify(this.filterValues)
-    console.log(this.dataSource.filter);
-  }
   getFilterObject(fullObj, key) {
     const uniqChk = [];
     fullObj.filter((obj) => {
@@ -318,18 +261,6 @@ clearFilters(){
       return obj;
     });
     return uniqChk;
-  }
-
-
-
-
-  applyEmpFilter(ob:MatSelectChange,empfilter:EmpFilter) {
-
-    this.filterDictionary.set(empfilter.name,ob.value);
-    var jsonString = JSON.stringify(Array.from(this.filterDictionary.entries()));
-    console.log(jsonString);
-    this.dataSource.filter = jsonString;
-    //console.log(this.filterValues);
   }
 
   getAgeing(_item: any) {
@@ -427,7 +358,6 @@ clearFilters(){
   }
 
   //Excel Upload End
-
   //Detail Start
   openDetails(targetModal: any, demand: Demand) {
     this.modalService.open(targetModal, {
@@ -539,5 +469,3 @@ clearFilters(){
     this.router.navigate(['/assign'], { queryParams: { Id: IdData.id } });
   }
 }
-
-
