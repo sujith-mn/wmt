@@ -1,9 +1,8 @@
 package com.application.workmanagement.service.rest.v1;
 
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.application.workmanagement.domain.model.Demand;
 import com.application.workmanagement.domain.repository.DemandRepository;
 import com.application.workmanagement.logic.DemandService;
 import com.application.workmanagement.service.rest.v1.model.DemandDto;
@@ -210,6 +208,224 @@ public class DemandController {
 			
 			return new ResponseEntity<>(result , HttpStatus.OK);
 			}
+		//********
+		//Filtering with status and skill
+		@GetMapping("/getBySkillAndStatusFields/{skill}/{status}")
+		public ResponseEntity<List<DemandDto>> getDemandsBySkillAndStatusSearch(
+				@PathVariable("skill")String skill,
+				@PathVariable("status")String status
+				)
+				{
+			List<DemandDto>	result = demandRepo.getBySkillAndStatusFields(skill,status)
+					.stream()
+					.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+					.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(result , HttpStatus.OK);
+			}
+		//Filtering with Date and status
+		@GetMapping("/getByStatusAndDateFields/{status}/{startDate}/{endDate}")
+		public ResponseEntity<List<DemandDto>> getDemandsByStatusAndDateSearch(
+				@PathVariable("status")String status,
+				@PathVariable("startDate") String startDate,
+				@PathVariable("endDate") String endDate
+				)
+				{
+			List<DemandDto>	result = demandRepo.getByStatusAndDateFields(status,startDate,endDate)
+					.stream()
+					.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+					.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(result , HttpStatus.OK);
+			}
+		
+		//Filtering with Date and skill
+		@GetMapping("/getDemandsBySkillAndDateFields/{skill}/{status}/{startDate}/{endDate}")
+		public ResponseEntity<List<DemandDto>> getDemandsBySkillAndDateSearch(
+				@PathVariable("skill")String skill,
+				@PathVariable("startDate") String startDate,
+				@PathVariable("endDate") String endDate
+				)
+				{
+			List<DemandDto>	result = demandRepo.getDemandsBySkillAndDateFields(skill,startDate,endDate)
+					.stream()
+					.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+					.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(result , HttpStatus.OK);
+			}
+		
+//Filtering with first date 
+		@GetMapping("/getByStartDateFields/{startDate}")
+		public ResponseEntity<List<DemandDto>> getByStartDateFields(
+				
+				@PathVariable("startDate") String startDate
+				)
+				{
+			List<DemandDto>	result = demandRepo.getByStartDateFields(startDate)
+					.stream()
+					.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+					.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(result , HttpStatus.OK);
+			}
+		
+//Filtering with firstdate ,status , skill
+		@GetMapping("/getBySkillStatusStartDateFields/{skill}/{status}/{startDate}")
+		public ResponseEntity<List<DemandDto>> getBySkillStatusStartDateFields(
+				@PathVariable("skill")String skill,
+				@PathVariable("status")String status,
+				@PathVariable("startDate") String startDate
+				)
+				{
+			List<DemandDto>	result = demandRepo.getBySkillStatusStartDateFields(skill,status,startDate)
+					.stream()
+					.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+					.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(result , HttpStatus.OK);
+			}
+		
+//Filtering with firstdate and status 
+		@GetMapping("/getByStatusDateFields/{status}/{startDate}")
+		public ResponseEntity<List<DemandDto>> getStatusAndDate(
+				@PathVariable("status")String status,
+				@PathVariable("startDate") String startDate
+				)
+				{
+			List<DemandDto>	result = demandRepo.getByStatusStartDateFields(status,startDate)
+					.stream()
+					.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+					.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(result , HttpStatus.OK);
+			}
+		
+//Filtering with first date and skill
+		@GetMapping("/getBySkillStartDateFields/{skill}/{startDate}")
+		public ResponseEntity<List<DemandDto>> GetDateAndSkill(
+				@PathVariable("skill")String skill,
+				@PathVariable("startDate") String startDate
+				)
+				{
+			List<DemandDto>	result = demandRepo.getBySkillStartDateFields(skill,startDate)
+					.stream()
+					.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+					.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(result , HttpStatus.OK);
+			}
+		
+		
+		
+		@GetMapping("/getDemandsBySearch")
+		public ResponseEntity<List<DemandDto>> getDemandsBySearch(
+				@RequestParam("skill") Optional<String> skill,
+				@RequestParam("status")Optional<String> status,
+				@RequestParam("startDate") Optional<String> startDate,
+				@RequestParam("endDate") Optional<String> endDate
+				) {
+			List<DemandDto>	result =null;
+			if(!(skill.isEmpty())&& !(status.isEmpty()) && !(startDate.isEmpty()) && !(endDate.isEmpty())) {
+				result = demandRepo.getByAllFields(skill.get(),status.get(),startDate.get(),endDate.get())
+						.stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			else if(!(status.isEmpty()) && !(startDate.isEmpty()) && !(endDate.isEmpty())) {
+				result = demandRepo.getByStatusAndDateFields(status.get(),startDate.get(),endDate.get())
+						.stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			else if(!(skill.isEmpty()) && !(startDate.isEmpty()) && !(endDate.isEmpty())) {
+				result = demandRepo.getDemandsBySkillAndDateFields(skill.get(),startDate.get(),endDate.get())
+						.stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			else if(!(skill.isEmpty())&& !(status.isEmpty()) && !(startDate.isEmpty()) ) {
+				result = demandRepo.getBySkillStatusStartDateFields(skill.get(),status.get(),startDate.get())
+						.stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			else if(!(skill.isEmpty())&& !(startDate.isEmpty())) {
+				result = demandRepo.getBySkillStartDateFields(skill.get(),startDate.get())
+						.stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			else if(!(status.isEmpty()) && !(startDate.isEmpty())) {
+				result = demandRepo.getByStatusStartDateFields(status.get(),startDate.get())
+						.stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			else if(!(skill.isEmpty())&& !(status.isEmpty())) {
+				result = demandRepo.getBySkillAndStatusFields(skill.get(),status.get())
+						.stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			else if(!(startDate.isEmpty()) && !(endDate.isEmpty())) {
+				result = demandRepo.getByDateField(startDate.get(),endDate.get())
+						.stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			else if(!(skill.isEmpty())&& !(status.isEmpty())) {
+				result = demandRepo.getBySkillAndStatusFields(skill.get(),status.get())
+						.stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			else if(!(skill.isEmpty())) {
+				result = demandRepo.getBySkillField(skill.get()).stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+						}
+			else if(!(status.isEmpty())) {
+				result = demandRepo.getByStatusField(status.get()).stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			
+			
+			else if( !(startDate.isEmpty()) ) {
+				result = demandRepo.getByStartDateFields(startDate.get())
+						.stream()
+						.map(demand-> modelMapper.map(demand,DemandDto.class))
+
+						.collect(Collectors.toList());
+			}
+			
+			
+			
+
+			return new ResponseEntity<>(result, HttpStatus.OK);
+
+		}
+		
+		
 }
 	
 
