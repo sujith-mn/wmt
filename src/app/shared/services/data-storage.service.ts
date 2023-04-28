@@ -88,9 +88,16 @@ export class DataStorageService {
   filterDemand(val){
     let variable;
 
-    if(val.fromdate && val.todate){
-      variable = decodeURIComponent(encodeURIComponent(`${val.status}`));
-      variable = 'getByDate/'+val.fromdate/val.todate;
+    if(val.fromdate && val.todate && val.status && val.skill){
+      variable =  decodeURIComponent(encodeURIComponent(`${val.skill}/${val.status}/${val.fromdate}/${val.todate}`));
+      variable = 'getByAllFields/'+variable;
+      
+    }
+
+    else if(val.fromdate && val.todate){
+      variable =  decodeURIComponent(encodeURIComponent(`${val.fromdate}/${val.todate}`));
+      variable = 'getByDate/'+variable;
+      
     }
     else if(val.status){
       variable = decodeURIComponent(encodeURIComponent(`${val.status}`));

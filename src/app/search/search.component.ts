@@ -188,6 +188,7 @@ export class SearchComponent implements OnInit {
     this.empFilters[1].defaultValue = 'All';
     this.dataSource.filter = '';
     this.filter = '';
+    this.getDemands();
   }
   applyFilterDate() {
     var fromdate = this.datePipe.transform(
