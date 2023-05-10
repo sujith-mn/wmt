@@ -17,5 +17,13 @@ public class ProfileDto {
 	private String proposedBy;
 	private String source;
 	private String path;
+	
+	@Override
+	public String toString() {
+		return "ProfileDto [id=" + id + ", name=" + name + ", primarySkill=" + primarySkill + ", location=" + location
+				+ ", availability=" + availability + ", proposedBy=" + proposedBy + ", source=" + source + ", path="
+				+ path + "]";
+	}
 
+	
 }

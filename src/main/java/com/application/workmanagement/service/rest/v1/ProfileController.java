@@ -5,7 +5,10 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +30,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.application.common.exception.ResumeAlreadyExistsException;
 import com.application.common.exception.ResumeNotFoundException;
 import com.application.common.exception.ResumeSizeLimitExceededException;
+import com.application.workmanagement.domain.repository.ProfileRepository;
 import com.application.workmanagement.logic.ProfileService;
+import com.application.workmanagement.service.rest.v1.model.DemandDto;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 
 
@@ -44,7 +49,12 @@ public class ProfileController {
 	@Autowired
 	private ProfileService profileService;
 	
+	@Autowired
+	private ProfileRepository profileRepo;
+	
 
+	@Autowired
+	private ModelMapper modelMapper;
 
 	@PostMapping("/add")
 	public ResponseEntity<ProfileDto> addProfile(@RequestBody ProfileDto profile) {
@@ -262,4 +272,273 @@ public class ProfileController {
 		throw new ResumeNotFoundException("Resume Not Available ");
 	}
 	}
+/*---------------------SEARCH---------------------*/
+	@GetMapping("/getProfilesBySearch")
+	public ResponseEntity<List<ProfileDto>> getProfileBySearch(
+			@RequestParam("availability") Optional<String> availability,
+			@RequestParam("location") Optional<String> location,
+			@RequestParam("name") Optional<String> name,
+			@RequestParam("primary_skill") Optional<String> primary_skill,
+			@RequestParam("proposed_by") Optional<String> proposed_by,
+			@RequestParam("source") Optional<String> source
+			
+			){
+		
+		List<ProfileDto>	result =null;
+		if(!(availability.isEmpty())&& !(location.isEmpty()) 
+				&& !(name.isEmpty()) && !(primary_skill.isEmpty())
+				&& !(proposed_by.isEmpty()) && !(source.isEmpty())) {
+			result = profileRepo
+					.getByAllFields(availability.get(), location.get(), name.get(), primary_skill.get(), proposed_by.get(), source.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if(!(availability.isEmpty())&& !(location.isEmpty()) 
+				&& !(name.isEmpty()) && !(primary_skill.isEmpty())
+				&& !(proposed_by.isEmpty()) && !(source.isEmpty())) {
+			result = profileRepo
+					.getByAllFields(availability.get(), location.get(), name.get(), primary_skill.get(), proposed_by.get(), source.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if(!(availability.isEmpty())&& !(location.isEmpty()) 
+				&& !(name.isEmpty()) && !(primary_skill.isEmpty()) && !(source.isEmpty())) {
+			result = profileRepo
+					.getByAvailableLocationNameSkillSourceFields(availability.get(), location.get(), name.get(), primary_skill.get(), source.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+			
+		}
+		else if(!(availability.isEmpty())&& !(location.isEmpty()) 
+				&& !(primary_skill.isEmpty()) && !(source.isEmpty())) {
+			result = profileRepo
+					.getByAvailabilityAndLocationAndSkillAndSourceFields(availability.get(), location.get(), primary_skill.get(),  source.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+			
+		}
+		else if(!(availability.isEmpty())&& !(location.isEmpty()) 
+				&& !(name.isEmpty()) && !(primary_skill.isEmpty())
+				&& !(proposed_by.isEmpty())) {
+			result = profileRepo
+					.getByAvailableLocationNameSkillProposedFields(availability.get(), location.get(), name.get(), primary_skill.get(), proposed_by.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+			
+		}
+		else if(!(availability.isEmpty())&& !(location.isEmpty())&& !(primary_skill.isEmpty())
+				) {
+			result = profileRepo
+					.getByAvailabilityAndLocationAndSkillFields(availability.get(), location.get(), primary_skill.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if(!(availability.isEmpty())&& !(location.isEmpty()) 
+				&& !(proposed_by.isEmpty())) {
+			result = profileRepo
+					.getByAvailabilityAndLocationAndProposedFields(availability.get(), location.get(), proposed_by.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if(!(availability.isEmpty())&& !(location.isEmpty())  && !(source.isEmpty())) {
+			result = profileRepo
+					.getByAvailabilityAndLocationAndSourceFields(availability.get(), location.get(), source.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if(!(availability.isEmpty())&& !(location.isEmpty()) 
+				 && !(primary_skill.isEmpty())
+				&& !(proposed_by.isEmpty()) ) {
+			result = profileRepo
+					.getByAvailabilityAndLocationAndSkillAndProposedFields(availability.get(), location.get(), primary_skill.get(), proposed_by.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+			
+		}
+		
+		else if(!(availability.isEmpty())&& !(location.isEmpty()) 
+				) {
+			result = profileRepo
+					.getByAvailabilityAndLocationFields(availability.get(), location.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if(!(availability.isEmpty()) && !(primary_skill.isEmpty())
+				) {
+			result = profileRepo
+					.getByAvailabilityAndPrimarySkillFields(availability.get(), primary_skill.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if(!(availability.isEmpty())&& !(proposed_by.isEmpty()) ) {
+			result = profileRepo
+					.getByAvailabilityAndProposedByFields(availability.get(), proposed_by.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if(!(availability.isEmpty())&& !(source.isEmpty())) {
+			result = profileRepo
+					.getByAvailabilityAndSourceFields(availability.get(), source.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if(!(location.isEmpty()) && !(primary_skill.isEmpty())
+				) {
+			result = profileRepo
+					.getByLocationAndSkillFields(location.get(),primary_skill.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if( !(location.isEmpty()) && !(proposed_by.isEmpty()) ) {
+			result = profileRepo
+					.getByLocationAndProposedByFields( location.get(), proposed_by.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if( !(location.isEmpty())  && !(source.isEmpty())) {
+			result = profileRepo
+					.getByLocationAndSourceFields( location.get(),  source.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if( !(name.isEmpty()) && !(primary_skill.isEmpty())) {
+			result = profileRepo
+					.getByNameAndSkillFields(name.get(), primary_skill.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if(!(primary_skill.isEmpty())
+				&& !(proposed_by.isEmpty()) ) {
+			result = profileRepo
+					.getByPrimarySkillAndProposedByFields( primary_skill.get(), proposed_by.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if( !(primary_skill.isEmpty()) && !(source.isEmpty())) {
+			result = profileRepo
+					.getByPrimarySkillAndSourceFields( primary_skill.get(),  source.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+	
+		else if(!(availability.isEmpty())) {
+			result = profileRepo
+					.getByAvailableFields(availability.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if( !(location.isEmpty()) ) {
+			result = profileRepo
+					.getByLocationFields( location.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if( !(name.isEmpty()) ) {
+			result = profileRepo
+					.getByNameFields( name.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if( !(primary_skill.isEmpty())
+				) {
+			result = profileRepo
+					.getByPrimarySkillFields(primary_skill.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if( !(proposed_by.isEmpty()) ) {
+			result = profileRepo
+					.getByProposedFields( proposed_by.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		else if( !(source.isEmpty())) {
+			result = profileRepo
+					.getBySourceFields( source.get())
+					.stream()
+					.map(profile-> modelMapper.map(profile,ProfileDto.class))
+					.collect(Collectors.toList());
+					
+		
+		}
+		
+		
+		
+		
+		
+		
+		
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+
+	}
+	
+	
 }
+	
+	
+	
