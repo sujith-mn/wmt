@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,7 @@ import com.application.workmanagement.service.rest.v1.model.DemandDto;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 import com.application.workmanagement.service.rest.v1.model.ProfilesListDto;
 import com.xlm.reader.SheetReader;
-
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 @Service
 public class DemandService {
@@ -78,9 +79,10 @@ public class DemandService {
 	
 	public List<DemandDto> getAllDemands(int page,int size) {
 		
-		Pageable paging = PageRequest.of(page, size);
+		Pageable paging = PageRequest.of(page, size,Sort.by("Id").descending());
 		Page<Demand> demands =  demandRepository.findAll(paging);
 		List<DemandDto> demandDtos = demands.stream()
+											
 											.map(demand->this.demandToDto(demand))
 											.collect(Collectors.toList());
 		return demandDtos;
