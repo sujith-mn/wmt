@@ -58,6 +58,7 @@ public class DemandService {
 		demand.setPriority(demandDto.getPriority());
 		demand.setSkill(demandDto.getSkill());
 		demand.setStatus(demandDto.getStatus());
+		demand.setDepartment(demandDto.getDepartment());
 		
 		Demand updatedDemand = this.demandRepository.save(demand);
 		DemandDto resultDemandDto = this.demandToDto(updatedDemand);

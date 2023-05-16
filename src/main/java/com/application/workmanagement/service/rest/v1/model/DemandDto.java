@@ -41,13 +41,18 @@ public class DemandDto {
 	@NotNull(message = "status Field can't be null")
 	private String status;
 	
+	@NotNull(message = "department Field can't be null")
+	private String department;
+	
 	private List<Profiles> profilesList;
 
 	@Override
 	public String toString() {
 		return "DemandDto [Id=" + Id + ", manager=" + manager + ", created=" + created + ", endDate=" + endDate
 				+ ", ageing=" + ageing + ", priority=" + priority + ", skill=" + skill + ", status=" + status
-				+ ", profilesList=" + profilesList + "]";
+				+ ", department=" + department + ", profilesList=" + profilesList + "]";
 	}
+
+	
 
 }

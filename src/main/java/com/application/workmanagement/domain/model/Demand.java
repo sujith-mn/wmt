@@ -30,6 +30,7 @@ public class Demand {
 	private int priority;
 	private String skill;
 	private String status;
+	private String Department;
 	@OneToMany
 	private List<Profiles> profiles;
 }

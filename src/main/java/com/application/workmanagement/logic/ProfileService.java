@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -98,7 +99,7 @@ public class ProfileService {
 
 	public List<ProfileDto> getAllprofiles(int page,int size) {
 		
-		Pageable paging = PageRequest.of(page, size);
+		Pageable paging = PageRequest.of(page, size,Sort.by("id").descending());
 
 		return profileRepository.findAll(paging).stream().map(profile -> modelMapper.map(profile, ProfileDto.class))
 				.collect(Collectors.toList());
