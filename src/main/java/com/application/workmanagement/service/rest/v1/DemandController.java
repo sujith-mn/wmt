@@ -147,6 +147,15 @@ public class DemandController {
 		return new ResponseEntity<>(responseInfo,HttpStatus.OK);
 	}
 	
+	@PutMapping("/profileStatus/{demandId}")
+	public ResponseEntity<ResponseInfo> addProfilesStatus(@RequestBody ProfilesListDto profilesList, @PathVariable("demandId") int demandId){
+		
+		demandService.addProfilesListStatus(profilesList,demandId);
+		
+		responseInfo = new ResponseInfo(HttpStatus.OK,profilesList,"Profiles added to demand");
+		
+		return new ResponseEntity<>(responseInfo,HttpStatus.OK);
+	}
 	
 
 	//Filtering with All values

@@ -27,5 +27,7 @@ public class ProfilesExcel {
 	private String proposedBy;
 	@XLColumn(name="Source")
 	private String source;
+	
+	private String ProfileStatus;
 
 }

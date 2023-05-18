@@ -32,6 +32,8 @@ public class Profiles {
 	
 	private String path;
 	
+	private String ProfileStatus;
+	
 	
 //	@Lob
 //	private byte[] resume;

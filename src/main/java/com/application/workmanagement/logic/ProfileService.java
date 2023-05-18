@@ -47,6 +47,7 @@ public class ProfileService {
 		Profiles profiles = modelMapper.map(profile, Profiles.class);
 		if(resumePath!=null) {
 		profiles.setPath(resumePath);
+		profiles.setProfileStatus("onhold");
 		resumePath=null;
 		profileRepository.save(profiles);
 		return modelMapper.map(profiles, ProfileDto.class);
@@ -152,7 +153,8 @@ public class ProfileService {
 			sr.setHeaderRow(0);
 
 			List<ProfilesExcel> excels = sr.retrieveRows(datatypeSheet, ProfilesExcel.class);
-			List<Profiles> excel = excels.stream().map(profile -> modelMapper.map(profile, Profiles.class))
+			List<Profiles> excel = excels.stream().map(profile ->{
+				         profile.setProfileStatus("onhold"); return modelMapper.map(profile, Profiles.class);	})
 					.collect(Collectors.toList());
 			profileRepository.saveAll(excel);
 		} catch (Exception e) {
@@ -195,6 +197,7 @@ public class ProfileService {
 				.map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
 
 		return profiles.stream().filter(profile -> profile.getAvailability().equalsIgnoreCase(available))
+				.filter(profile-> !profile.getProfileStatus().equalsIgnoreCase("rejected"))
 				.collect(Collectors.toList());
 
 	}

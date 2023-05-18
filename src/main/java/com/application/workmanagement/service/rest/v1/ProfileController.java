@@ -155,6 +155,8 @@ public class ProfileController {
 		return new ResponseEntity<>(profileList, HttpStatus.OK);
 	}
 	
+	
+	
 	@GetMapping("/resume")
 	public ResponseEntity<List<ProfileDto>> getProfilesHasNoResume() {
 		List<ProfileDto> profilesList = profileService.getProfilesHasNoResume();

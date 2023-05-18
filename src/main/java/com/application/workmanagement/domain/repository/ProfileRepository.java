@@ -38,7 +38,19 @@ public interface ProfileRepository extends JpaRepository<Profiles, Long> {
 	
 	/*---------------------- SEARCH------------------------ */
 	
-	/* Search with all fields */
+	
+	/**
+	 * Search with all fields
+	 * 
+	 * @param availability
+	 * @param location
+	 * @param name
+	 * @param primary_skill
+	 * @param proposed_by
+	 * @param source
+	 * @return list of profiles
+	 * @exception
+	 */
 	@Query(value="select * from profiles where availability =:availability and location=:location and name LIKE :name% and primary_skill=:primary_skill and  proposed_by=:proposed_by and source=:source ",nativeQuery=true)
 	List<Profiles> getByAllFields(
 			@Param("availability") String availability,
