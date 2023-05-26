@@ -32,6 +32,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import { DatePipe } from '@angular/common';
+import {MatCheckboxDefaultOptions, MatCheckboxModule, MAT_CHECKBOX_DEFAULT_OPTIONS} from '@angular/material/checkbox'
+
+import { AssignedProfilesComponent } from './assigned-profiles/assigned-profiles.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,7 +43,8 @@ import { DatePipe } from '@angular/common';
     NavbarComponent,
     ProfileComponent,
     AssignComponent,
-    LoginComponent
+    LoginComponent,
+    AssignedProfilesComponent
   ],
   imports: [
 
@@ -66,14 +70,18 @@ import { DatePipe } from '@angular/common';
     MatSnackBarModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSelectModule
+    MatSelectModule,
+    MatCheckboxModule,
   ],
   exports: [
     MatButtonModule,
     MatFormFieldModule,
     MatRippleModule,
   ],
-  providers: [  DatePipe,DataStorageService,NotificationService,{ provide: APP_CONFIG, useValue: environment }],
+  providers: [  DatePipe,DataStorageService,NotificationService,{ provide: APP_CONFIG, useValue: environment }, {
+    provide: MAT_CHECKBOX_DEFAULT_OPTIONS,
+    useValue: { clickAction: "noop" } as MatCheckboxDefaultOptions
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

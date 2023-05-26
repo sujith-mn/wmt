@@ -19,5 +19,9 @@
     right: 0;
 }
 
+table thead tr th div,.mdc-data-table__header-cell{
+  font-weight: bold;
+  text-transform: capitalize;
+ }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

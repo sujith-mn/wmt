@@ -2,7 +2,7 @@
     <br/>
 <h4>Demand Detail</h4>
     <div class="mat-elevation-z7">
-        <table *ngIf="dataSource"  mat-table [dataSource]="dataSource" matSort>
+        <table *ngIf="dataSourceVal"  mat-table [dataSource]="dataSourceVal" matSort>
 
           <!-- Customer Manager Column -->
           <ng-container matColumnDef="manager">
@@ -49,9 +49,84 @@
     <div class="container">
 
         <h4>Profiles</h4>
+        
         <form >
-        <table class="table table-striped" matSort>
-            <thead >
+
+
+          <table *ngIf="dataSource"  mat-table [dataSource]="dataSource" matSort>
+
+            <!-- Customer Manager Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+              <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+              <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+            </ng-container>
+  
+            <!-- Start Date Column -->
+            <ng-container matColumnDef="created">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Practice </th>
+              <td mat-cell *matCellDef="let row"> {{row.source}} </td>
+            </ng-container>
+  
+            <!-- Priority Column -->
+            <ng-container matColumnDef="location">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Location </th>
+              <td mat-cell *matCellDef="let row"> {{row.location}} </td>
+            </ng-container>
+  
+            <!-- skill Column -->
+            <ng-container matColumnDef="primarySkill">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>skill </th>
+              <td mat-cell *matCellDef="let row"> {{row.primarySkill}} </td>
+            </ng-container>
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Status </th>
+              <td mat-cell *matCellDef="let row"> {{row.status}} </td>
+            </ng-container>
+            <ng-container matColumnDef="availability">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Availability </th>
+              <td mat-cell *matCellDef="let row"> {{row.availability}} </td>
+            </ng-container>
+            <ng-container matColumnDef="source">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Practice </th>
+              <td mat-cell *matCellDef="let row"> {{row.source}} </td>
+            </ng-container>
+  
+
+            <!-- Action Column -->
+            <ng-container matColumnDef="Action">
+              <th mat-header-cell *matHeaderCellDef >Action</th>
+            
+              <td mat-cell *matCellDef="let myRowData" class="actionGroup">
+                <button mat-button (click)="openProfile(contentDetails,myRowData)">
+                  <mat-icon>remove_red_eye</mat-icon>
+                </button>
+                <!-- <mat-checkbox  [(ngModel)]=checkboxVal value="true"  (change)="SubmitProfiles($event)"   [ngModelOptions]="{standalone: true}">  </mat-checkbox> -->
+                <input type="checkbox"  [(ngModel)]="myRowData.isChecked" [ngModelOptions]="{standalone: true}"
+                (change)="SubmitProfiles()" > 
+              </td>
+            
+
+            
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="ShowColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: ShowColumns;"></tr>
+          
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row mt-2" *matNoDataRow>
+              <td class="mat-cell text-center" colspan="9">No Records Found</td>
+            </tr>
+          </table>
+
+
+        <!-- <table class="table table-striped" >
+            <thead matSort>
                 <tr >
 
                   <th>Name</th>
@@ -87,7 +162,7 @@
 
             </tbody>
 
-          </table>
+          </table> -->
           <button type="submit" class="btn btn-info" (click)="GetProfileOnSubmit()">Submit</button>
         </form>
       </div>
@@ -158,69 +233,3 @@
 </ng-template>
 <!-- Detail Demand End -->
 
-<!--       <div class="mat-elevation-z8">
-        <form >
-        <table mat-table [dataSource]="profiles" matSort>
-          <ng-container matColumnDef="assign">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Assign </th>
-          <mat-cell *matCellDef="let profiles" class="actionGroup">
-            <mat-checkbox #checkBox
-             [(ngModel)]="profiles.isChecked"
-             [ngModelOptions]="{standalone: true}"
-          (change)="SubmitProfiles()">
-        </mat-checkbox>
-        </mat-cell>
-        </ng-container>
-
-
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-            <td mat-cell *matCellDef="let row"> {{row.name}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="source">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Source</th>
-            <td mat-cell *matCellDef="let row"> {{row.source}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="location">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Location </th>
-            <td mat-cell *matCellDef="let row"> {{row.location}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="availability">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Availability</th>
-            <td mat-cell *matCellDef="let row"> {{row.availability}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="primarySkill">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Skill </th>
-            <td mat-cell *matCellDef="let row"> {{row.primarySkill}} </td>
-          </ng-container>
-
-     <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Action</th>
-      <td mat-cell *matCellDef="let myRowData" class="actionGroup">
-
-        <button mat-button >
-          <mat-icon>remove_red_eye</mat-icon></button>
-
-
-
-          </td>
-
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="ShowColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: ShowColumns;"></tr>
-
-      <tr class="mat-row mt-2" *matNoDataRow>
-        <td class="mat-cell text-center" colspan="9">No Records Found</td>
-      </tr>
-    </table>
-    <button type="submit" class="btn btn-info" (click)="GetProfileOnSubmit()">Submit</button>
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
-
-
-  </form>
-
-</div>  -->

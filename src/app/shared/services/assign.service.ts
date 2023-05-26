@@ -59,7 +59,7 @@ getProfileBySkill( skill:any){
 getProfileByAssign(Id:any,values:assign){
 
   return this.http.
-  put<assign[]>(this.baseURL + 'api/demands/profilelist/'  +Id,values)
+  put<assign[]>(this.baseURL + 'api/demands/profilelist/'+Id, values)
   .pipe(
     map((resData:any)=>{
       this.notificationService.success('Profile Assigned to Demand successfully');

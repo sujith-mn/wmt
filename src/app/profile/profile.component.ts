@@ -6,10 +6,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { map, take } from 'rxjs';
 // import { saveAs } from 'file-saver';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormArray, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ProfileService } from '../shared/services/profile.service';
 import { Profile } from '../shared/model/profile';
 import { fileExtensionValidator } from './file-extension-validator.directive';
+import { ProfileFilter } from '../shared/model/emptyfier';
+import { DataStorageService } from '../shared/services/data-storage.service';
 
 export class ProfileData {
 
@@ -38,7 +40,10 @@ export class ProfileComponent implements OnInit {
 
   skillVal: string[] = ['Java', 'Angular', 'Spring framework', 'React'];
   locationVal: string[] = ['Mumbai', 'Banglore', 'Chennai', 'Hyderabad'];
-  availabilityVal: string[] = ['Blocked', 'Available'];
+  availabilityVal: string[] = ['Available','Blocked'];
+
+  proposedBy: string[] = ['NA','Sogeti'];
+  source:string[] =  ['NA','Sogeti'];
   displayedColumns: string[] = ['id', 'name', 'primarySkill', 'location', 'availability', 'proposedBy', 'source', 'actions']
   profilepath = '';
   acceptedExtensions = "pdf,doc,docx";
@@ -50,13 +55,54 @@ export class ProfileComponent implements OnInit {
   detailProfileForm: FormGroup;
   editForm: FormGroup;
   Data: any;
+  filterForm: FormGroup = this.fb.group({
+    skill: [null],
+    status: [null],
+    availability:[],
+    proposedBy:[],
+    source:[],
+    location:[]
+
+  });
+
+  profileFilter: ProfileFilter[] = [
+    {
+      name: 'skill',
+      options: this.skillVal
+    },
+    {
+      name: 'location',
+      options: this.locationVal
+    },
+    {
+      name: 'availability',
+      options: this.availabilityVal
+    },
+    {
+      name: 'proposedBy',
+      options: this.proposedBy
+    },
+    {
+      name: 'source',
+      options: this.source
+    }
+  ];
+
+
+    
+
+
 
   constructor(
     private _http: HttpClient,
     private modalService: NgbModal,  //Add parameter of type NgbModal
     private profileService: ProfileService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dataStorageService: DataStorageService
   ) { }
+
+
+
   newProfile: FormGroup = this.fb.group({
     name: [null, [Validators.required]],
     primarySkill: [null, [Validators.required]],
@@ -75,6 +121,24 @@ export class ProfileComponent implements OnInit {
       this.getProfile();
     })
     this.getProfile();
+
+    this.dataStorageService.filterRefreshneeds.subscribe(
+      (result: any) => {
+        this.profiles = result;
+          this.dataSource = new MatTableDataSource<ProfileData>(this.profiles);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+      },
+      (errorResponse) => {
+        console.log(errorResponse);
+      },
+      () => {
+        console.log('complete');
+      }
+    );
+
+
+
     this.editForm = this.fb.group({
       id: [''],
       name: [null, [Validators.required]],
@@ -104,6 +168,51 @@ export class ProfileComponent implements OnInit {
     console.log(this.file);
   }
 
+
+  applyFilterDate() {
+    var location = this.filterForm.value['location']
+      ? this.filterForm.value['location'].toLowerCase()
+      : '';
+    var skill = this.filterForm.value['skill']
+      ? this.filterForm.value['skill']
+      : '';
+    var availability = this.filterForm.value['availability']
+      ? this.filterForm.value['availability']
+      : '';
+    var proposedBy = this.filterForm.value['proposedBy']
+    ? this.filterForm.value['proposedBy']
+    : '';
+    var source = this.filterForm.value['source']
+    ? this.filterForm.value['source']
+    : '';
+ 
+
+    let value = {
+      primary_skill: skill,
+      location: location,
+      source:source,
+      proposed_by:proposedBy,
+      availability:availability
+    };
+
+    return this.dataStorageService.filterProfile(value).subscribe({
+      next: (_result: any) => {
+        console.log(_result);
+        // return this.demands = _result;
+      },
+      error: (_err: any) => {
+        console.log(_err);
+      },
+      complete: () => {
+        console.log('complete');
+      },
+    });
+  }
+  clearFilters() {
+    this.filterForm.reset();
+    this.dataSource.filter = '';
+    this.getProfile();
+  }
   uploadFile() {
     return this.profileService.uploadProfile(this.file).subscribe(
       {

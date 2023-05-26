@@ -61,8 +61,7 @@ export class ProfileService {
     formData.append("file", x);
     const httpOptions: Object = {
       headers: new HttpHeaders({
-        'Access-Control-Allow-Headers': '*',
-        'Content-Type': 'file'
+        'Access-Control-Allow-Headers': '*'
       }),
     };
     return this.http

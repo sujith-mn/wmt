@@ -7,4 +7,5 @@ export interface Demand {
       skill:string
       status: string
       id?:string
+      department:string
   }

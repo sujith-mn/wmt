@@ -3,14 +3,17 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { AppConfig, APP_CONFIG } from 'src/app/app-config';
 import { catchError, map, Subject } from 'rxjs';
 import { Demand } from '../model/demand';
-import { NgForm } from '@angular/forms';
+import { NgForm, Validators } from '@angular/forms';
 import { NotificationService } from './notification.service';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RouterTestingModule } from '@angular/router/testing';
 @Injectable({
   providedIn: 'root',
 })
 export class DataStorageService {
   private baseURL!: string;
+  formDataVal: any
+  formvalues : any
  DemandSubject = new Subject<void>();
  filterSubject = new Subject<void>();
   constructor(
@@ -25,6 +28,9 @@ export class DataStorageService {
   get refreshneeds(){
     return this.DemandSubject;
   }
+  get filterRefreshneeds(){
+    return this.filterSubject;
+  }
   storeDemand(value: NgForm) {
     const httpOptions: Object = {
       headers: new HttpHeaders({
@@ -32,18 +38,19 @@ export class DataStorageService {
         'Access-Control-Allow-Headers': '*',
       }),
       responseType: 'json',
-      observe: 'response',
+      observe: "response" as 'body',
     };
     let body = JSON.stringify(value);
     return this.http
       .post<Demand[]>(this.baseURL + 'api/demands/', body, httpOptions)
       .pipe(
         map((resData: any) => {
-          console.log(resData);
-          this.DemandSubject.next();
+          console.log(resData['body']);
+          // this.DemandSubject.next(resData['body']);
+          this.DemandSubject.next(resData['body']);
           this.modalService.dismissAll();
           this.notificationService.success('Demand successfully added');
-          return resData;
+          return resData['body'];
         }),
         catchError((err: any) => {
           console.log(err);
@@ -85,43 +92,80 @@ export class DataStorageService {
     );
   }
 
-  filterDemand(val){
+  filterDemand(val) {
     let variable;
+    let test = [];
 
-    if(val.fromdate && val.todate && val.status && val.skill){
-      variable =  decodeURIComponent(encodeURIComponent(`${val.skill}/${val.status}/${val.fromdate}/${val.todate}`));
-      variable = 'getByAllFields/'+variable;
-      
+    const formData: any = new FormData();
+    for (var key in val) {
+      if (val[key]) {
+        formData.append(key, val[key]);
+      }
     }
 
-    else if(val.fromdate && val.todate){
-      variable =  decodeURIComponent(encodeURIComponent(`${val.fromdate}/${val.todate}`));
-      variable = 'getByDate/'+variable;
-      
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
     }
-    else if(val.status){
-      variable = decodeURIComponent(encodeURIComponent(`${val.status}`));
-      variable = 'getByStatusField/'+variable;
-    }
-    else{
-      variable = decodeURIComponent(encodeURIComponent(`${val.skill}/${val.status}`)).replace(/\/$/,'');
-      variable = 'getBySkillField/'+variable;
-    }
-    return this.http.get(`${this.baseURL}api/demands/${variable}`)
-    .pipe(
-      map((resData: any) => {
-        console.log(resData);
-        // this.modalService.dismissAll();
-        this.DemandSubject.next(resData);
-        //   this.notificationService.success('Demand Updated successfully ');
-        return resData;
+    const httpOptions: Object = {
+      headers: new HttpHeaders({
+        'Access-Control-Allow-Headers': '*'
       }),
-      catchError((err: any) => {
+    };
 
-        throw err;
-      })
-    );
+    return this.http.post(this.baseURL + 'api/demands/getDemandsBySearch', formData, httpOptions)
+      .pipe(
+        map((resData: any) => {
+          console.log(resData);
+          // this.modalService.dismissAll();
+          this.filterSubject.next(resData);
+          //   this.notificationService.success('Demand Updated successfully ');
+          return resData;
+        }),
+        catchError((err: any) => {
+
+          throw err;
+        })
+      );
   }
+
+
+  
+  filterProfile(val) {
+    let variable;
+    let test = [];
+
+    const formData: any = new FormData();
+    for (var key in val) {
+      if (val[key]) {
+        formData.append(key, val[key]);
+      }
+    }
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+    const httpOptions: Object = {
+      headers: new HttpHeaders({
+        'Access-Control-Allow-Headers': '*'
+      }),
+    };
+
+    return this.http.post(this.baseURL + 'profiles/getProfilesBySearch', formData, httpOptions)
+      .pipe(
+        map((resData: any) => {
+          console.log(resData);
+          // this.modalService.dismissAll();
+          this.filterSubject.next(resData);
+          //   this.notificationService.success('Demand Updated successfully ');
+          return resData;
+        }),
+        catchError((err: any) => {
+
+          throw err;
+        })
+      );
+  }
+
 
   deleteDemand(id:any){
     console.log("delete id ",id);
@@ -129,6 +173,8 @@ export class DataStorageService {
     .pipe(
       map((resData: any) => {
         this.modalService.dismissAll();
+        var a = this.getAllDemands();
+        console.log(a);
         this.DemandSubject.next();
         this.notificationService.success('Demand Deleted successfully');
         return resData;

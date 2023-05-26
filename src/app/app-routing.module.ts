@@ -6,6 +6,7 @@ import { SearchComponent } from './search/search.component';
 import { AssignComponent } from './assign/assign.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuardService } from './shared/services/auth-guard.service';
+import { AssignedProfilesComponent } from './assigned-profiles/assigned-profiles.component';
 
 const routes: Routes = [
   {path: '', component: LoginComponent},
@@ -13,7 +14,8 @@ const routes: Routes = [
   {path: 'home', component: HomeComponent,canActivate:[AuthGuardService]},
   {path: 'profile', component: ProfileComponent,canActivate:[AuthGuardService]},
   {path: 'demand', component: SearchComponent,canActivate:[AuthGuardService]},
-  {path: 'assign', component: AssignComponent,canActivate:[AuthGuardService]}
+  {path: 'assign', component: AssignComponent,canActivate:[AuthGuardService]},
+  {path: 'assignedprofile/:id', component: AssignedProfilesComponent,canActivate:[AuthGuardService]}
 ];
 
 @NgModule({

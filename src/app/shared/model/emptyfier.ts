@@ -9,3 +9,8 @@ export interface filterOption{
   value:string;
   isdefault:boolean;
 }
+
+export interface ProfileFilter {
+  name:string;
+  options:string[];
+}

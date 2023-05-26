@@ -1,14 +1,17 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Component, Inject, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { assign } from '../shared/model/assign';
-import { ActivatedRoute, Data } from '@angular/router';
+import { ActivatedRoute, Data, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AssignService } from '../shared/services/assign.service';
 import { profileList } from '../shared/model/profileList';
 import { Profile } from '../shared/model/profile';
-
+import { ProfileData } from '../profile/profile.component';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import {MatCheckbox, MatCheckboxChange, MatCheckboxModule} from '@angular/material/checkbox';
 @Component({
   selector: 'app-assign',
   templateUrl: './assign.component.html',
@@ -16,35 +19,44 @@ import { Profile } from '../shared/model/profile';
 })
 export class AssignComponent implements OnInit {
 
-  ShowColumns: string[] = [ 'name', 'primarySkill', 'location', 'availability', 'source','actions','assign']
+  ShowColumns: string[] = [ 'name', 'primarySkill', 'location','availability','source','Action']
 
-   displayedColumns:string[] = ['manager','created','priority','skill','status'];
-  dataSource: assign[] = [];
+  displayedColumns:string[] = ['manager','created','priority','skill','status'];
+  dataSourceVal: assign[] = [];
   profiles:any;
   Id: string;
   paramsId: any;
   skill:string;
   DetailProfileForm: [];
-
+  dataSource: MatTableDataSource<ProfileData>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  myModel = false;
+  isChecked:any=false;
+  checkboxVal:boolean = false;
+ 
+  @ViewChildren('myCheckbox') myCheckbox: QueryList<MatCheckbox>;
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private assignService: AssignService
-
+    private assignService: AssignService,
+    private router: Router
   ) {
   }
 
-
-
+  form: FormGroup = this.fb.group({
+    i_agree: ['', [Validators.required]],
+  })
   detailForm:FormGroup = this.fb.group({
     id:[''],
     name: [''],
     source: [''],
     location:[''],
     availability:[''],
-    primarySkill: ['']
+    primarySkill: [''],
+    check:['']
   })
 
   ngOnInit(){
@@ -68,9 +80,8 @@ export class AssignComponent implements OnInit {
         next: (result: assign) => {
           this.skill=result.skill;
 
-          this.dataSource.push(result);
-          this.dataSource = [...this.dataSource];
-          console.log("Datasource ",this.dataSource);
+          this.dataSourceVal.push(result);
+          this.dataSourceVal = [...this.dataSourceVal];
           this.getProfile();
         },
         error: (err: any) => {
@@ -89,7 +100,10 @@ export class AssignComponent implements OnInit {
       {
         next: (result: any) => {
           this.profiles=result;
-
+          console.log(result);
+          this.dataSource = new MatTableDataSource<ProfileData>(this.profiles);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
         },
         error: (err: any) => {
           console.log(err);
@@ -100,32 +114,35 @@ export class AssignComponent implements OnInit {
       }
     )
   }
-  SubmitProfiles(){
-      this.fetchSelectedItems()
+ 
+  SubmitProfiles() {
+   
+    this.fetchSelectedItems()
   }
   fetchSelectedItems() {
+
     this.DetailProfileForm = this.profiles.filter((value: { isChecked: any; }, index: any) => {
 
       return value.isChecked });
-      this.dataSource[0].profilesList =  this.DetailProfileForm;
-    console.log(this.dataSource[0]);
+      this.dataSourceVal[0].profilesList =  this.DetailProfileForm;
+    console.log(this.dataSourceVal[0]);
    }
   GetProfileOnSubmit(){
-   return this.assignService.getProfileByAssign(this.Id,this.dataSource[0]).subscribe(
+    this.assignService.getProfileByAssign(this.Id,this.dataSourceVal[0]).subscribe(
     {
     next: (result: any) => {
-
+      this.router.navigate(['/assignedprofile/'+this.Id]);
       console.log("profiles : " +result);
     },
     error: (err: any) => {
+      this.router.navigate(['/assignedprofile']);
       console.log(err);
     },
     complete: () => {
       console.log('complete');
     }
-  }
-   )
-    console.log(this.DetailProfileForm);
+  })
+
   }
 
 

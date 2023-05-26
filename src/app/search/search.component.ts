@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -31,6 +31,7 @@ export interface demandData {
   priority: string;
   skill: string;
   status: string;
+  department:string;
 }
 @Component({
   selector: 'app-search',
@@ -38,14 +39,21 @@ export interface demandData {
   styleUrls: ['./search.component.css'],
 })
 export class SearchComponent implements OnInit {
+  @ViewChild('createddate', {static: true}) usernameElement: ElementRef;
+  @Output()
+dateChange: EventEmitter<MatDatepickerInputEvent<any>> = new EventEmitter();
+  createddate:any="";
   constructor(
     private httpClient: HttpClient,
     private modalService: NgbModal, //Add parameter of type NgbModal
     private fb: FormBuilder,
     private dataStorageService: DataStorageService,
     private router: Router,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    usernameElement: ElementRef
   ) {
+    this.usernameElement=usernameElement;
+    console.log(this.usernameElement);
     this.pipe = new DatePipe('en');
   }
 
@@ -64,9 +72,10 @@ export class SearchComponent implements OnInit {
     'ageing',
     'skill',
     'status',
+    'department',
     'actions',
   ];
-  statusVal: string[] = ['All', 'Open', 'complete', 'pending', 'InProgress'];
+  statusVal: string[] = ['on-hold', 'open', 'complete', 'pending'];
   skillVal: string[] = ['All', 'Java', 'Angular', 'Spring framework', 'React'];
   dataSource: MatTableDataSource<demandData>;
   pipe: DatePipe = new DatePipe('en-US');
@@ -89,6 +98,8 @@ export class SearchComponent implements OnInit {
     return this.filterForm.get('toDate').value;
   }
 
+ 
+
   editedDemandValues: any;
   private ageingCal: any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -97,8 +108,8 @@ export class SearchComponent implements OnInit {
   newDemand: FormGroup = this.fb.group({
     manager: [null, [Validators.required]],
     created: [null, [Validators.required]],
-    endDate: [],
-    ageing: [],
+    ageing:  [],
+    department:[null, [Validators.required]],
     priority: [null, [Validators.required]],
     skill: [null, [Validators.required]],
     status: [null, [Validators.required]],
@@ -123,18 +134,23 @@ export class SearchComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.newDemand.get('created')?.valueChanges.subscribe((value) => {
-      console.log(value);
-      return this.getAgeing(value);
-    });
-    this.getDemands();
+   this.getDemands() 
     this.dataStorageService.refreshneeds.subscribe(
       (response: any) => {
-        this.demands = response;
+        this.getDemands() 
+      },
+      (errorResponse) => {
+        console.log(errorResponse);
+      },
+      () => {
+        console.log('complete');
+      }  
+    );
 
-        this.demands.forEach((value) => {
-          return this.getAgeing(value);
-        });
+    this.dataStorageService.filterRefreshneeds.subscribe(
+      (response: any) => {
+        this.demands = response;
+        console.log(this.demands);
         this.dataSource = new MatTableDataSource<demandData>(this.demands);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -146,6 +162,8 @@ export class SearchComponent implements OnInit {
         console.log('complete');
       }
     );
+  
+
 
     this.detailForm = this.fb.group({
       id: [''],
@@ -156,6 +174,7 @@ export class SearchComponent implements OnInit {
       priority: [''],
       skill: [''],
       status: [''],
+      department: [''],
     });
     this.editForm = this.fb.group({
       id: [''],
@@ -166,6 +185,7 @@ export class SearchComponent implements OnInit {
       priority: [null, Validators.required],
       skill: [null, Validators.required],
       status: [null, Validators.required],
+      department: [null, Validators.required],
     });
 
     // multiple filter
@@ -181,6 +201,14 @@ export class SearchComponent implements OnInit {
       defaultValue: this.defaultValue,
     });
   }
+
+
+  setDate(event): void {
+    var a = this.getAgeing(event.target.value);
+    this.newDemand.patchValue({
+      ageing: a
+    });
+}
 
   clearFilters() {
     this.filterForm.reset();
@@ -207,16 +235,16 @@ export class SearchComponent implements OnInit {
       : '';
 
     let value = {
-      fromdate: fromdate,
-      todate: todate,
-      status: status,
       skill: skill,
+      status: status,
+      startDate: fromdate,
+      endDate: todate
     };
 
     return this.dataStorageService.filterDemand(value).subscribe({
       next: (_result: any) => {
         console.log(_result);
-        //  return this.demands = _result;
+         return this.demands = _result;
       },
       error: (_err: any) => {
         console.log(_err);
@@ -228,11 +256,12 @@ export class SearchComponent implements OnInit {
   }
 
   getDemands() {
+
     return this.dataStorageService.getAllDemands().subscribe(
       (response) => {
         // console.log(result)
         this.demands = response;
-
+        console.log(this.demands);
         this.demands.forEach((value) => {
           this.getAgeing(value);
         });
@@ -253,6 +282,12 @@ export class SearchComponent implements OnInit {
     this.empFilters['defaultValue'] = 'All';
   }
 
+  onChangeEvent(event){
+    console.log(this.usernameElement.nativeElement.value);
+    console.log(event);
+    console.log(event.value);
+  }
+
   getFilterObject(fullObj, key) {
     const uniqChk = [];
     fullObj.filter((obj) => {
@@ -265,7 +300,12 @@ export class SearchComponent implements OnInit {
   }
 
   getAgeing(_item: any) {
-    var a: any = new Date(_item.created);
+
+    if(_item.created || _item){
+
+      var dateValue = _item.created || _item;
+    
+    var a: any = new Date(dateValue);
     var today = new Date();
     var year = today.toLocaleString('default', { year: 'numeric' });
     var month = today.toLocaleString('default', { month: '2-digit' });
@@ -277,9 +317,8 @@ export class SearchComponent implements OnInit {
     const _MS_PER_DAY = 1000 * 60 * 60 * 24;
     const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
     const utc2 = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
-
-    console.log((utc2 - utc1) / _MS_PER_DAY);
     return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    }
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -370,7 +409,7 @@ export class SearchComponent implements OnInit {
       id: demand.id,
       manager: demand.manager,
       created: demand.created,
-      // endDate:demand.endDate,
+      department:demand.department,
       ageing: demand.ageing,
       priority: demand.priority,
       skill: demand.skill,
@@ -416,6 +455,8 @@ export class SearchComponent implements OnInit {
       priority: demand.priority,
       skill: demand.skill,
       status: demand.status,
+      department: demand.department,
+      
     };
     this.editForm.patchValue(editedDemandValues);
 
