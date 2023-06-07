@@ -51,8 +51,20 @@ export class AssignedProfilesComponent {
     )
   }
 
-  status(value){
-    return this.assignProfileService.statusValidation(value).subscribe({
+  status(value,id){
+    var status = value;
+    if(status == 'accepted'){
+      value = [1];
+    }
+    else{
+      value = [0]
+    }
+    var profileidValue  = this.profiles.find(test => test.id === id);
+    profileidValue['demandRejectedStatus'] = value;
+    console.log(profileidValue);
+
+    this.profiles
+    return this.assignProfileService.statusValidation(profileidValue,this.id).subscribe({
       next: (result: any) => {
         console.log(result);
       },

@@ -44,10 +44,10 @@
               
                 <td mat-cell *matCellDef="let myRowData" class="actionGroup">
 
-                  <button class="btn btn-primary" (click)="status('accepted')">
+                  <button class="btn btn-primary" (click)="status('accepted',myRowData.id)">
                     Accepted
                   </button>&nbsp;
-                  <button class="btn btn-danger" (click)="status('rejected')">
+                  <button class="btn btn-danger" (click)="status('rejected',myRowData.id)">
                     Rejected
                   </button>
                 
