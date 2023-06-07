@@ -34,6 +34,18 @@ export class AssignProfileService {
       })
     );
   }
+  statusValidation(value){
+    return  this.http
+    .get<assign[]>(this.baseURL + 'api/demands/profilelist/' +value)
+    .pipe(
+      map((resData: any) => {
+        return resData;
+      }),
+      catchError((err: any) => {
+        throw err;
+      })
+    );
+  }
   
 
 }

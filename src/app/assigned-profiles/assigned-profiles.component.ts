@@ -50,4 +50,18 @@ export class AssignedProfilesComponent {
       }
     )
   }
+
+  status(value){
+    return this.assignProfileService.statusValidation(value).subscribe({
+      next: (result: any) => {
+        console.log(result);
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+      complete: () => {
+        console.log('complete');
+      }
+    });
+  }
 }
