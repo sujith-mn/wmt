@@ -54,13 +54,14 @@ export class AssignedProfilesComponent {
   status(value,id){
     var status = value;
     if(status == 'accepted'){
-      value = [1];
+      status = [1];
     }
     else{
-      value = [0]
+      status = [0]
     }
     var profileidValue  = this.profiles.find(test => test.id === id);
-    profileidValue['demandRejectedStatus'] = value;
+    profileidValue['demandRejectedStatus'] = status;
+    profileidValue['profileStatus'] = value;
     console.log(profileidValue);
 
     this.profiles
