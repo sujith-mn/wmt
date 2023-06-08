@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,7 @@ public class ProfileService {
 		if(resumePath!=null) {
 		profiles.setPath(resumePath);
 		profiles.setProfileStatus("onhold");
+		profiles.setDemandRejectedStatus(new ArrayList<>(0));
 		resumePath=null;
 		profileRepository.save(profiles);
 		return modelMapper.map(profiles, ProfileDto.class);
@@ -59,22 +61,7 @@ public class ProfileService {
 
 	}
 
-//
-//	public void localSave(MultipartFile file,ProfileDto profile) throws IOException {
-//		
-//		File path = new File("C:\\data\\" + file.getOriginalFilename());
-//  		path.createNewFile();
-//  		String resumePath ="C:\\data\\" + file.getOriginalFilename();
-//  		FileOutputStream output = new FileOutputStream(path);
-//  		output.write(file.getBytes());
-//  		output.close();	
-//  		ProfileService profileService = new ProfileService();
-//  	
-//  		
-//  		
-//  		
-//		
-//	}
+
 
 	@Async
 	public void localSave(MultipartFile file) throws IOException {
@@ -154,7 +141,8 @@ public class ProfileService {
 
 			List<ProfilesExcel> excels = sr.retrieveRows(datatypeSheet, ProfilesExcel.class);
 			List<Profiles> excel = excels.stream().map(profile ->{
-				         profile.setProfileStatus("onhold"); return modelMapper.map(profile, Profiles.class);	})
+				         profile.setProfileStatus("onhold"); 
+				         return modelMapper.map(profile, Profiles.class);	})
 					.collect(Collectors.toList());
 			profileRepository.saveAll(excel);
 		} catch (Exception e) {
@@ -192,12 +180,14 @@ public class ProfileService {
 				.map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
 	}
 
-	public List<ProfileDto> getProfilesBasedOnSkillAndAvailability(String skill, String available) {
+	public List<ProfileDto> getProfilesBasedOnSkillAndAvailability(String skill, String available ,long id) {
 		List<ProfileDto> profiles = profileRepository.findAllByPrimarySkill(skill).stream()
+//				.filter(profile -> profile.getDemandRejectedStatus().stream().filter(demand -> demand.getId() != 40 ))
 				.map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
 
 		return profiles.stream().filter(profile -> profile.getAvailability().equalsIgnoreCase(available))
 				.filter(profile-> !profile.getProfileStatus().equalsIgnoreCase("rejected"))
+				.filter(assign -> assign.getDemandRejectedStatus().isEmpty()&& !assign.getDemandRejectedStatus().contains(id))
 				.collect(Collectors.toList());
 
 	}

@@ -1,9 +1,13 @@
 package com.application.workmanagement.domain.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,6 +38,8 @@ public class Profiles {
 	
 	private String ProfileStatus;
 	
+	
+	private List<Integer> demandRejectedStatus = new ArrayList<>();
 	
 //	@Lob
 //	private byte[] resume;

@@ -137,11 +137,10 @@ public class DemandService {
 				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: " + demandId + " not found"));
 		
 		List<Profiles> assignedProfile = demand.getProfiles(); 
-		List<Profiles> assign=
-		profilesList.getProfilesList().stream().map(profile -> {
-			profile.setAvailability("Assigned");
-			return profile;
-		}).collect(Collectors.toList());
+		List<Profiles> assign= profilesList.getProfilesList().stream().map(profile -> {
+									profile.setAvailability("Assigned");
+									return profile;
+								}).collect(Collectors.toList());
 		List<Profiles> assignProfiles= new ArrayList<>();
 		assignProfiles.addAll(assignedProfile);
 		assignProfiles.addAll(assign);
@@ -189,6 +188,9 @@ public class DemandService {
 		List<Profiles> rejectedProfile =status.stream()
 											.filter(profile->profile.getProfileStatus().equalsIgnoreCase("rejected"))
 											.map(profile->{
+//												List<Demand> profileDemandStatus = profile.getDemandRejectedStatus();
+//												profileDemandStatus.add(demand);
+//												profile.setDemandRejectedStatus(profileDemandStatus);
 												profile.setAvailability("Available");
 												return profile;
 											})

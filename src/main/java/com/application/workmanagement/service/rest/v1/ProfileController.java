@@ -4,6 +4,7 @@ package com.application.workmanagement.service.rest.v1;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,7 +33,6 @@ import com.application.common.exception.ResumeNotFoundException;
 import com.application.common.exception.ResumeSizeLimitExceededException;
 import com.application.workmanagement.domain.repository.ProfileRepository;
 import com.application.workmanagement.logic.ProfileService;
-import com.application.workmanagement.service.rest.v1.model.DemandDto;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 
 
@@ -148,10 +148,11 @@ public class ProfileController {
 
 	}
 
-	@GetMapping("/by/skill/{skill}/availability/{available}")
+	@GetMapping("/by/skill/{skill}/availability/{available}/demandid/{id}")
 	public ResponseEntity<List<ProfileDto>> getProfilesBasedOnSkillAndAvailability(@PathVariable("skill") String skill,
-			@PathVariable("available") String available) {
-		List<ProfileDto> profileList = profileService.getProfilesBasedOnSkillAndAvailability(skill, available);
+			@PathVariable("available") String available,
+			@PathVariable("id") long demandid) {
+		List<ProfileDto> profileList = profileService.getProfilesBasedOnSkillAndAvailability(skill, available,demandid);
 		return new ResponseEntity<>(profileList, HttpStatus.OK);
 	}
 	
@@ -165,7 +166,7 @@ public class ProfileController {
 
 	@GetMapping("/by/search/{search}")
 	public ResponseEntity<List<ProfileDto>> getAllProfilesBySearch(@PathVariable("search") String search) {
-		List<ProfileDto> profilesList = null;
+		List<ProfileDto> profilesList =new ArrayList<>();
 
 		if (!profileService.getAllprofilesByPrimarySkillIgnoreCase(search).isEmpty()) {
 			profilesList = profileService.getAllprofilesByPrimarySkillIgnoreCase(search);
@@ -275,7 +276,7 @@ public class ProfileController {
 	}
 	}
 /*---------------------SEARCH---------------------*/
-	@GetMapping("/getProfilesBySearch")
+	@PostMapping("/getProfilesBySearch") 
 	public ResponseEntity<List<ProfileDto>> getProfileBySearch(
 			@RequestParam("availability") Optional<String> availability,
 			@RequestParam("location") Optional<String> location,

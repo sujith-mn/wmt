@@ -1,5 +1,8 @@
 package com.application.workmanagement.service.rest.v1.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +21,7 @@ public class ProfileDto {
 	private String source;
 	private String path;
 	private String ProfileStatus;
+	private List<Integer> demandRejectedStatus= new ArrayList<>();
 	
 	
 
