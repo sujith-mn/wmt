@@ -112,7 +112,7 @@ public class ProfileController {
 
 	@GetMapping("/")
 	public ResponseEntity<List<ProfileDto>> getAllProfiles(@RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "5") int size) {
+	        @RequestParam(defaultValue = "10") int size) {
 
 		List<ProfileDto> profilesList = profileService.getAllprofiles(page,size);
 
@@ -151,7 +151,7 @@ public class ProfileController {
 	@GetMapping("/by/skill/{skill}/availability/{available}/demandid/{id}")
 	public ResponseEntity<List<ProfileDto>> getProfilesBasedOnSkillAndAvailability(@PathVariable("skill") String skill,
 			@PathVariable("available") String available,
-			@PathVariable("id") long demandid) {
+			@PathVariable("id") int demandid) {
 		List<ProfileDto> profileList = profileService.getProfilesBasedOnSkillAndAvailability(skill, available,demandid);
 		return new ResponseEntity<>(profileList, HttpStatus.OK);
 	}

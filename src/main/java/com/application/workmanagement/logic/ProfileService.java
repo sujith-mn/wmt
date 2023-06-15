@@ -180,14 +180,15 @@ public class ProfileService {
 				.map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
 	}
 
-	public List<ProfileDto> getProfilesBasedOnSkillAndAvailability(String skill, String available ,long id) {
+	
+	public List<ProfileDto> getProfilesBasedOnSkillAndAvailability(String skill, String available ,int id) {
 		List<ProfileDto> profiles = profileRepository.findAllByPrimarySkill(skill).stream()
 //				.filter(profile -> profile.getDemandRejectedStatus().stream().filter(demand -> demand.getId() != 40 ))
 				.map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
-
-		return profiles.stream().filter(profile -> profile.getAvailability().equalsIgnoreCase(available))
+				System.out.println(id);
+return profiles.stream().filter(profile -> profile.getAvailability().equalsIgnoreCase("available"))
 				.filter(profile-> !profile.getProfileStatus().equalsIgnoreCase("rejected"))
-				.filter(assign -> assign.getDemandRejectedStatus().isEmpty()&& !assign.getDemandRejectedStatus().contains(id))
+				.filter(assign -> !assign.getDemandRejectedStatus().contains(id))
 				.collect(Collectors.toList());
 
 	}
@@ -223,16 +224,9 @@ public class ProfileService {
 
 	}
 
-//	public void saveResume(MultipartFile file,long id) throws IOException {
-//		
-//		Profiles profile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("profile", "id", id));
-//		profile.setResume(file.getBytes());
-//		profileRepository.save(profile);
-//	}
 
 	public Profiles getFile(long id) {
 		return profileRepository.findById(id).get();
-
 	}
 
 	public List<ProfileDto> getProfilesHasNoResume() {
