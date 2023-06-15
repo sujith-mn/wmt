@@ -35,8 +35,9 @@ export class AssignProfileService {
     );
   }
   statusValidation(value,id){
+    let profilesList =  {"profilesList":value};
     return  this.http
-    .put<assign[]>(this.baseURL + 'api/demands/profileStatus/'+id,value)
+    .put<assign[]>(this.baseURL + 'api/demands/profileStatus/'+id,profilesList)
     .pipe(
       map((resData: any) => {
         return resData;

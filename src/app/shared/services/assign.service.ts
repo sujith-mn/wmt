@@ -43,9 +43,9 @@ export class AssignService {
   );
 }
 
-getProfileBySkill( skill:any){
+getProfileBySkill( skill:any,demandId:any){
   return  this.http
-.get<assign[]>(this.baseURL + 'profiles/by/skill/' +skill + '/availability/' +this.availability)
+  .get<assign[]>(this.baseURL + 'profiles/by/skill/' +skill + '/availability/' +this.availability + '/demandid/' +demandId)
 .pipe(
   map((resData: any) => {
     return resData;

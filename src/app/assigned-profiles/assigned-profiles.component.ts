@@ -53,18 +53,16 @@ export class AssignedProfilesComponent {
 
   status(value,id){
     var status = value;
+    var profileidValue  = this.profiles.find(test => test.id === id);
+    profileidValue['demandRejectedStatus'] = [];
     if(status == 'accepted'){
-      status = [1];
+      profileidValue['profileStatus'] = 'accepted';     
     }
     else{
-      status = [0]
+      profileidValue['profileStatus'] = 'onhold';
+      profileidValue['demandRejectedStatus'].push(this.id);
     }
-    var profileidValue  = this.profiles.find(test => test.id === id);
-    profileidValue['demandRejectedStatus'] = status;
-    profileidValue['profileStatus'] = value;
-    console.log(profileidValue);
 
-    this.profiles
     return this.assignProfileService.statusValidation(profileidValue,this.id).subscribe({
       next: (result: any) => {
         console.log(result);

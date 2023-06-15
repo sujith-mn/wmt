@@ -96,7 +96,7 @@ export class AssignComponent implements OnInit {
 
   getProfile(){
     //console.log(this.skill);
-    return this.assignService.getProfileBySkill(this.skill).subscribe(
+    return this.assignService.getProfileBySkill(this.skill,this.Id).subscribe(
       {
         next: (result: any) => {
           this.profiles=result;
