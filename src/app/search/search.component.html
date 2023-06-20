@@ -29,7 +29,7 @@
  
         <mat-select
           [(value)]="empfilter.defaultValue"
-          formControlName="{{ empfilter.name }}" >
+          formControlName="{{ empfilter.name }}" placeholder="{{ empfilter.name }}" floatlLabel="never">
           <mat-option *ngFor="let op of empfilter.options" [value]="op">
             {{ op }}
           </mat-option>

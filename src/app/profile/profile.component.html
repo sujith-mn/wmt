@@ -33,7 +33,7 @@
  
         <mat-select
           [(value)]="proFilter.name"
-          formControlName="{{ proFilter.name }}" >
+          formControlName="{{ proFilter.name }}" placeholder="{{ proFilter.name }}" floatlLabel="never">
           <mat-option *ngFor="let op of proFilter.options" [value]="op">
             {{ op }}
           </mat-option>

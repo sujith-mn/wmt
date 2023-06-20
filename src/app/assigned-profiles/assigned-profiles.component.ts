@@ -7,6 +7,7 @@ import { ProfileData } from '../profile/profile.component';
 import { AssignProfileService } from '../shared/services/assigned-profiles';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { NotificationService } from '../shared/services/notification.service';
 @Component({
   selector: 'app-assigned-profiles',
   templateUrl: './assigned-profiles.component.html',
@@ -18,7 +19,8 @@ export class AssignedProfilesComponent {
     private fb: FormBuilder,
     private assignProfileService:AssignProfileService,
     private router:Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public notificationService: NotificationService
   ) {
   }
   public id: string;
@@ -65,7 +67,13 @@ export class AssignedProfilesComponent {
 
     return this.assignProfileService.statusValidation(profileidValue,this.id).subscribe({
       next: (result: any) => {
-        console.log(result);
+        if(result.data['profilesList'][0].profileStatus == 'onhold'){
+          this.notificationService.error('Profile Rejected to this Demand');
+        }
+        else{
+          this.notificationService.success('Profile Assigned to this Demand successfully');
+        }
+      
       },
       error: (err: any) => {
         console.log(err);
