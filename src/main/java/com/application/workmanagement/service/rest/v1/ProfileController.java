@@ -148,6 +148,13 @@ public class ProfileController {
 
 	}
 
+	/**
+	 * 
+	 * @param skill
+	 * @param available
+	 * @param demandid
+	 * @return profileList
+	 */
 	@GetMapping("/by/skill/{skill}/availability/{available}/demandid/{id}")
 	public ResponseEntity<List<ProfileDto>> getProfilesBasedOnSkillAndAvailability(@PathVariable("skill") String skill,
 			@PathVariable("available") String available,

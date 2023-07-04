@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,9 +26,12 @@ import com.application.common.exception.ResourceNotFoundException;
 import com.application.common.exception.ResumeAlreadyExistsException;
 import com.application.common.exception.ResumeNotUploadedException;
 import com.application.common.exception.ResumeSizeLimitExceededException;
+import com.application.workmanagement.domain.model.DemandProfileStatus;
 import com.application.workmanagement.domain.model.Profiles;
 import com.application.workmanagement.domain.model.ProfilesExcel;
+import com.application.workmanagement.domain.repository.DemandProfileStatusRepository;
 import com.application.workmanagement.domain.repository.ProfileRepository;
+import com.application.workmanagement.service.rest.v1.model.DemandProfileStatusDto;
 import com.application.workmanagement.service.rest.v1.model.ProfileDto;
 import com.xlm.reader.SheetReader;
 
@@ -39,6 +43,9 @@ public class ProfileService {
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	  @Autowired
+	    private DemandProfileStatusRepository demandProfileStatusRepository;
 
 	private String resumePath=null;;
 
@@ -49,6 +56,7 @@ public class ProfileService {
 		if(resumePath!=null) {
 		profiles.setPath(resumePath);
 		profiles.setProfileStatus("onhold");
+		
 		profiles.setDemandRejectedStatus(new ArrayList<>(0));
 		resumePath=null;
 		profileRepository.save(profiles);
@@ -60,6 +68,8 @@ public class ProfileService {
 
 
 	}
+
+	
 
 
 
@@ -180,18 +190,33 @@ public class ProfileService {
 				.map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
 	}
 
-	
-	public List<ProfileDto> getProfilesBasedOnSkillAndAvailability(String skill, String available ,int id) {
-		List<ProfileDto> profiles = profileRepository.findAllByPrimarySkill(skill).stream()
-//				.filter(profile -> profile.getDemandRejectedStatus().stream().filter(demand -> demand.getId() != 40 ))
-				.map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
-				System.out.println(id);
-return profiles.stream().filter(profile -> profile.getAvailability().equalsIgnoreCase("available"))
-				.filter(profile-> !profile.getProfileStatus().equalsIgnoreCase("rejected"))
-				.filter(assign -> !assign.getDemandRejectedStatus().contains(id))
-				.collect(Collectors.toList());
+	public List<ProfileDto> getProfilesBasedOnSkillAndAvailability(String skill, String available, int demandId) {
+		 List<ProfileDto> profiles = profileRepository.findAllByPrimarySkill(skill).stream()
+		            .map(profile -> modelMapper.map(profile, ProfileDto.class))
+		            .collect(Collectors.toList());
 
+List<Long> rejectedProfileIds = demandProfileStatusRepository.findByDemandidAndStatus(demandId, "rejected")
+		            .stream()
+		            .map(DemandProfileStatus::getProfileid)
+		            .collect(Collectors.toList());
+
+		    return profiles.stream()
+		            .filter(profile -> profile.getAvailability().equalsIgnoreCase(available))
+		            .filter(profile -> !rejectedProfileIds.contains(profile.getId()))
+		            .collect(Collectors.toList());
 	}
+	
+//	public List<ProfileDto> getProfilesBasedOnSkillAndAvailability(String skill, String available ,int id) {
+//		List<ProfileDto> profiles = profileRepository.findAllByPrimarySkill(skill).stream()
+////				.filter(profile -> profile.getDemandRejectedStatus().stream().filter(demand -> demand.getId() != 40 ))
+//				.map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
+//				System.out.println(id);
+//				return profiles.stream().filter(profile -> profile.getAvailability().equalsIgnoreCase("available"))
+////				.filter(profile-> !profile.getProfileStatus().equalsIgnoreCase("rejected"))
+//				.filter(assign -> !assign.getDemandRejectedStatus().contains(id))
+//				.collect(Collectors.toList());
+//
+//	}
 
 	public ProfileDto getProfileById(long id) {
 		Profiles profile = profileRepository.findById(id)

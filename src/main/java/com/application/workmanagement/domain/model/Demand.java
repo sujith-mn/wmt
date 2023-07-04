@@ -1,9 +1,11 @@
 package com.application.workmanagement.domain.model;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +33,7 @@ public class Demand {
 	private String skill;
 	private String status;
 	private String Department;
-	@OneToMany
-	private List<Profiles> profiles;
+   
+//	 @OneToMany
+//	private List<Profiles> profiles= new ArrayList<>();
 }

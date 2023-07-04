@@ -128,15 +128,23 @@ public class DemandController {
 		return new ResponseEntity<> (profiles,HttpStatus.OK);
 	}
 	
-	@PatchMapping("/profileslist/{Id}")
-	public ResponseEntity<ResponseInfo> addProfiles(@RequestBody DemandDto profilesList, @PathVariable("Id") int demandId){
-		
-		demandService.addProfilesToDemand(profilesList,demandId);
-		
-		responseInfo = new ResponseInfo(HttpStatus.OK,profilesList,"Profiles added to demand");
-		
-		return new ResponseEntity<>(responseInfo,HttpStatus.OK);
-	}
+//	@PatchMapping("/profileslist/{Id}")
+//	public ResponseEntity<ResponseInfo> addProfiles(@RequestBody DemandDto profilesList, @PathVariable("Id") int demandId){
+//		
+//		demandService.addProfilesToDemand(profilesList,demandId);
+//		
+//		responseInfo = new ResponseInfo(HttpStatus.OK,profilesList,"Profiles added to demand");
+//		
+//		return new ResponseEntity<>(responseInfo,HttpStatus.OK);
+//	}
+	
+	/**
+	 * profiles assigning to demand
+	 * from Demand ->assign button clicked.
+	 * @param profilesList
+	 * @param demandId
+	 * @return
+	 */
 	@PutMapping("/profilelist/{Id}")
 	public ResponseEntity<ResponseInfo> addProfiles(@RequestBody ProfilesListDto profilesList, @PathVariable("Id") int demandId){
 		
@@ -147,6 +155,13 @@ public class DemandController {
 		return new ResponseEntity<>(responseInfo,HttpStatus.OK);
 	}
 	
+	/**
+	 * Profiles either to accepted or rejected by demand 
+	 * 
+	 * @param profilesList
+	 * @param demandId
+	 * @return profilesList
+	 */
 	@PutMapping("/profileStatus/{demandId}")
 	public ResponseEntity<ResponseInfo> addProfilesStatus(@RequestBody ProfilesListDto profilesList, @PathVariable("demandId") int demandId){
 		

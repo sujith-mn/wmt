@@ -2,12 +2,14 @@ package com.application.workmanagement.logic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.application.common.exception.DemandIdNotFoundException;
+import com.application.common.exception.ProfileNotFoundException;
 import com.application.workmanagement.domain.model.Demand;
+import com.application.workmanagement.domain.model.DemandProfileStatus;
 import com.application.workmanagement.domain.model.DemandsExcel;
 import com.application.workmanagement.domain.model.Profiles;
+import com.application.workmanagement.domain.repository.DemandProfileStatusRepository;
 import com.application.workmanagement.domain.repository.DemandRepository;
 import com.application.workmanagement.domain.repository.ProfileRepository;
 import com.application.workmanagement.service.rest.v1.model.DemandDto;
@@ -38,6 +43,8 @@ public class DemandService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+	
+	private final DemandProfileStatusRepository demandProfileStatusRepository;
 	// create demand
 
 	public DemandDto createDemand(DemandDto demandDto) {
@@ -120,36 +127,6 @@ public class DemandService {
 		return demandDto;
 	}
 
-	public void addProfilesToDemand(DemandDto profilesList, int demandId) {
-
-		Demand demand = demandRepository.findById(demandId)
-				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: " + demandId + " not found"));
-
-		demand.setProfiles(profilesList.getProfilesList());
-
-		demandRepository.save(demand);
-
-	}
-
-	public void addProfilesListToDemand(ProfilesListDto profilesList, int demandId) {
-
-		Demand demand = demandRepository.findById(demandId)
-				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: " + demandId + " not found"));
-		
-		List<Profiles> assignedProfile = demand.getProfiles(); 
-		List<Profiles> assign= profilesList.getProfilesList().stream().map(profile -> {
-									profile.setAvailability("Assigned");
-									return profile;
-								}).collect(Collectors.toList());
-		List<Profiles> assignProfiles= new ArrayList<>();
-		assignProfiles.addAll(assignedProfile);
-		assignProfiles.addAll(assign);
-		profileRepository.saveAll(assignProfiles);
-		demand.setProfiles(assignProfiles);
-		demandRepository.save(demand);
-
-	}
-
 	@Async
 	public void save(MultipartFile file) {
 		try {
@@ -171,41 +148,162 @@ public class DemandService {
 	}
 
 	public List<ProfileDto> getProfilesFromDemand(int demandId) {
-		Demand demand = this.demandRepository.findById(demandId)
-				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: " + demandId + " not found"));
-		List<ProfileDto> profiles = demand.getProfiles().stream()
-				.map(profile -> modelMapper.map(profile, ProfileDto.class)).collect(Collectors.toList());
-		return profiles;
+//		Demand demand = demandRepository.findById(demandId)
+//	            .orElseThrow(() -> new DemandIdNotFoundException("Demand with id: " + demandId + " not found"));
+//
+//	    List<ProfileDto> profiles = demand.getProfiles()
+//	            .stream()
+//	            .filter(profile -> profile.getAvailability().equalsIgnoreCase("Assigned"))
+//	            .filter(profile -> !isProfileRejectedByDemandId(demandId, profile.getId()))
+//	            .map(profile -> modelMapper.map(profile, ProfileDto.class))
+//	            .collect(Collectors.toList());
+//
+//	    return profiles;
+		
+		List<ProfileDto> profiles = new ArrayList<>();
+
+	    // Retrieve DemandProfileStatus instances with the given demandId and "Assigned" status
+	    List<DemandProfileStatus> demandProfileStatusList = demandProfileStatusRepository.findByDemandidAndStatus(demandId, "Assigned");
+
+	    for (DemandProfileStatus dps : demandProfileStatusList) {
+	        // Retrieve the corresponding profile based on profileid
+	        Profiles profile = profileRepository.findById(dps.getProfileid())
+	                .orElseThrow(NoSuchElementException::new);
+
+	        // Map the profile to ProfileDto and add it to the result list
+	        ProfileDto profileDto = modelMapper.map(profile, ProfileDto.class);
+	        profiles.add(profileDto);
+	    }
+
+	    return profiles;
+	}
+
+	private boolean isProfileRejectedByDemandId(int demandId, long profileId) {
+	    DemandProfileStatus dps = demandProfileStatusRepository.findByDemandIdAndProfileId(demandId, profileId);
+	    return dps != null && "rejected".equalsIgnoreCase(dps.getStatus());
 	}
 
 	public void addProfilesListStatus(ProfilesListDto profilesList, int demandId) {
-		// TODO Auto-generated method stub
-		
-		Demand demand = demandRepository.findById(demandId)
-				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: " + demandId + " not found"));
-		List<Profiles> status = profilesList.getProfilesList();
-		
-		List<Profiles> rejectedProfile =status.stream()
-											.filter(profile->profile.getProfileStatus().equalsIgnoreCase("rejected"))
-											.map(profile->{
-//												List<Demand> profileDemandStatus = profile.getDemandRejectedStatus();
-//												profileDemandStatus.add(demand);
-//												profile.setDemandRejectedStatus(profileDemandStatus);
-												profile.setAvailability("Available");
-												return profile;
-											})
-											.collect(Collectors.toList());
-		List<Profiles> acceptedProfile = status.stream()
-											.filter(profile->profile.getProfileStatus().equalsIgnoreCase("accepted"))
-											.collect(Collectors.toList());
-		profileRepository.saveAll(rejectedProfile);
-		profileRepository.saveAll(acceptedProfile);
-		
-		
-		
-		
-		
-		
+		List<Profiles> profiles = profilesList.getProfilesList();
+
+	    for (Profiles profile : profiles) {
+	        long profileId = profile.getId();
+
+	        DemandProfileStatus dps = demandProfileStatusRepository.findByDemandIdAndProfileId(demandId, profileId);
+	        if (dps != null) {
+	            String profileStatus = profile.getProfileStatus();
+	            dps.setStatus(profileStatus);
+
+	            demandProfileStatusRepository.save(dps);
+	           
+	            if ("rejected".equals(profileStatus)) {
+	            	
+	                profile.setAvailability("Available");
+	                
+
+	                // Save the updated profile
+	                profileRepository.save(profile);
+	            }
+	           
+	        }
+	    }
+
 	}
+//	public void addProfilesListStatus(ProfilesListDto profilesList, int demandId) {
+//		// TODO Auto-generated method stub
+//
+//		Demand demand = demandRepository.findById(demandId)
+//				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: " + demandId + " not found"));
+//		List<Profiles> status = profilesList.getProfilesList();
+//
+//		List<Profiles> rejectedProfile = status.stream()
+//				.filter(profile -> profile.getProfileStatus().equalsIgnoreCase("onhold")).map(profile -> {
+////												List<Demand> profileDemandStatus = profile.getDemandRejectedStatus();
+////												profileDemandStatus.add(demand);
+////												profile.setDemandRejectedStatus(profileDemandStatus);
+//					profile.setAvailability("Available");
+//					return profile;
+//				}).collect(Collectors.toList());
+//		List<Profiles> acceptedProfile = status.stream()
+//				.filter(profile -> profile.getProfileStatus().equalsIgnoreCase("accepted"))
+//				.collect(Collectors.toList());
+//		profileRepository.saveAll(rejectedProfile);
+//		profileRepository.saveAll(acceptedProfile);
+//
+//	}
+
+//	public void addProfilesToDemand(DemandDto profilesList, int demandId) {
+//
+//		Demand demand = demandRepository.findById(demandId)
+//				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: " + demandId + " not found"));
+//
+//		demand.setProfiles(profilesList.getProfilesList());
+//
+//		demandRepository.save(demand);
+//
+//	}
+	
+
+    public DemandService(DemandProfileStatusRepository demandProfileStatusRepository) {
+        this.demandProfileStatusRepository = demandProfileStatusRepository;
+    }
+	public void addProfilesListToDemand(ProfilesListDto profilesList, int demandId) {
+
+		  List<Long> profileIds = profilesList.getProfilesList()
+		            .stream()
+		            .map(Profiles::getId)
+		            .collect(Collectors.toList());
+
+        for (long profileId : profileIds) {
+        	// Check if the record already exists
+            DemandProfileStatus existingRecord = demandProfileStatusRepository.findByDemandIdAndProfileId(demandId, profileId);
+            if (existingRecord == null) {
+                DemandProfileStatus dps = new DemandProfileStatus();
+                dps.setDemandid(demandId);
+                dps.setProfileid(profileId);
+                dps.setStatus("Assigned");
+                demandProfileStatusRepository.save(dps);
+            }        
+        }
+		
+//		Demand demand = demandRepository.findById(demandId)
+//				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: " + demandId + " not found"));
+//		List<Profiles> assignedProfile = demand.getProfiles();
+//		List<Profiles> assign = profilesList.getProfilesList().stream().map(profile -> {
+//			profile.setAvailability("Assigned");
+//			return profile;
+//		}
+//		).collect(Collectors.toList());
+//
+//		List<Profiles> assignProfiles = new ArrayList<>();
+//		assignProfiles.addAll(assignedProfile);
+//		assignProfiles.addAll(assign);
+//		profileRepository.saveAll(assignProfiles);
+//		demand.setProfiles(assignProfiles);
+//		demandRepository.save(demand);
+
+	}
+
+//	public void addProfilesListToDemand(ProfilesListDto profilesList, int demandId) {
+//
+//		Demand demand = demandRepository.findById(demandId)
+//				.orElseThrow(() -> new DemandIdNotFoundException("Demand with id: " + demandId + " not found"));
+//		
+//		List<Profiles> assignedProfile = demand.getProfiles(); 
+//		List<Profiles> assign= profilesList.getProfilesList().stream().map(profile -> {
+//									profile.setAvailability("Assigned");
+//									return profile;
+//								})
+//				
+//				
+//				.collect(Collectors.toList());
+//		List<Profiles> assignProfiles= new ArrayList<>();
+//		assignProfiles.addAll(assignedProfile);
+//		assignProfiles.addAll(assign);
+//		profileRepository.saveAll(assignProfiles);
+//		demand.setProfiles(assignProfiles);
+//		demandRepository.save(demand);
+//
+//	}
 
 }
