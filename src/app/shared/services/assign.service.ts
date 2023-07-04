@@ -56,6 +56,19 @@ getProfileBySkill( skill:any,demandId:any){
 );
 }
 
+viewAssignedProfile(Id:any){
+  return this.http.
+  get<assign[]>(this.baseURL + 'api/demands/profilelist/'+Id)
+  .pipe(
+    map((resData:any)=>{
+      return resData;
+    }),
+    catchError((err:any)=>{
+      throw err;
+    })
+  )
+}
+
 getProfileByAssign(Id:any,values:assign){
 
   return this.http.

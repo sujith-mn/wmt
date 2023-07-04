@@ -13,6 +13,7 @@ export class AssignProfileService {
 
   private baseURL!: string;
   private availability = 'available';
+  assignedProfileSubject = new Subject<void>();
   constructor(
     private http: HttpClient,
     public notificationService: NotificationService,
@@ -20,6 +21,11 @@ export class AssignProfileService {
     @Inject(APP_CONFIG) appConfig: AppConfig)
      {
     this.baseURL = appConfig.apiURL;
+  }
+
+
+  get refreshneeds() {
+    return this.assignedProfileSubject;
   }
 
   getAssignedProfileLists(id){
@@ -40,6 +46,7 @@ export class AssignProfileService {
     .put<assign[]>(this.baseURL + 'api/demands/profileStatus/'+id,profilesList)
     .pipe(
       map((resData: any) => {
+        this.assignedProfileSubject.next();
         return resData;
       }),
       catchError((err: any) => {

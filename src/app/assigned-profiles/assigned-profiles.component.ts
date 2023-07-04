@@ -30,6 +30,10 @@ export class AssignedProfilesComponent {
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = ['id', 'name', 'primarySkill', 'location', 'availability', 'proposedBy', 'source','actions']
   ngOnInit(): void {
+    this.assignProfileService.refreshneeds.subscribe(() => {
+      this.id = this.route.snapshot.paramMap.get('id');
+      this.getProfile();
+    })
     this.id = this.route.snapshot.paramMap.get('id');
     this.getProfile()
   }

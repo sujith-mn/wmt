@@ -11,7 +11,7 @@ import { Profile } from '../shared/model/profile';
 import { ProfileData } from '../profile/profile.component';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import {MatCheckbox, MatCheckboxChange, MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckbox, MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 @Component({
   selector: 'app-assign',
   templateUrl: './assign.component.html',
@@ -19,22 +19,22 @@ import {MatCheckbox, MatCheckboxChange, MatCheckboxModule} from '@angular/materi
 })
 export class AssignComponent implements OnInit {
 
-  ShowColumns: string[] = [ 'name', 'primarySkill', 'location','availability','source','Action']
+  ShowColumns: string[] = ['name', 'primarySkill', 'location', 'availability', 'source', 'Action']
 
-  displayedColumns:string[] = ['manager','created','priority','skill','status'];
+  displayedColumns: string[] = ['manager', 'created', 'priority', 'skill', 'status'];
   dataSourceVal: assign[] = [];
-  profiles:any;
+  profiles: any;
   Id: string;
   paramsId: any;
-  skill:string;
+  skill: string;
   DetailProfileForm: [];
   dataSource: MatTableDataSource<ProfileData>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   myModel = false;
-  isChecked:any=false;
-  checkboxVal:boolean = false;
- 
+  isChecked: any = false;
+  checkboxVal: boolean = false;
+
   @ViewChildren('myCheckbox') myCheckbox: QueryList<MatCheckbox>;
   constructor(
     private route: ActivatedRoute,
@@ -49,17 +49,17 @@ export class AssignComponent implements OnInit {
   form: FormGroup = this.fb.group({
     i_agree: ['', [Validators.required]],
   })
-  detailForm:FormGroup = this.fb.group({
-    id:[''],
+  detailForm: FormGroup = this.fb.group({
+    id: [''],
     name: [''],
     source: [''],
-    location:[''],
-    availability:[''],
+    location: [''],
+    availability: [''],
     primarySkill: [''],
-    check:['']
+    check: ['']
   })
 
-  ngOnInit(){
+  ngOnInit() {
     this.route.queryParamMap.subscribe((params) => {
       this.paramsId = { ...params.keys, ...params };
       this.Id = this.paramsId.params.Id;
@@ -78,7 +78,7 @@ export class AssignComponent implements OnInit {
     return this.assignService.getDemandById(this.Id).subscribe(
       {
         next: (result: assign) => {
-          this.skill=result.skill;
+          this.skill = result.skill;
 
           this.dataSourceVal.push(result);
           this.dataSourceVal = [...this.dataSourceVal];
@@ -94,12 +94,12 @@ export class AssignComponent implements OnInit {
     )
   }
 
-  getProfile(){
+  getProfile() {
     //console.log(this.skill);
-    return this.assignService.getProfileBySkill(this.skill,this.Id).subscribe(
+    return this.assignService.getProfileBySkill(this.skill, this.Id).subscribe(
       {
         next: (result: any) => {
-          this.profiles=result;
+          this.profiles = result;
           console.log(result);
           this.dataSource = new MatTableDataSource<ProfileData>(this.profiles);
           this.dataSource.paginator = this.paginator;
@@ -114,59 +114,77 @@ export class AssignComponent implements OnInit {
       }
     )
   }
- 
+
   SubmitProfiles() {
-   
+
     this.fetchSelectedItems()
   }
   fetchSelectedItems() {
 
     this.DetailProfileForm = this.profiles.filter((value: { isChecked: any; }, index: any) => {
 
-      return value.isChecked });
-      this.dataSourceVal[0].profilesList =  this.DetailProfileForm;
-    console.log(this.dataSourceVal[0]);
-   }
-  GetProfileOnSubmit(){
-    this.assignService.getProfileByAssign(this.Id,this.dataSourceVal[0]).subscribe(
-    {
-    next: (result: any) => {
-      this.router.navigate(['/assignedprofile/'+this.Id]);
-      console.log("profiles : " +result);
-    },
-    error: (err: any) => {
-      this.router.navigate(['/assignedprofile']);
-      console.log(err);
-    },
-    complete: () => {
-      console.log('complete');
-    }
-  })
+      return value.isChecked
+    });
+    this.dataSourceVal[0].profilesList = this.DetailProfileForm;
+  }
+
+
+  viewAssignedProfile(){
+    this.assignService.viewAssignedProfile(this.Id).subscribe(
+      {
+        next: (result: any) => {
+          this.router.navigate(['/assignedprofile/' + this.Id]);
+          console.log("profiles : " + result);
+        },
+        error: (err: any) => {
+          this.router.navigate(['/assignedprofile']);
+          console.log(err);
+        },
+        complete: () => {
+          console.log('complete');
+        }
+      })
+  } 
+  GetProfileOnSubmit() {
+    this.assignService.getProfileByAssign(this.Id, this.dataSourceVal[0]).subscribe(
+      {
+        next: (result: any) => {
+          this.router.navigate(['/assignedprofile/' + this.Id]);
+          console.log("profiles : " + result);
+        },
+        error: (err: any) => {
+          this.router.navigate(['/assignedprofile']);
+          console.log(err);
+        },
+        complete: () => {
+          console.log('complete');
+        }
+      })
 
   }
 
 
   //Detail Start
-  openProfile(targetModal: any, profiles:any) {
+  openProfile(targetModal: any, profiles: any) {
     this.modalService.open(targetModal, {
       centered: true,
       backdrop: 'static',
       size: 'md'
     });
-    console.log("Profiles  " , profiles);
+    console.log("Profiles  ", profiles);
     let editedDemandValues = {
 
       id: profiles.id,
       name: profiles.name,
       source: profiles.source,
-      location:profiles.location,
+      location: profiles.location,
 
-      availability:profiles.availability,
+      availability: profiles.availability,
       primarySkill: profiles.primarySkill
       // proposedBy: profiles.proposedBy,
 
     }
-    console.log("editedDemandValues : " , editedDemandValues);
+    console.log("editedDemandValues : ", editedDemandValues);
     this.detailForm.patchValue(editedDemandValues);
 
   }
