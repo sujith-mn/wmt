@@ -61,13 +61,13 @@ export class AssignedProfilesComponent {
       profileidValue['profileStatus'] = 'accepted';     
     }
     else{
-      profileidValue['profileStatus'] = 'onhold';
+      profileidValue['profileStatus'] = 'rejected';
       profileidValue['demandRejectedStatus'].push(this.id);
     }
 
     return this.assignProfileService.statusValidation(profileidValue,this.id).subscribe({
       next: (result: any) => {
-        if(result.data['profilesList'][0].profileStatus == 'onhold'){
+        if(result.data['profilesList'][0].profileStatus == 'rejected'){
           this.notificationService.error('Profile Rejected to this Demand');
         }
         else{
