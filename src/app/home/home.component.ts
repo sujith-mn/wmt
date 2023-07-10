@@ -7,9 +7,31 @@ import { SafeResourceUrl } from '@angular/platform-browser';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
- 
+  showMyContainer=false;
+  viewMode = 'map';
+  val = true;
   ngOnInit(): void {
     localStorage.setItem('login','false');
   }
 
+  onclick(){
+    this.showMyContainer=!this.showMyContainer
+  }
+  calculate(){
+
+    if(this.val){
+
+      this.val = false;
+
+    }
+
+    else{
+
+      this.val = true;
+
+    }
+
+ 
+
+  }
 }
