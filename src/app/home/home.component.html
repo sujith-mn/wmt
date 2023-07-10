@@ -1,76 +1,96 @@
-
-<div>
+<div class="container-fluid">
+<div class="mt-5">
   <h4>Practice</h4>
-  
   <ul class="nav nav-pills">
-  
-    <li [class.active]="viewMode=='NA'"><a (click)="viewMode='NA';calculate()"> <button type="button" class="btn btn-primary">NA</button> </a></li>&nbsp;
-  
-    <li [class.active]="viewMode=='DCX'"><a (click)="viewMode='DCX';calculate()"><button type="button" class="btn btn-secondary">DCX</button></a></li>&nbsp;
-  
-    <li [class.active]="viewMode=='SOGETI'"><a (click)="viewMode='SOGETI';calculate()"><button type="button" class="btn btn-success">SOGETI</button></a></li>
-  
-  
-  
-  
+    <li [class.active]="viewMode=='NA'"><a (click)="viewMode='NA';calculate()"> <button type="button"
+          class="btn btn-primary">NA</button> </a></li>&nbsp;
+
+    <li [class.active]="viewMode=='DCX'"><a (click)="viewMode='DCX';calculate()"><button type="button"
+          class="btn btn-secondary">DCX</button></a></li>&nbsp;
+
+    <li [class.active]="viewMode=='SOGETI'"><a (click)="viewMode='SOGETI';calculate()"><button type="button"
+          class="btn btn-success">SOGETI</button></a></li>
   </ul>
-  
-  <div [ngSwitch]="viewMode" *ngIf="val">
-  
+
+  <div [ngSwitch]="viewMode" *ngIf="val" class="mt-5">
+
     <div *ngSwitchCase="'NA'">
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=18" width="350" height="200" frameborder="0"></iframe>
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=20" width="450" height="200" frameborder="0"></iframe>
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=22" width="450" height="200" frameborder="0"></iframe>
-  
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=18"
+        width="350" height="200" frameborder="0"></iframe>
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=20"
+        width="450" height="200" frameborder="0"></iframe>
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=22"
+        width="450" height="200" frameborder="0"></iframe>
+
     </div>
-  
+
     <div *ngSwitchCase="'DCX'">
-  
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=24" width="350" height="200" frameborder="0"></iframe>
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=28" width="450" height="200" frameborder="0"></iframe>
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=32" width="450" height="200" frameborder="0"></iframe>
-  
+
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=24"
+        width="350" height="200" frameborder="0"></iframe>
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=28"
+        width="450" height="200" frameborder="0"></iframe>
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=32"
+        width="450" height="200" frameborder="0"></iframe>
+
     </div>
-  
+
     <div *ngSwitchCase="'SOGETI'">
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=26" width="350" height="200" frameborder="0"></iframe>
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=30" width="450" height="200" frameborder="0"></iframe>
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=34" width="450" height="200" frameborder="0"></iframe>
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=26"
+        width="350" height="200" frameborder="0"></iframe>
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=30"
+        width="450" height="200" frameborder="0"></iframe>
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=34"
+        width="450" height="200" frameborder="0"></iframe>
     </div>
-  
+
     <div *ngSwitchDefault>Otherwise</div>
-  
+
   </div>
 
   <h4>Demands Status</h4>
-  
+
   <ul class="nav nav-pills">
-    <li [class.active]="viewMode=='OPEN'"><a (click)="viewMode='OPEN' ;calculate()"> <button type="button" >OPEN</button> </a></li>&nbsp;
-    <li [class.active]="viewMode=='PENDING'"><a (click)="viewMode='PENDING';calculate()"><button type="button" >PENDING</button></a></li>&nbsp;
-     </ul>
-  
+    <li [class.active]="viewMode=='OPEN'"><a (click)="viewMode='OPEN' ;calculate()"> <button type="button">OPEN</button>
+      </a></li>&nbsp;
+    <li [class.active]="viewMode=='PENDING'"><a (click)="viewMode='PENDING';calculate()"><button
+          type="button">PENDING</button></a></li>&nbsp;
+  </ul>
+
   <div [ngSwitch]="viewMode">
     <div *ngSwitchCase="'OPEN'">
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=38" width="700" height="200" frameborder="0"></iframe>
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=38"
+        width="700" height="200" frameborder="0"></iframe>
     </div>
     <div *ngSwitchCase="'PENDING'">
-      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=40" width="700" height="200" frameborder="0"></iframe>
-    
+      <iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=40"
+        width="700" height="200" frameborder="0"></iframe>
+
     </div>
-    
-  
+
+
     <div *ngSwitchDefault>Otherwise</div>
-  
+
   </div>
 </div>
-<iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=42" width="450" height="250" frameborder="0"></iframe>
 
-<iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=44" width="450" height="250" frameborder="0"></iframe>
-<iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=46" width="450" height="200" frameborder="0"></iframe>
-
-
-
-
-<iframe src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=10" 
-width="450" height="200" frameborder="0"></iframe>
-
+<div>
+  <ul class="list-unstyled d-flex open">
+    <li class="w-50"><iframe
+        src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=42"
+        width="450" height="250" frameborder="0"></iframe></li>
+    <li class="w-50"><iframe
+        src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=44"
+        width="450" height="250" frameborder="0"></iframe></li>
+  </ul>
+  <ul class="list-unstyled d-flex open">
+    <li class="w-50"><iframe
+        src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=46"
+        width="450" height="200" frameborder="0"></iframe>
+    </li>
+    <li class="w-50"><iframe
+        src="http://localhost:3000/d-solo/zHEwFKa4k/demand?orgId=1&from=1663612203500&to=1689877795500&panelId=10"
+        width="450" height="200" frameborder="0"></iframe></li>
+  </ul>
+</div>
+</div>

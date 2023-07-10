@@ -7,3 +7,8 @@
  width: 50% !important;
  text-align: center ;
 }
+
+.open li iframe{
+  width: 100% !important;
+  text-align: center ;
+}
